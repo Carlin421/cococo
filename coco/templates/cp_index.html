@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    {% for p in posts %}
+        <div class="col-sm-12 col-md-4" style="font-family:'LiSong Pro';">
+            <div class="panel {% cycle 'panel-primary' 'panel-info' 'panel-warning' 'panel-success'%}">
+                <div class="panel-heading">{{p.title}}</div>
+                <div class="panel-body">{{p.content}}</div>
+                <div class="panel-footer" algin="right">
+                    <i><small>{{p.created_at}}</small></i>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

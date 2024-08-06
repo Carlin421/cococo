@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>最新活動</h2>
+<div class="row">
+    {% for p in posts %}
+        <div class="col-sm-12 col-md-4" style="font-family:'LiSong Pro';">
+            <div class="panel {% cycle 'panel-primary' 'panel-info' 'panel-warning' 'panel-success'%}">
+                <div class="panel-heading">{{p.title}}</div>
+                <div class="panel-body">{{p.content}}</div>
+                <div class="panel-footer" algin="right">
+                    <i><small>{{p.created_at}}</small></i>
+                    <span class="glyphicon glyphicon-trash" onclick="go_delete({{p.title}})"></span>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<h2>最新贊助</h2>
+<div class="row">
+    {% for c in cposts %}
+        <div class="col-sm-12 col-md-4" style="font-family:'LiSong Pro';">
+            <div class="panel {% cycle 'panel-primary' 'panel-info' 'panel-warning' 'panel-success'%}">
+                <div class="panel-heading">{{c.title}}</div>
+                <div class="panel-body">{{c.content}}</div>
+                <div class="panel-footer" algin="right">
+                    <i><small>{{c.created_at}}</small></i>
+                    <span class="glyphicon glyphicon-trash" onclick="go_delete({{p.title}})"></span>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
