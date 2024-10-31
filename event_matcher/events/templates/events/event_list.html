@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活動媒合平台</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+<div class="navbar">
+    <a href="#">首頁</a>
+    <a href="#">找活動</a>
+    <a href="#">找贊助</a>
+    <button class="navbar-button">➕ 發布贊助</button>
+    <button class="navbar-button">➕ 發布活動</button>
+    <a href="#">登入</a>
+    <span>|</span>
+    <a href="#">註冊</a>
+</div>
+
+    <h1>最新活動</h1>
+    <div class="event-container">
+        {% for activity in activities %}
+            <div class="event-card" >
+                <img src="{{ activity.image.url }}" alt="活動照片" class="event-image">
+                <h2 class="event-title">{{ activity.title }}</h2>
+                <p class="event-details">{{ activity.description }}</p>
+                <p class="event-details">地點：{{ activity.location }}</p>
+                <p class="event-details">時間：{{ activity.date }}</p>
+                <form method="POST" action="{% url 'toggle_activity_favorite' activity.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="event-button">
+                        {% if activity.is_favorited %}取消收藏{% else %}收藏{% endif %}
+                    </button>
+                </form>
+            </div>
+        {% endfor %} 
+        <a href="#" class="view-more">➔ 查看更多</a>
+    </div>
+    <h1>最新贊助</h1>
+    <div class="event-container">
+        {% for sponsorship in sponsorships %}
+            <div class="event-card" >
+                <img src="{{ sponsorship.image.url }}" alt="活動照片" class="event-image">
+                <h2 class="event-title">{{ sponsorship.title }}</h2>
+                <p class="event-details">{{ sponsorship.description }}</p>
+                <p class="event-details">{{ sponsorship.sponsor}}</p>
+                <p class="event-details">{{ sponsorship.amount}}</p>
+                <p class="event-details">地點：{{ sponsorship.location }}</p>
+                <p class="event-details">時間：{{ sponsorship.date_posted }}</p>
+                <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="event-button">
+                        {% if sponsorship.is_favorited %}取消收藏{% else %}收藏{% endif %}
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+        <a href="#" class="view-more">➔ 查看更多</a>
+    </div>
+</body>
+</html>

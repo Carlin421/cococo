@@ -1,0 +1,112 @@
+/* 頂部導航欄樣式 */
+.navbar {
+    background-color: #ddd;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #333;
+    margin: 0 10px;
+}
+
+.navbar span {
+    color: #333;
+}
+
+.navbar-button {
+    background-color: #fff;
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-button:hover {
+    background-color: #ccc;
+}
+
+/* 將 event-container 設置為一行多列，卡片靠左對齊 */
+.event-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* 調整卡片之間的間距 */
+    justify-content: flex-start; /* 卡片靠左排列 */
+}
+
+/* 卡片樣式 */
+.event-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    max-width: 200px;
+    min-width: 200px; /* 設定固定寬度，使卡片對齊 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 置中內容 */
+    text-align: center; /* 置中文本 */
+}
+
+/* 卡片中的圖片 */
+.event-image {
+    width: 100%;
+    height: auto;
+    max-height: 150px; /* 限制圖片高度 */
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* 卡片標題和內容 */
+.event-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
+.event-details {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+/* 收藏按鈕 */
+.event-button {
+    margin-top: auto; /* 將按鈕推到底部 */
+    padding: 4px 10px;
+    font-size: 12px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.event-button:hover {
+    background-color: #e0e0e0;
+}
+
+/* 查看更多的樣式 */
+.view-more {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.view-more:hover {
+    text-decoration: underline;
+}
