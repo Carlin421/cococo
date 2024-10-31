@@ -82,42 +82,8 @@ body {
   }
   
 /* 頂部導航欄樣式 */
-.navbar {
-    background-color: #ddd;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-}
 
-.navbar a {
-    text-decoration: none;
-    color: #333;
-    margin: 0 10px;
-}
 
-.navbar span {
-    color: #333;
-}
-
-.navbar-button {
-    background-color: #fff;
-    color: #333;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    cursor: pointer;
-    margin: 0 10px;
-    display: flex;
-    align-items: center;
-}
-
-.navbar-button:hover {
-    background-color: #ccc;
-}
 
 /* 將 event-container 設置為一行多列，卡片靠左對齊 */
 .event-container {
