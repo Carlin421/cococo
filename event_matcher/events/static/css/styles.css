@@ -159,3 +159,9 @@ body {
 .view-more:hover {
     text-decoration: underline;
 }
+
+.custom-navbar {
+  background-color: rgba(0, 0, 0, 0.4); /* 0.8 為透明度，可自行調整 */
+}
+
+

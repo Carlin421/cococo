@@ -25,7 +25,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('events.urls')),
     path('activities/', views.activity_list, name='activity_list'),
-    path('sponsorships/', views.sponsorship_list, name='sponsorship_list'),
 ]
 
 if settings.DEBUG:

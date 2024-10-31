@@ -10,14 +10,6 @@ def activity_list(request):
     }
     return render(request, 'events/event_list.html', context)
 
-def sponsorship_list(request):
-    activities = Activity.objects.all()
-    sponsorships = Sponsorship.objects.all()
-    context = {
-        'activities': activities,
-        'sponsorships': sponsorships
-    }
-    return render(request, 'events/event_list.html', context)# 用於活動的收藏切換
 def toggle_activity_favorite(request, event_id):
     event = get_object_or_404(Activity, id=event_id)
     event.is_favorited = not event.is_favorited
