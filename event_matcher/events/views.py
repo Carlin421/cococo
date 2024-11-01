@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import LoginForm, RegisterForm
+from .models import Activitynew,Sponsorshipnew
 
 def activity_list(request):
     activities = Activity.objects.all()
@@ -54,7 +55,26 @@ def register_view(request):
     return render(request, 'events/register.html', {'form': form})
 
 
+def activitynew_list(request):
+    activitynew_list = Activitynew.objects.all()  # 使用新的變數名稱
+    return render(request, 'events/activitynew_list.html', {'activitynew_list': activitynew_list})
+
+def toggle_activitynew_favorite(request, activity_id):
+    activity = get_object_or_404(Activitynew, id=activity_id)
+    activity.is_favorited = not activity.is_favorited
+    activity.save()
+    return redirect('activitynew_list')
 
 
+def sponsorship_list(request):
+    sponsorship_list = Sponsorshipnew.objects.all()
+    return render(request, 'events/sponsorship_list.html', {'sponsorship_list': sponsorship_list})
+
+
+def toggle_sponsorshipnew_favorite(request, sponsorship_id):
+    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
+    sponsorship.is_favorited = not sponsorship.is_favorited
+    sponsorship.save()
+    return redirect('sponsorship_list')
 
 # Create your views here.
