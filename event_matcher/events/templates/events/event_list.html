@@ -54,17 +54,19 @@
             <li class="nav-item"><a class="nav-link" href="#">找贊助</a></li>
           </ul>
           <div class="d-flex align-items-center">
-            <a href="#" class="btn btn-primary me-2">登入</a>
-            <a href="#" class="btn btn-outline-light">註冊</a>
+            {% if user.is_authenticated %}
+              <a href="{% url 'logout' %}" class="btn btn-outline-light me-2">登出</a>
+            {% else %}
+              <a href="{% url 'login' %}" class="btn btn-primary me-2">登入</a>
+              <a href="{% url 'register' %}" class="btn btn-outline-light">註冊</a>
+            {% endif %}
           </div>
         </div>
       </div>
     </nav>
   </header>
-  
 
 <main>
-
 <!-- Carousel 區域 -->
 <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
   <div class="carousel-indicators">
@@ -74,8 +76,7 @@
   </div>
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="https://via.placeholder.com/1920x600" class="d-block w-100" alt="Placeholder image">
-
+      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100" alt="First slide">
       <div class="container">
         <div class="carousel-caption text-start">
           <h1>Example headline.</h1>
@@ -95,7 +96,7 @@
       </div>
     </div>
     <div class="carousel-item">
-      <img src="{% static 'images/slide3.jpg' %}" class="d-block w-100" alt="Third slide">
+      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100" alt="Third slide">
       <div class="container">
         <div class="carousel-caption text-end">
           <h1>One more for good measure.</h1>
@@ -114,8 +115,6 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
-
-  
 
   <!-- 活動列表區 -->
   <div class="container marketing">
@@ -162,17 +161,12 @@
       <a href="#" class="view-more">➔ 查看更多</a>
     </div>
 
-    <!-- 分隔線 -->
     <hr class="featurette-divider">
-
-    <!-- 其他網頁範例特徵內容 -->
-    <!-- 請在此根據需求加入其他範例模板中的行銷特徵和內容 -->
-
   </div>
 </main>
 
 <!-- Bootstrap Bundle JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 
 </body>
 </html>

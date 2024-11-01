@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 #設計「活動」模型（Activity Model）
 class Activity(models.Model):
