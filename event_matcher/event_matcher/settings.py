@@ -144,4 +144,3 @@ STATICFILES_DIRS = [BASE_DIR / "media"]
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'event_list'
-
