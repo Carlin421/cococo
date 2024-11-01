@@ -11,5 +11,9 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
     path('social-auth/', include('social_django.urls', namespace='social')),
+    # events/urls.py
+    path('', views.activity_list, name='event_list'),
+
+
 ]
 
