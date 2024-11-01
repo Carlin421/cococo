@@ -14,6 +14,7 @@ def activity_list(request):
     }
     return render(request, 'events/event_list.html', context)
 
+
 def toggle_activity_favorite(request, event_id):
     event = get_object_or_404(Activity, id=event_id)
     event.is_favorited = not event.is_favorited
@@ -51,6 +52,8 @@ def register_view(request):
     else:
         form = RegisterForm()
     return render(request, 'events/register.html', {'form': form})
+
+
 
 
 

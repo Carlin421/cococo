@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,6 +26,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', include('events.urls')),
     path('activities/', views.activity_list, name='activity_list'),
+    path('', views.activity_list, name='activity_list'),  # 主頁面
+    path('logout/', LogoutView.as_view(), name='logout'),  # 添加登出路由
 ]
 
 if settings.DEBUG:
