@@ -1,0 +1,55 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-brand img {
+    height: 50px;
+}
+
+.card {
+    border-radius: 15px;
+    border: none;
+}
+
+.card-header {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    background-image: linear-gradient(45deg, #0062E6, #33AEFF);
+}
+
+.btn-google {
+    background-color: #db4437;
+    color: #fff;
+}
+
+.btn-google:hover {
+    background-color: #c33d2e;
+    color: #fff;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+}
+
+.btn-primary {
+    border-radius: 10px;
+    background-image: linear-gradient(45deg, #0062E6, #33AEFF);
+    border: none;
+}
+
+.btn-primary:hover {
+    background-image: linear-gradient(45deg, #0050c9, #248fdb);
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-text {
+    font-size: 0.9em;
+}
+
+.navbar {
+    padding: 1rem 0;
+}
+
