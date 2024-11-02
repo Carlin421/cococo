@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}COCO - 找贊助{% endblock %}
+
+{% block content %}
+    <h1>找贊助</h1>
+    <div class="event-container">
+        {% for sponsorship in sponsorship_list %}
+            <div class="event-card">
+                {% if sponsorship.image %}
+                    <img src="{{ sponsorship.image.url }}" alt="{{ sponsorship.title }}" class="event-image">
+                {% endif %}
+                <h2 class="event-title">{{ sponsorship.title }}</h2>
+                <p class="event-details">贊助者：{{ sponsorship.sponsor }}</p>
+                <p class="event-details">{{ sponsorship.description }}</p>
+                <p class="event-details">金額：{{ sponsorship.amount }}</p>
+                <p class="event-details">地點：{{ sponsorship.location }}</p>
+                <p class="event-details">發布日期：{{ sponsorship.date_posted }}</p>
+                <form method="POST" action="{% url 'toggle_sponsorshipnew_favorite' sponsorship.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="event-button">
+                        {% if sponsorship.is_favorited %}取消收藏{% else %}收藏{% endif %}
+                    </button>
+                </form>                
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

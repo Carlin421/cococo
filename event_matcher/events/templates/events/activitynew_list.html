@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}COCO - 首頁{% endblock %}
+
+{% block content %}
+    <h1>找活動</h1>
+    <div class="event-container">
+        {% for activity in activitynew_list %}
+            <div class="event-card">
+                {% if activity.image %}
+                    <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="event-image">
+                {% endif %}
+                <h2 class="event-title">{{ activity.title }}</h2>
+                <p class="event-details">{{ activity.description }}</p>
+                <p class="event-details">地點：{{ activity.location }}</p>
+                <p class="event-details">時間：{{ activity.date }}</p>
+                <form method="POST" action="{% url 'toggle_activitynew_favorite' activity.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="event-button">
+                        {% if activity.is_favorited %}取消收藏{% else %}收藏{% endif %}
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
