@@ -5,6 +5,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import LoginForm, RegisterForm
 from .models import Activitynew,Sponsorshipnew
+from django.contrib.auth import logout
 
 def activity_list(request):
     activities = Activity.objects.all()
@@ -77,4 +78,9 @@ def toggle_sponsorshipnew_favorite(request, sponsorship_id):
     sponsorship.save()
     return redirect('sponsorship_list')
 
+def custom_logout(request):
+    logout(request)
+    # 如果您使用了任何自定義的認證令牌，在這裡清除它們
+    # 例如：request.user.auth_token.delete()
+    return redirect('event_list')  # 或者您希望重定向到的任何頁面
 # Create your views here.
