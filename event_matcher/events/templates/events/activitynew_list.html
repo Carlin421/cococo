@@ -1,27 +1,58 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}COCO - 首頁{% endblock %}
+{% block title %}COCO - 找活動{% endblock %}
 
 {% block content %}
-    <h1>找活動</h1>
-    <div class="event-container">
-        {% for activity in activitynew_list %}
-            <div class="event-card">
-                {% if activity.image %}
-                    <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="event-image">
-                {% endif %}
-                <h2 class="event-title">{{ activity.title }}</h2>
-                <p class="event-details">{{ activity.description }}</p>
-                <p class="event-details">地點：{{ activity.location }}</p>
-                <p class="event-details">時間：{{ activity.date }}</p>
-                <form method="POST" action="{% url 'toggle_activitynew_favorite' activity.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="event-button">
-                        {% if activity.is_favorited %}取消收藏{% else %}收藏{% endif %}
-                    </button>
-                </form>
-            </div>
-        {% endfor %}
+
+<main>
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">活動清單</h1>
+        <p class="lead text-body-secondary">瀏覽以下的活動並選擇適合的項目。</p>
+      </div>
     </div>
+  </section>
+
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        {% for activity in activitynew_list %}
+          <div class="col">
+            <div class="card shadow-sm">
+              {% if activity.image %}
+                <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="bd-placeholder-img card-img-top" height="225">
+              {% else %}
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">No Image</text></svg>
+              {% endif %}
+              
+              <div class="card-body">
+                <h2 class="card-title">{{ activity.title }}</h2>
+                <p class="card-text">{{ activity.description }}</p>
+                <p class="card-text">地點：{{ activity.location }}</p>
+                <p class="card-text">時間：{{ activity.date }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  {% if user.is_authenticated %}
+                    <form method="POST" action="{% url 'toggle_activitynew_favorite' activity.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-outline-primary">
+                        {% if activity.is_favorited %}取消收藏{% else %}收藏{% endif %}
+                      </button>
+                    </form>
+                  {% else %}
+                    <a href="{% url 'login' %}?next={% url 'activity_list' %}" class="btn btn-sm btn-outline-primary">收藏</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
