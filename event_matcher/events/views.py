@@ -7,6 +7,8 @@ from .forms import LoginForm, RegisterForm
 from .models import Activitynew,Sponsorshipnew
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import UserProfileForm
 
 def activity_list(request):
     activities = Activity.objects.all()
@@ -88,4 +90,13 @@ def custom_logout(request):
 
 @login_required
 def profile_view(request):
-    return render(request, 'events/profile.html', {'user': request.user})
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=request.user)
+    
+    return render(request, 'events/profile.html', {'form': form})

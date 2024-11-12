@@ -22,3 +22,7 @@ class RegisterForm(forms.ModelForm):
         if password != password_confirm:
             self.add_error('password_confirm', "Passwords do not match.")
         return cleaned_data
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
