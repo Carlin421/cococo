@@ -16,4 +16,5 @@ urlpatterns = [
     path('find_sponsorship/', views.sponsorship_list, name='sponsorship_list'),
     path('toggle_sponsorshipnew_favorite/<int:sponsorship_id>/', views.toggle_sponsorshipnew_favorite, name='toggle_sponsorshipnew_favorite'),
     path('', views.activity_list, name='event_list'),
+    path('profile/', views.profile_view, name='profile'),
 ]

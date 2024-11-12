@@ -65,6 +65,7 @@
           <div class="d-flex align-items-center">
             {% if user.is_authenticated %}
               <a href="{% url 'logout' %}" class="btn btn-outline-light me-2">登出</a>
+              <a href="{% url 'profile' %}" class="btn btn-outline-light">個人資料</a>
             {% else %}
               <a href="{% url 'login' %}" class="btn btn-primary me-2">登入</a>
               <a href="{% url 'register' %}" class="btn btn-outline-light">註冊</a>

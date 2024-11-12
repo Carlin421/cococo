@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import LoginForm, RegisterForm
 from .models import Activitynew,Sponsorshipnew
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 
 def activity_list(request):
     activities = Activity.objects.all()
@@ -83,4 +84,8 @@ def custom_logout(request):
     # 如果您使用了任何自定義的認證令牌，在這裡清除它們
     # 例如：request.user.auth_token.delete()
     return redirect('event_list')  # 或者您希望重定向到的任何頁面
-# Create your views here.
+
+
+@login_required
+def profile_view(request):
+    return render(request, 'events/profile.html', {'user': request.user})
