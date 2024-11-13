@@ -1,0 +1,13 @@
+<!-- sponsor_detail.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ activity.name }}</h1>
+<p>{{ activity.description }}</p>
+{% for activity in activity.sponsors.all %}
+  <a href="{% url 'activity_detail' activity.id %}">{{ activity.name }}</a>
+{% endfor %}
+<!-- Add more sponsor details -->
+{% endblock %}
+
+<!-- activity_detail.html -->

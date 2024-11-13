@@ -1,5 +1,4 @@
 from django.shortcuts import render,get_object_or_404, redirect
-from events.models import Activity, Sponsorship
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -11,8 +10,8 @@ from django.contrib import messages
 from .forms import UserProfileForm
 
 def activity_list(request):
-    activities = Activity.objects.all()
-    sponsorships = Sponsorship.objects.all()
+    activities = Activitynew.objects.all()
+    sponsorships = Sponsorshipnew.objects.all()
     context = {
         'activities': activities,
         'sponsorships': sponsorships
@@ -21,7 +20,7 @@ def activity_list(request):
 
 
 def toggle_activity_favorite(request, event_id):
-    event = get_object_or_404(Activity, id=event_id)
+    event = get_object_or_404(Activitynew, id=event_id)
     event.is_favorited = not event.is_favorited
     event.save()
     return redirect('activity_list')
@@ -29,7 +28,7 @@ def toggle_activity_favorite(request, event_id):
 # 用於贊助的收藏切換
 def toggle_sponsorship_favorite(request, sponsorship_id):
     
-    sponsorship = get_object_or_404(Sponsorship, id=sponsorship_id)
+    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
     sponsorship.is_favorited = not sponsorship.is_favorited
     sponsorship.save()
     return redirect('activity_list')
@@ -100,3 +99,11 @@ def profile_view(request):
         form = UserProfileForm(instance=request.user)
     
     return render(request, 'events/profile.html', {'form': form})
+
+def sponsor_detail(request, sponsor_id):
+    sponsor = get_object_or_404(Sponsorshipnew, pk=sponsor_id)
+    return render(request, 'events/sponsor_detail.html', {'sponsor': sponsor})
+
+def activity_detail(request, activity_id):
+    activity = get_object_or_404(Activitynew, pk=activity_id)
+    return render(request, 'events/activity_detail.html', {'activity': activity})

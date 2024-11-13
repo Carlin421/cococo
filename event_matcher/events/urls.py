@@ -20,4 +20,7 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
         path('password_change/', auth_views.PasswordChangeView.as_view(template_name='events/password_change.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='events/password_change_done.html'), name='password_change_done'),
+    path('sponsor/<int:sponsor_id>/', views.sponsor_detail, name='sponsor_detail'),
+    path('activity/<int:activity_id>/', views.activity_detail, name='activity_detail'),
 ]
+

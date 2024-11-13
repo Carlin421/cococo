@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ sponsor.title }}</h1>
+<p>描述: {{ sponsor.description }}</p>
+<p>贊助商: {{ sponsor.sponsor }}</p>
+<p>金額: {{ sponsor.amount }}</p>
+<p>地點: {{ sponsor.location }}</p>
+<p>發布日期: {{ sponsor.date_posted }}</p>
+{% if sponsor.image %}
+  <img src="{{ sponsor.image.url }}" alt="{{ sponsor.title }}">
+{% endif %}
+{% endblock %}
