@@ -1,13 +1,213 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
+{% load static %}
+
+{% block title %}新增贊助{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>新增贊助</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% bootstrap_form form %}
-        <button type="submit" class="btn btn-primary">提交</button>
-    </form>
+<div class="container my-5 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg rounded-lg border-0">
+                <div class="card-header bg-primary-gradient text-white text-center py-4">
+                    <h2 class="mb-0">新增贊助</h2>
+                </div>
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="mb-4 animate-slide-up" style="animation-delay: {{ forloop.counter0 }}00ms;">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                                {% if field.field.widget.input_type == 'file' %}
+                                    <div class="custom-file">
+                                        {{ field }}
+                                        <label class="custom-file-label" for="{{ field.id_for_label }}">選擇文件</label>
+                                    </div>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg animate-pulse shadow">提交贊助</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+        opacity: 0;
+    }
+    
+    .animate-slide-up {
+        animation: slideUp 0.6s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .bg-primary-gradient {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+    }
+    
+    .custom-file-label::after {
+        content: "瀏覽";
+    }
+    
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .form-control, .custom-file-input {
+        border-radius: 0.25rem;
+        border: 1px solid #ced4da;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    .form-control:focus, .custom-file-input:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+    table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+table thead th {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 12px;
+    font-weight: bold;
+    text-align: left;
+}
+
+table tbody tr {
+    border-bottom: 1px solid #f1f1f1;
+}
+
+table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+table tbody td {
+    padding: 12px;
+    border-right: 1px solid #f1f1f1;
+    text-align: left;
+}
+
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+table tbody td:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+table tbody td:last-child {
+    border-radius: 0 10px 10px 0;
+    border-right: none;
+}
+
+/* 改善表格外觀的陰影效果 */
+table {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 表格圓角和陰影 */
+table, th, td {
+    border-collapse: collapse;
+    border-radius: 8px;
+}
+
+/* 表格內文顏色和字體 */
+table tbody td {
+    color: #333333;
+    font-size: 14px;
+}
+
+
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+
+    document.querySelectorAll('.custom-file-input').forEach(function(input) {
+        input.addEventListener('change', function(e) {
+            var fileName = e.target.files[0].name;
+            var nextSibling = e.target.nextElementSibling
+            nextSibling.innerText = fileName
+        })
+    })
+})
+</script>
 {% endblock %}
