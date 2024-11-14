@@ -4,25 +4,36 @@
 {% block title %}COCO - 找活動{% endblock %}
 
 {% block content %}
-
-
+<main>
   <section class="py-5 text-center container">
     <div class="row py-lg-5">
       <div class="col-lg-6 col-md-8 mx-auto">
         <h1 class="fw-light">活動清單</h1>
         <p class="lead text-body-secondary">瀏覽以下的活動並選擇適合的項目。</p>
+        
+        <!-- 搜索表單 -->
+        <form class="d-flex justify-content-center mb-4" method="GET" action="{% url 'activitynew_list' %}">
+          <div class="input-group" style="max-width: 300px;">
+            <input type="text" class="form-control" placeholder="搜索活動..." name="q" value="{{ query|default_if_none:'' }}">
+            <button class="btn btn-outline-secondary" type="submit">搜索</button>
+          </div>
+        </form>
       </div>
     </div>
   </section>
 
   <div class="album py-5 bg-body-tertiary">
     <div class="container">
+      {% if query %}
+        <h2 class="mb-4">搜索結果: "{{ query }}"</h2>
+      {% endif %}
+      
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-        {% for activity in activitynew_list %}
+        {% for activity in activity_list %}
           <div class="col">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm h-100">
               {% if activity.image %}
-                <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="bd-placeholder-img card-img-top" height="225">
+                <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="card-img-top" height="225">
               {% else %}
                 <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">No Image</text></svg>
               {% endif %}
@@ -30,8 +41,8 @@
               <div class="card-body">
                 <h2 class="card-title">{{ activity.title }}</h2>
                 <p class="card-text">{{ activity.description }}</p>
-                <p class="card-text">地點：{{ activity.location }}</p>
-                <p class="card-text">時間：{{ activity.date }}</p>
+                <p class="card-text"><i class="fas fa-map-marker-alt me-2"></i>地點：{{ activity.location }}</p>
+                <p class="card-text"><i class="fas fa-calendar-alt me-2"></i>時間：{{ activity.date }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   {% if user.is_authenticated %}
                   <form method="POST" action="{% url 'toggle_activity_favorite' activity.id %}" onsubmit="checkLoginAndFavorite(event, '{% url 'login' %}')">
@@ -41,18 +52,19 @@
                     </button>
                   </form>
                   {% else %}
-                    <a href="{% url 'login' %}?next={% url 'activity_list' %}" class="btn btn-sm btn-outline-primary">收藏</a>
+                    <a href="{% url 'login' %}?next={% url 'activitynew_list' %}" class="btn btn-sm btn-outline-primary">收藏</a>
                   {% endif %}
                 </div>
               </div>
             </div>
           </div>
+        {% empty %}
+          <div class="col-12 text-center">
+            <p>沒有找到符合條件的活動。</p>
+          </div>
         {% endfor %}
       </div>
     </div>
   </div>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</main>
 {% endblock %}

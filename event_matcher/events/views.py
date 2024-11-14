@@ -8,6 +8,9 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserProfileForm
+from django.db.models import Q
+
+
 
 def activity_list(request):
     activities = Activitynew.objects.all()
@@ -60,19 +63,38 @@ def register_view(request):
 
 
 def activitynew_list(request):
-    activitynew_list = Activitynew.objects.all()  # 使用新的變數名稱
-    return render(request, 'events/activitynew_list.html', {'activitynew_list': activitynew_list})
+    query = request.GET.get('q')
+    activities = Activitynew.objects.all()
+
+    if query:
+        activities = activities.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(location__icontains=query) |
+            Q(date__icontains=query)
+        )
+
+    context = {
+        'activity_list': activities,
+        'query': query
+    }
+    return render(request, 'events/activitynew_list.html', context)
 @login_required
 def toggle_activitynew_favorite(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
     activity.is_favorited = not activity.is_favorited
     activity.save()
     return redirect('activitynew_list')
-
-
 def sponsorship_list(request):
-    sponsorship_list = Sponsorshipnew.objects.all()
-    return render(request, 'events/sponsorship_list.html', {'sponsorship_list': sponsorship_list})
+    query = request.GET.get('q', '')
+    if query:
+        sponsorship_list = Sponsorshipnew.objects.filter(title__icontains=query)
+    else:
+        sponsorship_list = Sponsorshipnew.objects.all()
+    return render(request, 'events/sponsorship_list.html', {
+        'sponsorship_list': sponsorship_list,
+        'query': query
+    })
 
 @login_required
 def toggle_sponsorshipnew_favorite(request, sponsorship_id):
