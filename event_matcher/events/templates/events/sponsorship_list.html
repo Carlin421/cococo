@@ -29,7 +29,7 @@
       {% endif %}
       
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-        {% for sponsorship in sponsorship_list %}
+        {% for sponsorship in sponsorships %}
           <div class="col">
             <div class="card shadow-lg h-100 animate-card">
               {% if sponsorship.image %}
@@ -68,6 +68,37 @@
           </div>
         {% endfor %}
       </div>
+
+      <!-- 分頁 -->
+      {% if sponsorships.has_other_pages %}
+        <nav class="mt-4">
+          <ul class="pagination justify-content-center">
+            {% if sponsorships.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ sponsorships.previous_page_number }}">&laquo; 上一頁</a>
+              </li>
+            {% endif %}
+
+            {% for i in sponsorships.paginator.page_range %}
+              {% if sponsorships.number == i %}
+                <li class="page-item active">
+                  <span class="page-link">{{ i }}</span>
+                </li>
+              {% else %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if sponsorships.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ sponsorships.next_page_number }}">下一頁 &raquo;</a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
     </div>
   </div>
 </main>

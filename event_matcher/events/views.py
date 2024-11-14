@@ -9,7 +9,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserProfileForm
 from django.db.models import Q
-
+from .forms import ActivityForm
+from .forms import SponsorshipForm
+from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def activity_list(request):
@@ -85,16 +88,18 @@ def toggle_activitynew_favorite(request, activity_id):
     activity.is_favorited = not activity.is_favorited
     activity.save()
     return redirect('activitynew_list')
-def sponsorship_list(request):
-    query = request.GET.get('q', '')
-    if query:
-        sponsorship_list = Sponsorshipnew.objects.filter(title__icontains=query)
-    else:
-        sponsorship_list = Sponsorshipnew.objects.all()
-    return render(request, 'events/sponsorship_list.html', {
-        'sponsorship_list': sponsorship_list,
-        'query': query
-    })
+def sponsorship_list(request, page=1):
+    sponsorships = Sponsorshipnew.objects.all().order_by('-date_posted')
+    paginator = Paginator(sponsorships, 10)  # 每頁顯示 10 個項目
+    
+    try:
+        sponsorships = paginator.page(page)
+    except PageNotAnInteger:
+        sponsorships = paginator.page(1)
+    except EmptyPage:
+        sponsorships = paginator.page(paginator.num_pages)
+    
+    return render(request, 'events/sponsorship_list.html', {'sponsorships': sponsorships})
 
 @login_required
 def toggle_sponsorshipnew_favorite(request, sponsorship_id):
@@ -123,12 +128,36 @@ def profile_view(request):
     
     return render(request, 'events/profile.html', {'form': form})
 
-def sponsor_detail(request, sponsor_id):
-    sponsor = get_object_or_404(Sponsorshipnew, pk=sponsor_id)
-    return render(request, 'events/sponsor_detail.html', {'sponsor': sponsor})
-
+def sponsor_detail(request, sponsorship_id):
+    sponsorship = get_object_or_404(Sponsorshipnew, pk=sponsorship_id)
+    return render(request, 'events/sponsor_detail.html', {'sponsorship': sponsorship})
 def activity_detail(request, activity_id):
     activity = get_object_or_404(Activitynew, pk=activity_id)
     return render(request, 'events/activity_detail.html', {'activity': activity})
 def about_us(request):
     return render(request, 'events/aboutus.html')
+def add_activity(request):
+    if request.method == 'POST':
+        form = ActivityForm(request.POST, request.FILES)
+        if form.is_valid():
+            activity = form.save(commit=False)
+            activity.organizer = request.user  # 假設您的 Activitynew 模型有一個 organizer 字段
+            activity.save()
+            messages.success(request, '活動已成功創建!')
+            return redirect('activity_detail', activity_id=activity.id)
+    else:
+        form = ActivityForm()
+    return render(request, 'events/add_activity.html', {'form': form})
+
+def add_sponsorship(request):
+    if request.method == 'POST':
+        form = SponsorshipForm(request.POST, request.FILES)
+        if form.is_valid():
+            sponsorship = form.save(commit=False)
+            sponsorship.sponsor = request.user
+            sponsorship.save()
+            messages.success(request, '贊助已成功創建!')
+            return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
+    else:
+        form = SponsorshipForm()
+    return render(request, 'events/add_sponsorship.html', {'form': form})

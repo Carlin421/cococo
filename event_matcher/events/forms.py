@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
+from .models import Activitynew
+from .models import Sponsorshipnew
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -26,3 +28,19 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
+# event_matcher/events/forms.py
+
+from django import forms
+from .models import Activitynew
+
+class ActivityForm(forms.ModelForm):
+    class Meta:
+        model = Activitynew
+        fields = ['title', 'description', 'location', 'date', 'image']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+class SponsorshipForm(forms.ModelForm):
+    class Meta:
+        model = Sponsorshipnew
+        fields = ['title', 'description', 'amount', 'location', 'image']

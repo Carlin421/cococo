@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 
     
 #設計「主活動」模型（Activitynew Model）
@@ -23,7 +23,7 @@ class Sponsorshipnew(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)  # 贊助金額
     image = models.ImageField(upload_to='sponsorship_images/', blank=True, null=True)  # 贊助圖片
     location = models.CharField(max_length=100,default="unknown")        # 贊助地點
-    date_posted = models.DateField(auto_now_add=True)   # 贊助發布日期
+    date_posted = models.DateTimeField(default=timezone.now)  # 贊助發布日期
     is_favorited = models.BooleanField(default=False)   # 收藏狀態
 
 

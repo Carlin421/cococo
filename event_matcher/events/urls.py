@@ -18,14 +18,16 @@ urlpatterns = [
     path('toggle_sponsorshipnew_favorite/<int:sponsorship_id>/', views.toggle_sponsorshipnew_favorite, name='toggle_sponsorshipnew_favorite'),
     path('', views.activity_list, name='event_list'),
     path('profile/', views.profile_view, name='profile'),
-        path('password_change/', auth_views.PasswordChangeView.as_view(template_name='events/password_change.html'), name='password_change'),
+    path('password_change/', auth_views.PasswordChangeView.as_view(template_name='events/password_change.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='events/password_change_done.html'), name='password_change_done'),
-    path('sponsor/<int:sponsor_id>/', views.sponsor_detail, name='sponsor_detail'),
     path('activity/<int:activity_id>/', views.activity_detail, name='activity_detail'),
     path('sponsorship_list/', views.sponsorship_list, name='sponsorship_list'),
     path('activities/', views.activitynew_list, name='activitynew_list'),
     path('about/', views.about_us, name='about_us'),
-    
-    
+    path('add_activity/', views.add_activity, name='add_activity'),
+    path('add_sponsorship/', views.add_sponsorship, name='add_sponsorship'),
+    path('sponsor/<int:sponsorship_id>/', views.sponsor_detail, name='sponsor_detail'),
+    path('sponsorship_list/', views.sponsorship_list, name='sponsorship_list'),
+    path('sponsorship_list/<int:page>/', views.sponsorship_list, name='sponsorship_list_page'),
 ]
 
