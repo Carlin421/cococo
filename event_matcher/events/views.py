@@ -18,7 +18,7 @@ def activity_list(request):
     }
     return render(request, 'events/event_list.html', context)
 
-
+@login_required
 def toggle_activity_favorite(request, event_id):
     event = get_object_or_404(Activitynew, id=event_id)
     event.is_favorited = not event.is_favorited
@@ -26,6 +26,7 @@ def toggle_activity_favorite(request, event_id):
     return redirect('activity_list')
 
 # 用於贊助的收藏切換
+@login_required
 def toggle_sponsorship_favorite(request, sponsorship_id):
     
     sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
@@ -61,7 +62,7 @@ def register_view(request):
 def activitynew_list(request):
     activitynew_list = Activitynew.objects.all()  # 使用新的變數名稱
     return render(request, 'events/activitynew_list.html', {'activitynew_list': activitynew_list})
-
+@login_required
 def toggle_activitynew_favorite(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
     activity.is_favorited = not activity.is_favorited
@@ -73,7 +74,7 @@ def sponsorship_list(request):
     sponsorship_list = Sponsorshipnew.objects.all()
     return render(request, 'events/sponsorship_list.html', {'sponsorship_list': sponsorship_list})
 
-
+@login_required
 def toggle_sponsorshipnew_favorite(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
     sponsorship.is_favorited = not sponsorship.is_favorited

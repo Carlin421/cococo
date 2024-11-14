@@ -36,6 +36,15 @@
         .b-example-divider { width: 100%; height: 3rem; background-color: rgba(0, 0, 0, .1); }
         .bd-mode-toggle { z-index: 1500; }
     </style>
+    <script>
+      function checkLoginAndFavorite(event, loginUrl) {
+          {% if not user.is_authenticated %}
+              event.preventDefault();
+              alert('請先登入以收藏此項目。');
+              window.location.href = loginUrl;
+          {% endif %}
+      }
+      </script>
 </head>
 <body>
 

@@ -36,12 +36,12 @@
                 <p class="card-text">發布日期：{{ sponsorship.date_posted }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   {% if user.is_authenticated %}
-                    <form method="POST" action="{% url 'toggle_sponsorshipnew_favorite' sponsorship.id %}">
-                      {% csrf_token %}
-                      <button type="submit" class="btn btn-sm btn-outline-primary">
-                        {% if sponsorship.is_favorited %}取消收藏{% else %}收藏{% endif %}
-                      </button>
-                    </form>
+                  <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship.id %}" onsubmit="checkLoginAndFavorite(event, '{% url 'login' %}')">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                      {% if sponsorship.is_favorited %}<i class="fas fa-heart"></i> 取消收藏{% else %}<i class="far fa-heart"></i> 收藏{% endif %}
+                    </button>
+                  </form>
                   {% else %}
                     <a href="{% url 'login' %}?next={% url 'sponsorship_list' %}" class="btn btn-sm btn-outline-primary">收藏</a>
                   {% endif %}
