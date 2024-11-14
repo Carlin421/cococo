@@ -163,5 +163,23 @@ body {
 .custom-navbar {
   background-color: rgba(0, 0, 0, 0.4); /* 0.8 為透明度，可自行調整 */
 }
-
+.row-eq-height {
+  display: flex;
+  flex-wrap: wrap;
+}
+.feature-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0.3s ease-in-out;
+}
+.feature-box:hover {
+  transform: translateY(-5px);
+}
+.icon {
+  transition: transform 0.3s ease-in-out;
+}
+.feature-box:hover .icon {
+  transform: scale(1.1);
+}
 
