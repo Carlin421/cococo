@@ -1,13 +1,92 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<h1>{{ sponsor.title }}</h1>
-<p>描述: {{ sponsor.description }}</p>
-<p>贊助商: {{ sponsor.sponsor }}</p>
-<p>金額: {{ sponsor.amount }}</p>
-<p>地點: {{ sponsor.location }}</p>
-<p>發布日期: {{ sponsor.date_posted }}</p>
-{% if sponsor.image %}
-  <img src="{{ sponsor.image.url }}" alt="{{ sponsor.title }}">
-{% endif %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-4">{{ sponsor.title }}</h1>
+            {% if sponsor.image %}
+                <img src="{{ sponsor.image.url }}" alt="{{ sponsor.title }}" class="img-fluid rounded mb-4">
+            {% endif %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">贊助商詳情</h5>
+                    <p class="card-text">{{ sponsor.description }}</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>贊助商：</strong> {{ sponsor.sponsor }}</li>
+                        <li class="list-group-item"><strong>金額：</strong> {{ sponsor.amount }}</li>
+                        <li class="list-group-item"><strong>地點：</strong> {{ sponsor.location }}</li>
+                        <li class="list-group-item"><strong>發布日期：</strong> {{ sponsor.date_posted }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            {% if sponsor.sponsored_activities.exists %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">贊助的活動</h5>
+                        <div class="row">
+                            {% for activity in sponsor.sponsored_activities.all %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        {% if activity.image %}
+                                            <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="card-img-top">
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ activity.title }}</h6>
+                                            <a href="{% url 'activity_detail' activity.id %}" class="btn btn-sm btn-outline-primary">查看活動</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">聯絡資訊</h5>
+                    {% if sponsor.contact_email %}
+                        <p><strong>聯絡信箱：</strong> {{ sponsor.contact_email }}</p>
+                    {% endif %}
+                    {% if sponsor.contact_phone %}
+                        <p><strong>聯絡電話：</strong> {{ sponsor.contact_phone }}</p>
+                    {% endif %}
+                    {% if sponsor.website %}
+                        <p><strong>官方網站：</strong> <a href="{{ sponsor.website }}" target="_blank">{{ sponsor.website }}</a></p>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <form method="POST" action="{% url 'toggle_sponsorshipnew_favorite' sponsor.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-block">
+                                {% if sponsor.is_favorited %}取消收藏{% else %}收藏贊助商{% endif %}
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-block">登入以收藏</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if related_sponsors %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">相關贊助商</h5>
+                        <ul class="list-group list-group-flush">
+                            {% for related_sponsor in related_sponsors %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'sponsor_detail' related_sponsor.id %}">{{ related_sponsor.title }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

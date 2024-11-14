@@ -1,13 +1,93 @@
-<!-- sponsor_detail.html -->
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<h1>{{ activity.name }}</h1>
-<p>{{ activity.description }}</p>
-{% for activity in activity.sponsors.all %}
-  <a href="{% url 'activity_detail' activity.id %}">{{ activity.name }}</a>
-{% endfor %}
-<!-- Add more sponsor details -->
-{% endblock %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-4">{{ activity.title }}</h1>
+            {% if activity.image %}
+                <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="img-fluid rounded mb-4">
+            {% endif %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">活動詳情</h5>
+                    <p class="card-text">{{ activity.description }}</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>日期：</strong> {{ activity.date }}</li>
+                        <li class="list-group-item"><strong>地點：</strong> {{ activity.location }}</li>
+                        {% if activity.organizer %}
+                            <li class="list-group-item"><strong>主辦方：</strong> {{ activity.organizer }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
 
-<!-- activity_detail.html -->
+            {% if activity.sponsors.exists %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">贊助商</h5>
+                        <div class="row">
+                            {% for sponsor in activity.sponsors.all %}
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        {% if sponsor.logo %}
+                                            <img src="{{ sponsor.logo.url }}" alt="{{ sponsor.name }}" class="card-img-top">
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ sponsor.name }}</h6>
+                                            <a href="{% url 'sponsor_detail' sponsor.id %}" class="btn btn-sm btn-outline-primary">查看詳情</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">活動資訊</h5>
+                    {% if activity.registration_deadline %}
+                        <p><strong>報名截止日期：</strong> {{ activity.registration_deadline }}</p>
+                    {% endif %}
+                    {% if activity.max_participants %}
+                        <p><strong>參與人數上限：</strong> {{ activity.max_participants }}</p>
+                    {% endif %}
+                    {% if activity.current_participants %}
+                        <p><strong>目前報名人數：</strong> {{ activity.current_participants }}</p>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <form method="POST" action="{% url 'toggle_activity_favorite' activity.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-block">
+                                {% if activity.is_favorited %}取消收藏{% else %}收藏活動{% endif %}
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-block">登入以收藏</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if related_activities %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">相關活動</h5>
+                        <ul class="list-group list-group-flush">
+                            {% for related_activity in related_activities %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'activity_detail' related_activity.id %}">{{ related_activity.title }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
