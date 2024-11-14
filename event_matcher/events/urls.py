@@ -24,6 +24,7 @@ urlpatterns = [
     path('activity/<int:activity_id>/', views.activity_detail, name='activity_detail'),
     path('sponsorship_list/', views.sponsorship_list, name='sponsorship_list'),
     path('activities/', views.activitynew_list, name='activitynew_list'),
+    path('about/', views.about_us, name='about_us'),
     
     
 ]

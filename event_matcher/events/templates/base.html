@@ -7,44 +7,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}COCO{% endblock %}</title>
 
-    <!-- 引入 Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
+    <!-- 引入 Bootstrap CSS 和自訂 CSS -->
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
-
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-  .feature-box {
-    transition: transform 0.3s ease-in-out;
-  }
-  .feature-box:hover {
-    transform: translateY(-5px);
-  }
-  .icon {
-    transition: transform 0.3s ease-in-out;
-  }
-  .feature-box:hover .icon {
-    transform: scale(1.1);
-  }
-</style>
-
+    
     <style>
-        /* 自訂樣式 */
-        .bd-placeholder-img { font-size: 1.125rem; text-anchor: middle; }
-        @media (min-width: 768px) { .bd-placeholder-img-lg { font-size: 3.5rem; } }
-        .b-example-divider { width: 100%; height: 3rem; background-color: rgba(0, 0, 0, .1); }
-        .bd-mode-toggle { z-index: 1500; }
+      .custom-navbar { 
+        background: linear-gradient(45deg, #0F2027, #203A43);
+    }
+    footer.bg-dark { 
+        background: linear-gradient(45deg, #1F2937, #374151);
+    }
+
+        /* 按鈕動畫 */
+        .btn-primary, .btn-outline-light { transition: transform 0.2s ease, background-color 0.2s; }
+        .btn-primary:hover, .btn-outline-light:hover { transform: scale(1.05); }
+
+        /* 主題切換按鈕 */
+        .bd-mode-toggle button { background: #f8f9fa; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: background 0.3s; }
+        .bd-mode-toggle button:hover { background: #e9ecef; }
+        .bd-mode-toggle svg { fill: #0056b3; }
+
+        /* Navbar連結樣式 */
+        .navbar-nav .nav-link { font-weight: 500; transition: color 0.3s; }
+        .navbar-nav .nav-link:hover { color: #f8f9fa; font-weight: bold; }
+        @media (max-width: 768px) { .navbar-nav .nav-link { text-align: center; padding: 0.75rem 0; } }
+
+        /* Footer 樣式 */
+        footer .col-md-3 h5 { font-size: 1.1rem; font-weight: bold; margin-bottom: 1rem; }
+        footer .list-unstyled li { margin-bottom: 0.5rem; }
     </style>
-    <script>
-      function checkLoginAndFavorite(event, loginUrl) {
-          {% if not user.is_authenticated %}
-              event.preventDefault();
-              alert('請先登入以收藏此項目。');
-              window.location.href = loginUrl;
-          {% endif %}
-      }
-      </script>
 </head>
 <body>
 
@@ -54,21 +48,9 @@
     <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="#circle-half"></use></svg>
   </button>
   <ul class="dropdown-menu dropdown-menu-end shadow">
-    <li>
-      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
-        淺色
-      </button>
-    </li>
-    <li>
-      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
-        深色
-      </button>
-    </li>
-    <li>
-      <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">
-        自動
-      </button>
-    </li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">淺色</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">深色</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">自動</button></li>
   </ul>
 </div>
 
@@ -85,6 +67,7 @@
             <li class="nav-item"><a class="nav-link active" href="{% url 'event_list' %}">首頁</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'activitynew_list' %}">找活動</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'sponsorship_list' %}">找贊助</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}">關於我們</a></li>
           </ul>
           <div class="d-flex align-items-center">
             {% if user.is_authenticated %}
@@ -109,51 +92,25 @@
 <footer class="bg-dark text-white mt-5">
     <div class="container py-4">
         <div class="row">
-            <!-- 關於我們 -->
-            <div class="col-md-3">
-                <h5>關於我們</h5>
-                <p>COCO 是一個連接品牌和社團的平台，致力於促進活動和贊助的交流與合作。</p>
-            </div>
-            <!-- 快速連結 -->
-            <div class="col-md-3">
-                <h5>快速連結</h5>
-                <ul class="list-unstyled">
-                    <li><a href="{% url 'event_list' %}" class="text-white">首頁</a></li>
-                    <li><a href="#" class="text-white">找活動</a></li>
-                    <li><a href="#" class="text-white">找贊助</a></li>
-                    <li><a href="#" class="text-white">聯絡我們</a></li>
-                </ul>
-            </div>
-            <!-- 合作夥伴 -->
-            <div class="col-md-3">
-                <h5>合作夥伴</h5>
-                <!-- 在這裡預留空間展示合作夥伴的標誌或連結 -->
-                <ul class="list-unstyled">
-                    <li><a href="#" class="text-white">夥伴一</a></li>
-                    <li><a href="#" class="text-white">夥伴二</a></li>
-                    <li><a href="#" class="text-white">夥伴三</a></li>
-                </ul>
-            </div>
-            <!-- 關注我們 -->
-            <div class="col-md-3">
-                <h5>關注我們</h5>
-                <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-2x"></i></a>
-                <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-2x"></i></a>
-                <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
-            </div>
+            <div class="col-md-3"><h5>關於我們</h5><p>COCO 是一個連接品牌和社團的平台，致力於促進活動和贊助的交流與合作。</p></div>
+            <div class="col-md-3"><h5>快速連結</h5><ul class="list-unstyled"><li><a href="{% url 'event_list' %}" class="text-white">首頁</a></li><li><a href="#" class="text-white">找活動</a></li></ul></div>
+            <div class="col-md-3"><h5>合作夥伴</h5><ul class="list-unstyled"><li><a href="#" class="text-white">夥伴一</a></li></ul></div>
+            <div class="col-md-3"><h5>關注我們</h5><a href="#" class="text-white me-3"><i class="fab fa-facebook fa-2x"></i></a><a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a></div>
         </div>
         <hr class="bg-white">
-        <div class="text-center">
-            <p class="mb-0">&copy; 2024 COCO. 版權所有。</p>
-        </div>
+        <div class="text-center"><p class="mb-0">&copy; 2024 COCO. 版權所有。</p></div>
     </div>
 </footer>
 
-<!-- 引入 Font Awesome -->
-<script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+<!-- 引入 ScrollReveal 動畫庫 -->
+<script src="https://unpkg.com/scrollreveal"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        ScrollReveal().reveal('.feature-box', { interval: 100, origin: 'bottom', distance: '20px', duration: 500 });
+    });
+</script>
 
 <!-- 引入 Bootstrap Bundle JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

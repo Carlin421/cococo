@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static %} 
 
 {% block title %}COCO - 找活動{% endblock %}
 
-{% block content %}
-<main>
+{% block content %} 
+<main> 
   <section class="py-5 text-center container">
     <div class="row py-lg-5">
       <div class="col-lg-6 col-md-8 mx-auto">
-        <h1 class="fw-light">活動清單</h1>
+        <h1 class="fw-light display-4">活動清單</h1>
         <p class="lead text-body-secondary">瀏覽以下的活動並選擇適合的項目。</p>
         
         <!-- 搜索表單 -->
         <form class="d-flex justify-content-center mb-4" method="GET" action="{% url 'activitynew_list' %}">
-          <div class="input-group" style="max-width: 300px;">
-            <input type="text" class="form-control" placeholder="搜索活動..." name="q" value="{{ query|default_if_none:'' }}">
-            <button class="btn btn-outline-secondary" type="submit">搜索</button>
+          <div class="input-group search-bar" style="max-width: 400px;">
+            <input type="text" class="form-control rounded-start" placeholder="搜索活動..." name="q" value="{{ query|default_if_none:'' }}">
+            <button class="btn btn-primary rounded-end" type="submit">搜索</button>
           </div>
         </form>
       </div>
@@ -28,31 +28,33 @@
         <h2 class="mb-4">搜索結果: "{{ query }}"</h2>
       {% endif %}
       
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
         {% for activity in activity_list %}
           <div class="col">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-lg h-100 animate-card">
               {% if activity.image %}
-                <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="card-img-top" height="225">
+                <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="card-img-top card-img-fade" height="225">
               {% else %}
-                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">No Image</text></svg>
+                <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">No Image</text></svg>
               {% endif %}
               
               <div class="card-body">
-                <h2 class="card-title">{{ activity.title }}</h2>
-                <p class="card-text">{{ activity.description }}</p>
+                <h5 class="card-title text-dark font-weight-bold">
+                  <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">{{ activity.title }}</a>
+                </h5>
+                <p class="card-text text-muted">{{ activity.description }}</p>
                 <p class="card-text"><i class="fas fa-map-marker-alt me-2"></i>地點：{{ activity.location }}</p>
                 <p class="card-text"><i class="fas fa-calendar-alt me-2"></i>時間：{{ activity.date }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   {% if user.is_authenticated %}
                   <form method="POST" action="{% url 'toggle_activity_favorite' activity.id %}" onsubmit="checkLoginAndFavorite(event, '{% url 'login' %}')">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                    <button type="submit" class="btn btn-outline-primary btn-sm animate-button">
                       {% if activity.is_favorited %}<i class="fas fa-heart"></i> 取消收藏{% else %}<i class="far fa-heart"></i> 收藏{% endif %}
                     </button>
                   </form>
                   {% else %}
-                    <a href="{% url 'login' %}?next={% url 'activitynew_list' %}" class="btn btn-sm btn-outline-primary">收藏</a>
+                    <a href="{% url 'login' %}?next={% url 'activitynew_list' %}" class="btn btn-sm btn-outline-primary animate-button">收藏</a>
                   {% endif %}
                 </div>
               </div>
@@ -67,4 +69,38 @@
     </div>
   </div>
 </main>
+<style>
+  /* 卡片陰影和懸浮效果 */
+.animate-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.animate-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 搜尋表單的動畫效果 */
+.search-bar .form-control:focus {
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  outline: none;
+}
+
+/* 按鈕動畫效果 */
+.animate-button {
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.animate-button:hover {
+  transform: scale(1.05);
+  background-color: #007bff;
+}
+
+/* 卡片圖片淡入效果 */
+.card-img-fade {
+  transition: opacity 0.4s ease;
+}
+.card-img-fade:hover {
+  opacity: 0.9;
+}
+
+</style>
 {% endblock %}

@@ -130,3 +130,5 @@ def sponsor_detail(request, sponsor_id):
 def activity_detail(request, activity_id):
     activity = get_object_or_404(Activitynew, pk=activity_id)
     return render(request, 'events/activity_detail.html', {'activity': activity})
+def about_us(request):
+    return render(request, 'events/aboutus.html')

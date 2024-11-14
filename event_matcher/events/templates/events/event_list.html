@@ -12,33 +12,32 @@
   </div>
   <div class="carousel-inner">
     <div class="carousel-item active">
-      
-      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100" alt="First slide">
+      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100 fade-in-image" alt="First slide">
       <div class="container">
-        <div class="carousel-caption text-start">
+        <div class="carousel-caption text-start fade-in-up">
           <h1>Example headline.</h1>
           <p>Some representative placeholder content for the first slide of the carousel.</p>
-          <p><a class="btn btn-lg btn-primary" href="#">Sign up today</a></p>
+          <p><a class="btn btn-lg btn-primary animate-button" href="#">Sign up today</a></p>
         </div>
       </div>
     </div>
     <div class="carousel-item">
-      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100" alt="First slide">
+      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100 fade-in-image" alt="First slide">
       <div class="container">
-        <div class="carousel-caption">
+        <div class="carousel-caption fade-in-up">
           <h1>Another example headline.</h1>
           <p>Some representative placeholder content for the second slide of the carousel.</p>
-          <p><a class="btn btn-lg btn-primary" href="#">Learn more</a></p>
+          <p><a class="btn btn-lg btn-primary animate-button" href="#">Learn more</a></p>
         </div>
       </div>
     </div>
     <div class="carousel-item">
-      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100" alt="First slide">
+      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100 fade-in-image" alt="First slide">
       <div class="container">
-        <div class="carousel-caption text-end">
+        <div class="carousel-caption text-end fade-in-up">
           <h1>One more for good measure.</h1>
           <p>Some representative placeholder content for the third slide of this carousel.</p>
-          <p><a class="btn btn-lg btn-primary" href="#">Browse gallery</a></p>
+          <p><a class="btn btn-lg btn-primary animate-button" href="#">Browse gallery</a></p>
         </div>
       </div>
     </div>
@@ -52,12 +51,13 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+
 <!-- 特色功能區 -->
-<div class="icon-boxes py-5 bg-light">
+<div class="icon-boxes py-5 bg-light fade-in-up">
   <div class="container">
     <div class="row row-eq-height">
       <div class="col-md-3 mb-4 d-flex">
-        <div class="feature-box p-4 bg-white rounded shadow-sm w-100">
+        <div class="feature-box p-4 bg-white rounded shadow-sm w-100 animate-card">
           <div class="icon mb-3">
             <i class="fas fa-chalkboard-teacher fa-3x text-primary"></i>
           </div>
@@ -66,7 +66,7 @@
         </div>
       </div>
       <div class="col-md-3 mb-4 d-flex">
-        <div class="feature-box p-4 bg-white rounded shadow-sm w-100">
+        <div class="feature-box p-4 bg-white rounded shadow-sm w-100 animate-card">
           <div class="icon mb-3">
             <i class="fas fa-database fa-3x text-success"></i>
           </div>
@@ -75,7 +75,7 @@
         </div>
       </div>
       <div class="col-md-3 mb-4 d-flex">
-        <div class="feature-box p-4 bg-white rounded shadow-sm w-100">
+        <div class="feature-box p-4 bg-white rounded shadow-sm w-100 animate-card">
           <div class="icon mb-3">
             <i class="fas fa-graduation-cap fa-3x text-info"></i>
           </div>
@@ -84,7 +84,7 @@
         </div>
       </div>
       <div class="col-md-3 mb-4 d-flex">
-        <div class="feature-box p-4 bg-white rounded shadow-sm w-100">
+        <div class="feature-box p-4 bg-white rounded shadow-sm w-100 animate-card">
           <div class="icon mb-3">
             <i class="fas fa-chart-line fa-3x text-warning"></i>
           </div>
@@ -95,9 +95,9 @@
     </div>
   </div>
 </div>
+
 <!-- 活動列表區 -->
-<!-- 最新活動區 -->
-<div class="container marketing py-5">
+<div class="container marketing py-5 fade-in-up">
   <h2 class="text-center mb-4">最新活動</h2>
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for activity in activities %}
@@ -132,7 +132,7 @@
 </div>
 
 <!-- 最新贊助區 -->
-<div class="container marketing py-5 bg-light">
+<div class="container marketing py-5 bg-light fade-in-up">
   <h2 class="text-center mb-4">最新贊助</h2>
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for sponsorship in sponsorships %}
@@ -168,34 +168,61 @@
   </div>
 </div>
 
-  <hr class="featurette-divider">
+<hr class="featurette-divider">
 </div>
+
 <style>
+  /* General Animation */
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in-up.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   /* 卡片陰影與懸浮效果 */
-.animate-card {
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.animate-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
+  .animate-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .animate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
 
-/* 按鈕動畫 */
-.animate-button {
-  transition: transform 0.2s ease, background-color 0.2s;
-}
-.animate-button:hover {
-  transform: scale(1.05);
-  background-color: #0056b3;
-}
+  /* 按鈕動畫 */
+  .animate-button {
+    transition: transform 0.2s ease, background-color 0.2s;
+  }
+  .animate-button:hover {
+    transform: scale(1.05);
+    background-color: #0056b3;
+  }
 
-/* 卡片圖片淡入效果 */
-.card-img-fade {
-  transition: opacity 0.4s ease;
-}
-.card-img-fade:hover {
-  opacity: 0.85;
-}
-
+  /* 卡片圖片淡入效果 */
+  .card-img-fade {
+    transition: opacity 0.4s ease;
+  }
+  .card-img-fade:hover {
+    opacity: 0.85;
+  }
 </style>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fadeElems = document.querySelectorAll('.fade-in-up');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    fadeElems.forEach(elem => observer.observe(elem));
+  });
+</script>
 {% endblock %}
