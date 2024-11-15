@@ -50,7 +50,12 @@
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">活動資訊</h5>
+                    {% if user.is_staff%}
+                        <h5 class="card-title">審核狀態</h5>
+                    {% elif user.is_authenticated %}
+                        <h5 class="card-title">活動資訊</h5>
+                    {% else %}
+                    {% endif %}
                     {% if activity.registration_deadline %}
                         <p><strong>報名截止日期：</strong> {{ activity.registration_deadline }}</p>
                     {% endif %}
@@ -60,7 +65,14 @@
                     {% if activity.current_participants %}
                         <p><strong>目前報名人數：</strong> {{ activity.current_participants }}</p>
                     {% endif %}
-                    {% if user.is_authenticated %}
+                    {% if user.is_staff%}
+                        <form method="POST" action="{% url 'toggle_activity_check' activity.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-block">
+                                {% if activity.check_status %}取消審核{% else %}審核通過{% endif %}
+                            </button>
+                        </form>
+                    {% elif user.is_authenticated %}
                         <form method="POST" action="{% url 'toggle_activity_favorite' activity.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary btn-block">

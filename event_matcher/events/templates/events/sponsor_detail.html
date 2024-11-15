@@ -28,7 +28,12 @@
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">聯絡資訊</h5>
+                    {% if user.is_staff%}
+                        <h5 class="card-title">審核狀態</h5>
+                    {% elif user.is_authenticated %}
+                        <h5 class="card-title">聯絡資訊</h5>
+                    {% else %}
+                    {% endif %}
                     {% if sponsorship.contact_email %}
                         <p><strong>聯絡信箱：</strong> {{ sponsorship.contact_email }}</p>
                     {% endif %}
@@ -38,11 +43,19 @@
                     {% if sponsorship.website %}
                         <p><strong>官方網站：</strong> <a href="{{ sponsorship.website }}" target="_blank">{{ sponsorship.website }}</a></p>
                     {% endif %}
-                    {% if user.is_authenticated %}
-                        <form method="POST" action="{% url 'toggle_sponsorshipnew_favorite' sponsorship.id %}">
+
+                    {% if user.is_staff%}
+                        <form method="POST" action="{% url 'toggle_sponsorship_check' sponsorship.id %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary btn-block">
-                                {% if sponsorship.is_favorited %}取消收藏{% else %}收藏贊助{% endif %}
+                                {% if sponsorship.check_status %}取消審核{% else %}審核通過{% endif %}
+                            </button>
+                        </form>
+                    {% elif user.is_authenticated %}
+                        <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-block">
+                                {% if sponsorship.is_favorited %}取消收藏{% else %}收藏活動{% endif %}
                             </button>
                         </form>
                     {% else %}

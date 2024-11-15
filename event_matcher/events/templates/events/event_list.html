@@ -101,6 +101,7 @@
   <h2 class="text-center mb-4">最新活動</h2>
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for activity in activities %}
+    {% if activity.check_status%}
       <div class="col">
         <div class="card h-100 shadow-lg rounded border-0 animate-card">
           <img src="{{ activity.image.url }}" class="card-img-top card-img-fade" alt="{{ activity.title }}">
@@ -124,6 +125,7 @@
           </div>
         </div>
       </div>
+    {% endif %}
     {% endfor %}
   </div>
   <div class="text-center mt-4">
@@ -136,6 +138,7 @@
   <h2 class="text-center mb-4">最新贊助</h2>
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for sponsorship in sponsorships %}
+    {% if sponsorship.check_status%}
       <div class="col">
         <div class="card h-100 shadow-lg rounded border-0 animate-card">
           <img src="{{ sponsorship.image.url }}" class="card-img-top card-img-fade" alt="{{ sponsorship.title }}">
@@ -161,6 +164,7 @@
           </div>
         </div>
       </div>
+    {% endif %}
     {% endfor %}
   </div>
   <div class="text-center mt-4">

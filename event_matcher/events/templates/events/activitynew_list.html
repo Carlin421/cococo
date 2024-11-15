@@ -30,6 +30,7 @@
       
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
         {% for activity in activity_list %}
+        {% if activity.check_status %}
           <div class="col">
             <div class="card shadow-lg h-100 animate-card">
               {% if activity.image %}
@@ -60,6 +61,7 @@
               </div>
             </div>
           </div>
+        {% endif %}
         {% empty %}
           <div class="col-12 text-center">
             <p>沒有找到符合條件的活動。</p>

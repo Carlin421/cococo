@@ -15,6 +15,53 @@ from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
+@login_required
+def toggle_sponsorship_check(request, event_id):
+    event = get_object_or_404(Sponsorshipnew, id=event_id)
+    event.check_status = not event.check_status
+    event.save()
+    return redirect('check_activity')
+
+@login_required
+def toggle_activity_check(request, event_id):
+    event = get_object_or_404(Activitynew, id=event_id)
+    event.check_status = not event.check_status
+    event.save()
+    return redirect('check_activity')
+
+@login_required
+def check_activity(request) :
+    if request.user.is_staff:
+        activities = Activitynew.objects.all()
+        sponsorships = Sponsorshipnew.objects.all()
+        context = {
+            'activities': activities,
+            'sponsorships': sponsorships
+        }
+        # 如果是 Staff，用特定的方式顯示
+        sponsorships = Sponsorshipnew.objects.all().order_by('-date_posted')
+        return render(request, 'events/check_activity.html', context)
+    else:
+        # 如果不是 Staff，顯示其他內容或重定向
+        return redirect('event_list')
+
+@login_required
+def check_sponsorship(request) :
+    if request.user.is_staff:
+        activities = Activitynew.objects.all()
+        sponsorships = Sponsorshipnew.objects.all()
+        context = {
+            'activities': activities,
+            'sponsorships': sponsorships
+        }
+        # 如果是 Staff，用特定的方式顯示
+        sponsorships = Sponsorshipnew.objects.all().order_by('-date_posted')
+        return render(request, 'events/check_sponsorship.html', context)
+    else:
+        # 如果不是 Staff，顯示其他內容或重定向
+        return redirect('event_list')
+
+
 def activity_list(request):
     activities = Activitynew.objects.all()
     sponsorships = Sponsorshipnew.objects.all()
@@ -82,12 +129,13 @@ def activitynew_list(request):
         'query': query
     }
     return render(request, 'events/activitynew_list.html', context)
-@login_required
-def toggle_activitynew_favorite(request, activity_id):
-    activity = get_object_or_404(Activitynew, id=activity_id)
-    activity.is_favorited = not activity.is_favorited
-    activity.save()
-    return redirect('activitynew_list')
+# @login_required
+# def toggle_activitynew_favorite(request, activity_id):
+#     activity = get_object_or_404(Activitynew, id=activity_id)
+#     activity.is_favorited = not activity.is_favorited
+#     activity.save()
+#     return redirect('activitynew_list')
+
 def sponsorship_list(request, page=1):
     sponsorships = Sponsorshipnew.objects.all().order_by('-date_posted')
     paginator = Paginator(sponsorships, 10)  # 每頁顯示 10 個項目
@@ -101,12 +149,12 @@ def sponsorship_list(request, page=1):
     
     return render(request, 'events/sponsorship_list.html', {'sponsorships': sponsorships})
 
-@login_required
-def toggle_sponsorshipnew_favorite(request, sponsorship_id):
-    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
-    sponsorship.is_favorited = not sponsorship.is_favorited
-    sponsorship.save()
-    return redirect('sponsorship_list')
+# @login_required
+# def toggle_sponsorshipnew_favorite(request, sponsorship_id):
+#     sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
+#     sponsorship.is_favorited = not sponsorship.is_favorited
+#     sponsorship.save()
+#     return redirect('sponsorship_list')
 
 def custom_logout(request):
     logout(request)
@@ -136,6 +184,8 @@ def activity_detail(request, activity_id):
     return render(request, 'events/activity_detail.html', {'activity': activity})
 def about_us(request):
     return render(request, 'events/aboutus.html')
+
+@login_required
 def add_activity(request):
     if request.method == 'POST':
         form = ActivityForm(request.POST, request.FILES)
@@ -149,6 +199,7 @@ def add_activity(request):
         form = ActivityForm()
     return render(request, 'events/add_activity.html', {'form': form})
 
+@login_required
 def add_sponsorship(request):
     if request.method == 'POST':
         form = SponsorshipForm(request.POST, request.FILES)
