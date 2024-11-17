@@ -174,8 +174,20 @@ def profile_view(request):
     else:
         form = UserProfileForm(instance=request.user)
     
-    return render(request, 'events/profile.html', {'form': form})
-
+    # 獲取用戶收藏的活動和贊助
+    favorite_activities = Activitynew.objects.filter(is_favorited=True)
+    favorite_sponsorships = Sponsorshipnew.objects.filter(is_favorited=True)
+    
+    # 獲取用戶發布的活動
+    user_activities = Activitynew.objects.filter(organizer=request.user)
+    
+    context = {
+        'form': form,
+        'favorite_activities': favorite_activities,
+        'favorite_sponsorships': favorite_sponsorships,
+        'user_activities': user_activities
+    }
+    return render(request, 'events/profile.html', context)
 def sponsor_detail(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, pk=sponsorship_id)
     return render(request, 'events/sponsor_detail.html', {'sponsorship': sponsorship})

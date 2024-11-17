@@ -3,27 +3,117 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1>Welcome, {{ user.username }}!</h1>
+    <div class="text-center mb-4">
+        <h1 class="display-5">Welcome, {{ user.username }}!</h1>
+    </div>
     
-    <div class="row">
-        <div class="col-md-6">
-            <h2>Your Profile Information</h2>
-            <p><strong>Username:</strong> {{ user.username }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>First Name:</strong> {{ user.first_name }}</p>
-            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-            <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+    <div class="row gy-4">
+        <!-- Profile Card -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Your Profile Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>First Name:</strong> {{ user.first_name }}</p>
+                    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+                    <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Edit Your Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                            <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">Change Password</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Favorites Section -->
+    <div class="row gy-4 mt-5">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">我的收藏活動</h5>
+                </div>
+                <div class="card-body">
+                    {% if favorite_activities %}
+                        <ul class="list-group">
+                            {% for activity in favorite_activities %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'activity_detail' activity.id %}">
+                                        {{ activity.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">你還沒有收藏任何活動。</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
         
-        <div class="col-md-6">
-            <h2>Edit Your Profile</h2>
-            <form method="post">
-                {% csrf_token %}
-                {% bootstrap_form form %}
-                <button type="submit" class="btn btn-primary">Update Profile</button>
-                <a href="{% url 'password_change' %}" class="btn btn-secondary">Change Password</a>
-            </form>
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">我的收藏贊助</h5>
+                </div>
+                <div class="card-body">
+                    {% if favorite_sponsorships %}
+                        <ul class="list-group">
+                            {% for sponsorship in favorite_sponsorships %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'sponsor_detail' sponsorship.id %}">
+                                        {{ sponsorship.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">你還沒有收藏任何贊助。</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">我發布的活動</h5>
+                </div>
+                <div class="card-body">
+                    {% if user_activities %}
+                        <ul class="list-group">
+                            {% for activity in user_activities %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'activity_detail' activity.id %}">
+                                        {{ activity.title }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">你還沒有發布任何活動。</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
     </div>
 </div>
 {% endblock %}
