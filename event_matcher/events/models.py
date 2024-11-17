@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.conf import settings
 
     
 #設計「主活動」模型（Activitynew Model）
@@ -12,7 +13,13 @@ class Activitynew(models.Model):
     image = models.ImageField(upload_to='activitynew_images/', blank=True, null=True)  # 活動圖片
     is_favorited = models.BooleanField(default=False)  # 收藏狀態
     check_status = models.BooleanField(default=False) # 審核狀態
-
+    organizer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='organized_activities',
+        null=True,
+        blank=True
+    )
     def __str__(self):
         return self.title
     
@@ -27,8 +34,12 @@ class Sponsorshipnew(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)  # 贊助發布日期
     is_favorited = models.BooleanField(default=False)   # 收藏狀態
     check_status = models.BooleanField(default=False) # 審核狀態
-
-
-
+    organizer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='organized_sponsorships',  
+        null=True,
+        blank=True
+    )
 
 # Create your models here.
