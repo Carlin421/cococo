@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-5">
@@ -7,42 +8,34 @@
         <h1 class="display-5">Welcome, {{ user.username }}!</h1>
     </div>
     
-    <div class="row gy-4">
+    <div class="row gy-4 justify-content-center">
         <!-- Profile Card -->
         <div class="col-lg-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Your Profile Information</h5>
+                    <h5 class="mb-0">個人資料</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Username:</strong> {{ user.username }}</p>
-                    <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>First Name:</strong> {{ user.first_name }}</p>
-                    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-                    <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Edit Profile -->
-        <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">Edit Your Profile</h5>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {% bootstrap_form form %}
-                        <div class="d-flex justify-content-between mt-3">
-                            <button type="submit" class="btn btn-primary">Update Profile</button>
-                            <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">Change Password</a>
+                    <div class="row">
+                        <!-- 左側：照片 -->
+                        <div class="col-md-4 d-flex align-items-center justify-content-center">
+                            <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="max-width: 150px;">
                         </div>
-                    </form>
+                        <!-- 右側：用戶信息 -->
+                        <div class="col-md-8">
+                            <p><strong>Username:</strong> {{ user.username }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-primary">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-light me-2">編輯個人資料</a>
                 </div>
             </div>
         </div>
     </div>
+    
 
     <!-- Favorites Section -->
     <div class="row gy-4 mt-5">

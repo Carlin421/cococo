@@ -1,6 +1,6 @@
 from django.shortcuts import render,get_object_or_404, redirect
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate,get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import LoginForm, RegisterForm
 from .models import Activitynew,Sponsorshipnew
@@ -14,6 +14,29 @@ from .forms import SponsorshipForm
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=request.user)
+    context = {
+        'form': form,
+    }
+    return render(request, 'events/edit_profile.html', context)
+def user_profile(request, user_id):
+    User= get_user_model()
+    user = get_object_or_404(User, id=user_id)
+    user_activities = Activitynew.objects.filter(organizer=user)
+    context = {
+        'user': user,
+        'user_activities': user_activities
+    }
+    return render(request, 'events/user_profile.html', context)
 
 @login_required
 def toggle_sponsorship_check(request, event_id):

@@ -18,6 +18,8 @@ urlpatterns = [
     # path('toggle_sponsorshipnew_favorite/<int:sponsorship_id>/', views.toggle_sponsorshipnew_favorite, name='toggle_sponsorshipnew_favorite'),
     path('', views.activity_list, name='event_list'),
     path('profile/', views.profile_view, name='profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('user/<int:user_id>/', views.user_profile, name='user_profile'),
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='events/password_change.html'), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='events/password_change_done.html'), name='password_change_done'),
     path('activity/<int:activity_id>/', views.activity_detail, name='activity_detail'),

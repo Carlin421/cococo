@@ -3,7 +3,15 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 
-    
+#11/19 這塊還未使用在任何介面
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    photo = models.ImageField(upload_to='user_photos/', blank=True, null=True,default='user_photos/default.jpg')
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s profile"
+
 #設計「主活動」模型（Activitynew Model）
 class Activitynew(models.Model):
     title = models.CharField(max_length=200)           # 活動名稱

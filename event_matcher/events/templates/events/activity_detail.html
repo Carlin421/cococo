@@ -79,11 +79,14 @@
                                 {% if activity.is_favorited %}取消收藏{% else %}收藏活動{% endif %}
                             </button>
                         </form>
+                    <div class="card-body">
+                        <h5 class="card-title">審核狀態</h5>
+                        {% if activity.check_status %}<i class="fas fa-heart"></i> 審核完成{% else %}<i class="far fa-heart"></i> 審核中{% endif %}
+                    </div>
                     {% else %}
                         <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-block">登入以收藏</a>
                     {% endif %}
                 </div>
-            </div>
 
             {% if related_activities %}
                 <div class="card">

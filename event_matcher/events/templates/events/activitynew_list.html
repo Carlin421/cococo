@@ -43,6 +43,7 @@
                 <h5 class="card-title text-dark font-weight-bold">
                   <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">{{ activity.title }}</a>
                 </h5>
+                <p class="card-text text-muted"><i class="fas fa-user me-2"></i>主辦方：<a href="{% url 'user_profile' activity.organizer.id %}" class="text-decoration-none text-dark">{{ activity.organizer }}</a></p>
                 <p class="card-text text-muted">{{ activity.description }}</p>
                 <p class="card-text"><i class="fas fa-map-marker-alt me-2"></i>地點：{{ activity.location }}</p>
                 <p class="card-text"><i class="fas fa-calendar-alt me-2"></i>時間：{{ activity.date }}</p>

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container mt-5">
+<div class="text-center mb-4">
+    <h1 class="display-5">編輯個人資料</h1>
+</div>
+<div class="row gy-4 justify-content-center">
+    <!-- Edit Profile -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Edit Your Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                            <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">Change Password</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

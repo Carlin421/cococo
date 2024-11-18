@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1 class="display-5">Welcome, {{ user.username }}!</h1>
+    </div>
+    
+    <div class="row gy-4 justify-content-center">
+        <!-- Profile Card -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Your Profile Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>First Name:</strong> {{ user.first_name }}</p>
+                    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+                    <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                </div>
+            </div>
+        </div>
+    {% comment %} </div>
+
+    <!-- Favorites Section -->
+    <div class="row gy-4 mt-5"> {% endcomment %}
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">我發布的活動</h5>
+                </div>
+                <div class="card-body">
+                    {% if user_activities %}
+                        <ul class="list-group">
+                            {% for activity in user_activities %}
+                                {% if activity.check_status %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'activity_detail' activity.id %}">
+                                        {{ activity.title }}
+                                    </a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">你還沒有發布任何活動。</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

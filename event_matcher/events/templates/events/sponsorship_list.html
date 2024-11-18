@@ -43,7 +43,7 @@
                 <h5 class="card-title text-dark font-weight-bold">
                   <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">{{ sponsorship.title }}</a>
                 </h5>
-                <p class="card-text text-muted"><i class="fas fa-user me-2"></i>贊助者：{{ sponsorship.sponsor }}</p>
+                <p class="card-text text-muted"><i class="fas fa-user me-2"></i>贊助者：{{ sponsorship.organizer }}</p>
                 <p class="card-text">{{ sponsorship.description }}</p>
                 <p class="card-text text-muted"><i class="fas fa-dollar-sign me-2"></i>金額：{{ sponsorship.amount }}</p>
                 <p class="card-text text-muted"><i class="fas fa-map-marker-alt me-2"></i>地點：{{ sponsorship.location }}</p>
