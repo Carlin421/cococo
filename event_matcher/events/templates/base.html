@@ -38,21 +38,23 @@
         /* Footer 樣式 */
         footer .col-md-3 h5 { font-size: 1.1rem; font-weight: bold; margin-bottom: 1rem; }
         footer .list-unstyled li { margin-bottom: 0.5rem; }
+        html, body {
+          height: 100%;
+      }
+      body {
+          display: flex;
+          flex-direction: column;
+      }
+      main {
+          flex: 1 0 auto;
+      }
+      footer {
+          flex-shrink: 0;
+      }
     </style>
 </head>
 <body>
 
-<!-- 主題切換按鈕 -->
-<div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-  <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" data-bs-toggle="dropdown">
-    <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="#circle-half"></use></svg>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end shadow">
-    <li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">淺色</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">深色</button></li>
-    <li><button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto">自動</button></li>
-  </ul>
-</div>
 
 <!-- 頁首導航欄 -->
 <header data-bs-theme="dark">
