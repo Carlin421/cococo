@@ -2,8 +2,8 @@ from django.shortcuts import render,get_object_or_404, redirect
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate,get_user_model
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import LoginForm, RegisterForm
-from .models import Activitynew,Sponsorshipnew
+from .forms import LoginForm, RegisterForm,UserPhotoForm
+from .models import Activitynew,Sponsorshipnew,UserProfile
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -14,26 +14,37 @@ from .forms import SponsorshipForm
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+def chatbot_view(request):
+    return render(request, 'events/chatbot.html')
+
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
+        form_userprofile = UserPhotoForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if form.is_valid() and form_userprofile.is_valid():
             form.save()
+            form_userprofile.save()
             messages.success(request, 'Your profile has been updated!')
             return redirect('profile')
     else:
         form = UserProfileForm(instance=request.user)
+        form_userprofile = UserPhotoForm(instance=request.user.profile)
+
     context = {
         'form': form,
+        'form_userprofile': form_userprofile
     }
     return render(request, 'events/edit_profile.html', context)
 def user_profile(request, user_id):
     User= get_user_model()
     user = get_object_or_404(User, id=user_id)
+    user_extend = UserProfile.objects.get(user=user)
     user_activities = Activitynew.objects.filter(organizer=user)
     context = {
         'user': user,
+        'user_extend': user_extend,
         'user_activities': user_activities
     }
     return render(request, 'events/user_profile.html', context)
@@ -123,17 +134,18 @@ def login_view(request):
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            user.save()
-            role = request.POST.get("role")
-            # 根據 role 進行不同的處理，例如存儲到用戶的其他屬性
-            return redirect('login')
+        form_userprofile = UserPhotoForm(request.POST, request.FILES)
+        if form.is_valid() and form_userprofile.is_valid():
+            user = form.save()
+            user_profile = form_userprofile.save(commit=False)
+            user_profile.user = user
+            user_profile.save()
+            return redirect('login')  # 註冊完成後重定向到登入頁面
     else:
         form = RegisterForm()
-    return render(request, 'events/register.html', {'form': form})
+        form_userprofile = UserPhotoForm()
 
+    return render(request, 'events/register.html',{'form': form,'form_userprofile': form_userprofile})
 
 def activitynew_list(request):
     query = request.GET.get('q')
@@ -188,15 +200,6 @@ def custom_logout(request):
 
 @login_required
 def profile_view(request):
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your profile has been updated!')
-            return redirect('profile')
-    else:
-        form = UserProfileForm(instance=request.user)
-    
     # 獲取用戶收藏的活動和贊助
     favorite_activities = Activitynew.objects.filter(is_favorited=True)
     favorite_sponsorships = Sponsorshipnew.objects.filter(is_favorited=True)
@@ -204,11 +207,13 @@ def profile_view(request):
     # 獲取用戶發布的活動
     user_activities = Activitynew.objects.filter(organizer=request.user)
     
+    # 用戶的照片跟描述
+    user_extend = UserProfile.objects.get(user=request.user)
     context = {
-        'form': form,
         'favorite_activities': favorite_activities,
         'favorite_sponsorships': favorite_sponsorships,
-        'user_activities': user_activities
+        'user_activities': user_activities,
+        'user_extend': user_extend
     }
     return render(request, 'events/profile.html', context)
 def sponsor_detail(request, sponsorship_id):
@@ -247,6 +252,3 @@ def add_sponsorship(request):
     else:
         form = SponsorshipForm()
     return render(request, 'events/add_sponsorship.html', {'form': form})
-    
-def chatbot_view(request):
-    return render(request, 'chatbot.html')

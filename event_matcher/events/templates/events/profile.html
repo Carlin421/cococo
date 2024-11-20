@@ -19,13 +19,18 @@
                     <div class="row">
                         <!-- 左側：照片 -->
                         <div class="col-md-4 d-flex align-items-center justify-content-center">
+                            {% if user_extend.photo %}
+                            <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded mb-4">
+                            {% else %}
                             <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="max-width: 150px;">
+                            {% endif %}
                         </div>
                         <!-- 右側：用戶信息 -->
                         <div class="col-md-8">
                             <p><strong>Username:</strong> {{ user.username }}</p>
                             <p><strong>Email:</strong> {{ user.email }}</p>
                             <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                            <p><strong>Description:</strong> {{ user_extend.description }}</p>
                         </div>
                     </div>
                 </div>

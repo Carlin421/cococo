@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
+{% load static %}
+
 
 {% block content %}
 <div class="container mt-5">
     <div class="text-center mb-4">
         <h1 class="display-5">Welcome, {{ user.username }}!</h1>
     </div>
-    
+
     <div class="row gy-4 justify-content-center">
         <!-- Profile Card -->
         <div class="col-lg-6">
@@ -15,18 +17,30 @@
                     <h5 class="mb-0">Your Profile Information</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Username:</strong> {{ user.username }}</p>
-                    <p><strong>Email:</strong> {{ user.email }}</p>
-                    <p><strong>First Name:</strong> {{ user.first_name }}</p>
-                    <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-                    <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                    <div class="row">
+                        <!-- 第一列 -->
+                        <div class="col-md-6">
+                            {% if user_extend.photo %}
+                            <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded mb-4">
+                            {% else %}
+                            <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="max-width: 150px;">
+                            {% endif %}
+                        </div>
+                        <!-- 第二列 -->
+                        <div class="col-md-6">
+                            <p><strong>Description:</strong> {{ user_extend.description }}</p>
+                            <p><strong>Username:</strong> {{ user.username }}</p>
+                            <p><strong>Email:</strong> {{ user.email }}</p>
+                            <p><strong>First Name:</strong> {{ user.first_name }}</p>
+                            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
+                            <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    {% comment %} </div>
-
-    <!-- Favorites Section -->
-    <div class="row gy-4 mt-5"> {% endcomment %}
+    
+        <!-- Favorites Section -->
         <div class="col-lg-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-warning text-white">
@@ -51,7 +65,6 @@
                 </div>
             </div>
         </div>
-        
-    </div>
+    </div>    
 </div>
 {% endblock %}
