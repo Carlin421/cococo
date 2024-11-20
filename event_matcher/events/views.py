@@ -247,3 +247,6 @@ def add_sponsorship(request):
     else:
         form = SponsorshipForm()
     return render(request, 'events/add_sponsorship.html', {'form': form})
+    
+def chatbot_view(request):
+    return render(request, 'chatbot.html')

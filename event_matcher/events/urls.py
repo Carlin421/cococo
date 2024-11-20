@@ -3,6 +3,7 @@ from . import views
 from .views import login_view, register_view, custom_logout
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import views as auth_views
+from .views import chatbot_view
 
 
 urlpatterns = [
@@ -35,6 +36,7 @@ urlpatterns = [
     path('check_sponsorship/',views.check_sponsorship, name = 'check_sponsorship'),
     path('toggle_activity_check/<int:event_id>/',views.toggle_activity_check, name = 'toggle_activity_check'),
     path('toggle_sponsorship_check/<int:event_id>/',views.toggle_sponsorship_check, name = 'toggle_sponsorship_check'),
+    path('chatbot/', chatbot_view, name='chatbot'),
 
 ]
 
