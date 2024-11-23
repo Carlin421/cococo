@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}COCO - 聊天室{% endblock %}
+
+{% block content %}
+<div class="container mt-5 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">聊天室: {{ chat_name }}</h2>
+                </div>
+                <div class="card-body">
+                    <div id="messages" class="mb-3" style="height: 400px; overflow-y: auto;">
+                        {% for message_id, message in messages.items %}
+                            <p class="animate-slide-up {% if message.sender == request.user.username %}text-right{% endif %}">
+                                <strong>
+                                    {% if message.sender == request.user.username %}
+                                        {{ current_user_name }}
+                                    {% else %}
+                                        {{ other_user }}
+                                    {% endif %}
+                                </strong>: 
+                                <span class="message-content">{{ message.content }}</span>
+                            </p>
+                        {% endfor %}
+                    </div>
+                    <form id="message-form" class="animate-fade-in">
+                        <div class="input-group">
+                            <input type="text" id="message-input" class="form-control" placeholder="輸入訊息..." required>
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">發送</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script>
+    // 初始化Firebase (使用您的配置)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBAAfed_Lj01Vr3REWpSFdbzVLvD5oc4Ss",
+        authDomain: "coco-7f24e.firebaseapp.com",
+        projectId: "coco-7f24e",
+        storageBucket: "coco-7f24e.appspot.com",
+        messagingSenderId: "554625673766",
+        appId: "1:554625673766:web:6b0f1b0b2a0e6f2e0b7f7e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    
+    const db = firebase.firestore();
+    const chatRef = db.collection('chatrooms').doc('{{ chat_id }}');
+    
+    // 用於追踪已經顯示的消息
+    const displayedMessages = new Set();
+
+    // 監聽新消息
+    chatRef.collection('messages').orderBy('timestamp').onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+                const message = change.doc.data();
+                const messageId = change.doc.id;
+                
+                // 檢查這條消息是否已經顯示過
+                if (!displayedMessages.has(messageId)) {
+                    displayedMessages.add(messageId);
+                    const messageElement = document.createElement('p');
+                    messageElement.classList.add('animate-slide-up');
+                    const senderName = message.sender === '{{ request.user.username }}' ? 
+                        '{{ current_user_name }}' : '{{ other_user }}';
+                    if (message.sender === '{{ request.user.username }}') {
+                        messageElement.classList.add('text-right');
+                    }
+                    messageElement.innerHTML = `<strong>${senderName}:</strong> <span class="message-content">${message.content}</span>`;
+                    document.getElementById('messages').appendChild(messageElement);
+                    scrollToBottom();
+                }
+            }
+        });
+    });
+    
+    // 發送新消息
+    document.getElementById('message-form').addEventListener('submit', e => {
+        e.preventDefault();
+        const content = document.getElementById('message-input').value;
+        if (content.trim()) {
+            chatRef.collection('messages').add({
+                content: content,
+                sender: '{{ request.user.username }}',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById('message-input').value = '';
+        }
+    });
+
+    function scrollToBottom() {
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+</script>
+
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    .animate-slide-up {
+        animation: slideUp 0.5s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .message-content {
+        background-color: #f1f1f1;
+        padding: 5px 10px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+    
+    .text-right .message-content {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .text-right {
+        text-align: right;
+    }
+</style>
+{% endblock %}

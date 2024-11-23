@@ -1,0 +1,24 @@
+<!-- 在 event_matcher/events/templates/events/chatroom_list.html 文件中 -->
+{% extends 'base.html' %}
+
+{% block title %}聊天室列表{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>聊天室列表</h2>
+    {% if chatrooms %}
+        <ul class="list-group">
+        {% for chatroom in chatrooms %}
+            <li class="list-group-item">
+                <a href="{% url 'chatroom' chat_id=chatroom.id %}">
+                    與 {{ chatroom.other_user }} 的聊天
+                </a>
+                <small class="text-muted">最後消息: {{ chatroom.last_message|truncatechars:30 }}</small>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>您目前沒有任何聊天室。</p>
+    {% endif %}
+</div>
+{% endblock %}

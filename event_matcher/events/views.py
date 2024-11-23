@@ -13,7 +13,56 @@ from .forms import ActivityForm
 from .forms import SponsorshipForm
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from firebase_admin import firestore
+# 在 event_matcher/events/views.py 文件中
 
+@login_required
+def chatroom_list(request):
+    db = firestore.client()
+    chatrooms = db.collection('chatrooms').where('members', 'array_contains', request.user.username).get()
+    
+    chatroom_data = []
+    for chat in chatrooms:
+        chat_dict = chat.to_dict()
+        other_user = next((user for user in chat_dict['members'] if user != request.user.username), None)
+        
+        # 檢查是否有消息，如果沒有，設置一個默認值
+        messages = chat_dict.get('messages', {})
+        if messages:
+            last_message_key = max(messages, key=lambda k: messages[k]['timestamp'])
+            last_message = messages[last_message_key].get('content', '暫無消息')
+        else:
+            last_message = '暫無消息'
+        
+        chatroom_data.append({
+            'id': chat.id,
+            'other_user': other_user,
+            'last_message': last_message
+        })
+    
+    return render(request, 'events/chatroom_list.html', {'chatrooms': chatroom_data})
+@login_required
+def chatroom(request, chat_id):
+    db = firestore.client()
+    chat_ref = db.collection('chatrooms').document(chat_id)
+    chat_data = chat_ref.get().to_dict()
+    
+    if request.user.username not in chat_data['members']:
+        return redirect('home')  # 或其他適當的錯誤處理
+    
+    other_user = next(user for user in chat_data['members'] if user != request.user.username)
+    
+    # 獲取當前用戶的名稱
+    current_user_name = request.user.get_full_name() or request.user.username
+    
+    context = {
+        'chat_id': chat_id,
+        'other_user': other_user,
+        'messages': chat_data.get('messages', {}),
+        'chat_name': f"與 {other_user} 的聊天",
+        'current_user_name': current_user_name  # 添加當前用戶名稱到上下文
+    }
+    return render(request, 'events/chatroom.html', context)
 def chatbot_view(request):
     return render(request, 'events/chatbot.html')
 
@@ -38,17 +87,40 @@ def edit_profile(request):
     }
     return render(request, 'events/edit_profile.html', context)
 def user_profile(request, user_id):
-    User= get_user_model()
+    User = get_user_model()
     user = get_object_or_404(User, id=user_id)
     user_extend = UserProfile.objects.get(user=user)
     user_activities = Activitynew.objects.filter(organizer=user)
+
+    # 檢查聊天室是否存在
+    db = firestore.client()
+    chat_id = get_or_create_chat(request.user.username, user.username)
+
     context = {
         'user': user,
         'user_extend': user_extend,
-        'user_activities': user_activities
+        'user_activities': user_activities,
+        'chat_id': chat_id
     }
     return render(request, 'events/user_profile.html', context)
 
+def get_or_create_chat(user1, user2):
+    db = firestore.client()
+    chats_ref = db.collection('chatrooms')
+    
+    # 檢查是否已存在聊天室
+    query = chats_ref.where('members', 'array_contains', user1).get()
+    for chat in query:
+        if user2 in chat.to_dict()['members']:
+            return chat.id
+
+    # 如果不存在，創建新的聊天室
+    new_chat_ref = chats_ref.document()
+    new_chat_ref.set({
+        'members': [user1, user2],
+        'createtime': firestore.SERVER_TIMESTAMP
+    })
+    return new_chat_ref.id
 @login_required
 def toggle_sponsorship_check(request, event_id):
     event = get_object_or_404(Sponsorshipnew, id=event_id)

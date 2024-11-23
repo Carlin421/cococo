@@ -36,6 +36,8 @@ urlpatterns = [
     path('toggle_activity_check/<int:event_id>/',views.toggle_activity_check, name = 'toggle_activity_check'),
     path('toggle_sponsorship_check/<int:event_id>/',views.toggle_sponsorship_check, name = 'toggle_sponsorship_check'),
     path('chatbot/', views.chatbot_view, name='chatbot'),
+    path('chatroom/<str:chat_id>/', views.chatroom, name='chatroom'),
+    path('chatroom_list/', views.chatroom_list, name='chatroom_list'),
 
 ]
 
