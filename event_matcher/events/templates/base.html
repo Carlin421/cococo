@@ -14,9 +14,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
+      .navbar-brand {
+        color: #637290!important; /* 將文字改成黑色 */
+        font-weight: bold; /* 使文字加粗（可選） */
+        text-transform: uppercase; /* 全部大寫（可選） */
+      }
+      /* 導覽列背景漸層 */
       .custom-navbar { 
-        background: linear-gradient(45deg, #0F2027, #203A43);
-    }
+        background: rgba(255, 255, 255, 0.8); 
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 適當添加陰影讓內容更有層次感 */
+        padding: 10px 20px; /* 上下內邊距 */
+      }
     footer.bg-dark { 
         background: linear-gradient(45deg, #1F2937, #374151);
     }
@@ -26,14 +34,69 @@
         .btn-primary:hover, .btn-outline-light:hover { transform: scale(1.05); }
 
         /* 主題切換按鈕 */
-        .bd-mode-toggle button { background: #f8f9fa; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: background 0.3s; }
+        bd-mode-toggle button { background: #f8f9fa; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: background 0.3s; }
         .bd-mode-toggle button:hover { background: #e9ecef; }
         .bd-mode-toggle svg { fill: #0056b3; }
 
         /* Navbar連結樣式 */
-        .navbar-nav .nav-link { font-weight: 500; transition: color 0.3s; }
+        /*.navbar-nav .nav-link { font-weight: 500; transition: color 0.3s; }
         .navbar-nav .nav-link:hover { color: #f8f9fa; font-weight: bold; }
         @media (max-width: 768px) { .navbar-nav .nav-link { text-align: center; padding: 0.75rem 0; } }
+
+            /* Navbar 文字與按鈕樣式 */
+      .navbar-nav .nav-link { 
+          font-weight: 500; 
+          color: white !important; 
+          transition: color 0.3s ease; 
+      }
+      .navbar-nav .nav-link:hover { 
+          color: #b1b4b9 !important; 
+          font-weight: bold; 
+      }
+            /* 導覽列容器樣式 */
+      .button-navbar {
+        display: flex;
+        overflow-x: auto; /* 水平滾動 */
+        white-space: nowrap; /* 防止按鈕換行 */
+        /*background-color: #ffffff; /* 白色背景 */
+        padding: 10px 20px; /* 上下內邊距 */
+        border-bottom: 1px solid #ddd; /* 添加下邊框 */
+        gap: 1000px; /* 按鈕間距 */
+      }
+
+      /* 按鈕樣式 */
+      .nav-button {
+        background-color: #637290; /* 按鈕背景顏色 */
+        border: none; /* 無邊框 */
+        color: #ffffff; /* 文字顏色 */
+        border-radius: 25px; /* 圓角，讓按鈕呈橢圓形 */
+        padding: 10px 20px; /* 按鈕內邊距 */
+        font-size: 14px; /* 文字大小 */
+        font-weight: 500; /* 字體粗細 */
+        text-decoration: none; /* 移除下劃線 */
+        cursor: pointer; /* 鼠標為手形 */
+        transition: all 0.3s ease; /* 添加過渡效果 */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
+        margin: 10;
+        margin-right: 15px; 
+      }
+
+      /* 按鈕懸停效果 */
+      .nav-button:hover {
+        background-color: #d1d5db; /* 懸停時的背景顏色 */
+        color: #111827; /* 懸停時的文字顏色 */
+        transform: scale(1.05); /* 輕微放大 */
+        text-decoration: none; /* 確保懸停時也不顯示下劃線 */
+      }
+
+      /* 行動裝置適配 */
+      @media (max-width: 768px) {
+        .nav-button {
+          font-size: 12px; /* 減小文字大小 */
+          padding: 8px 15px; /* 減少按鈕內邊距 */
+        }
+      }
+
 
         /* Footer 樣式 */
         footer .col-md-3 h5 { font-size: 1.1rem; font-weight: bold; margin-bottom: 1rem; }
@@ -66,26 +129,26 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link active" href="{% url 'event_list' %}">首頁</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'activitynew_list' %}">找活動</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'sponsorship_list' %}">找贊助</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}">關於我們</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'add_activity' %}">新增活動</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'add_sponsorship' %}">新增贊助</a> </li>
-            <li class="nav-item"><a class="nav-link" href="https://hook.eu2.make.com/xea7ecug8jmofclyy03sbrrc0mcio0a8">機器人</a> </li>
+            <a class="nav-button" href="{% url 'event_list' %}">首頁</a></li>
+            <a class="nav-button" href="{% url 'activitynew_list' %}">找活動</a></li>
+            <a class="nav-button" href="{% url 'sponsorship_list' %}">找贊助</a></li>
+            <a class="nav-button" href="{% url 'about_us' %}">關於我們</a></li>
+            <a class="nav-button" href="{% url 'add_activity' %}">新增活動</a></li>
+            <a class="nav-button" href="{% url 'add_sponsorship' %}">新增贊助</a> </li>
+      
             <!-- 在 event_matcher/events/templates/base.html 文件中 -->
-            <li class="nav-item"><a class="nav-link" href="{% url 'chatroom_list' %}">聊天室列表</a></li>
+            <a class="nav-button" href="{% url 'chatroom_list' %}">聊天室列表</a></li>
             {% if user.is_staff %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'check_activity' %}">管理頁面</a> </li>
+            <a class="nav-button" href="{% url 'check_activity' %}">管理頁面</a> </li>
             {% endif %}
           </ul>
           <div class="d-flex align-items-center">
             {% if user.is_authenticated %}
-              <a href="{% url 'logout' %}" class="btn btn-outline-light me-2">登出</a>
-              <a href="{% url 'profile' %}" class="btn btn-outline-light">個人資料</a>
+              <a href="{% url 'logout' %}" class="nav-button">登出</a>
+              <a href="{% url 'profile' %}" class="nav-button">個人資料</a>
             {% else %}
-              <a href="{% url 'login' %}" class="btn btn-primary me-2">登入</a>
-              <a href="{% url 'register' %}" class="btn btn-outline-light">註冊</a>
+              <a href="{% url 'login' %}" class="nav-button">登入</a>
+              <a href="{% url 'register' %}" class="nav-button">註冊</a>
             {% endif %}
           </div>
         </div>
@@ -96,6 +159,10 @@
 <main>
     {% block content %}
     {% endblock %}
+
+    <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2024/11/25/14/20241125142039-VT3W2P5C.js"></script>
+    
 </main>
 
 <!-- 頁腳 -->

@@ -7,12 +7,12 @@
     <div class="text-center mb-4">
         <h1 class="display-5">Welcome, {{ user.username }}!</h1>
     </div>
-    
+
     <div class="row gy-4 justify-content-center">
         <!-- Profile Card -->
         <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light text-dark">
                     <h5 class="mb-0">個人資料</h5>
                 </div>
                 <div class="card-body">
@@ -27,34 +27,33 @@
                         </div>
                         <!-- 右側：用戶信息 -->
                         <div class="col-md-8">
-                            <p><strong>Username:</strong> {{ user.username }}</p>
-                            <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
-                            <p><strong>Description:</strong> {{ user_extend.description }}</p>
+                            <p class="mb-2"><strong>Username:</strong> {{ user.username }}</p>
+                            <p class="mb-2"><strong>Email:</strong> {{ user.email }}</p>
+                            <p class="mb-2"><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                            <p class="mb-2"><strong>Description:</strong> {{ user_extend.description }}</p>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer bg-primary">
-                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-light me-2">編輯個人資料</a>
+                <div class="card-footer bg-light">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">編輯個人資料</a>
                 </div>
             </div>
         </div>
     </div>
-    
 
     <!-- Favorites Section -->
     <div class="row gy-4 mt-5">
         <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light text-dark">
                     <h5 class="mb-0">我的收藏活動</h5>
                 </div>
                 <div class="card-body">
                     {% if favorite_activities %}
-                        <ul class="list-group">
+                        <ul class="list-group list-group-flush">
                             {% for activity in favorite_activities %}
                                 <li class="list-group-item">
-                                    <a href="{% url 'activity_detail' activity.id %}">
+                                    <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">
                                         {{ activity.title }}
                                     </a>
                                 </li>
@@ -66,18 +65,18 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light text-dark">
                     <h5 class="mb-0">我的收藏贊助</h5>
                 </div>
                 <div class="card-body">
                     {% if favorite_sponsorships %}
-                        <ul class="list-group">
+                        <ul class="list-group list-group-flush">
                             {% for sponsorship in favorite_sponsorships %}
                                 <li class="list-group-item">
-                                    <a href="{% url 'sponsor_detail' sponsorship.id %}">
+                                    <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">
                                         {{ sponsorship.title }}
                                     </a>
                                 </li>
@@ -89,17 +88,18 @@
                 </div>
             </div>
         </div>
+
         <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-warning text-white">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light text-dark">
                     <h5 class="mb-0">我發布的活動</h5>
                 </div>
                 <div class="card-body">
                     {% if user_activities %}
-                        <ul class="list-group">
+                        <ul class="list-group list-group-flush">
                             {% for activity in user_activities %}
                                 <li class="list-group-item">
-                                    <a href="{% url 'activity_detail' activity.id %}">
+                                    <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">
                                         {{ activity.title }}
                                     </a>
                                 </li>
@@ -111,7 +111,36 @@
                 </div>
             </div>
         </div>
-        
     </div>
 </div>
+
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+
+  .card-header {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  .btn-outline-primary {
+    color: #637290;
+    border-color: #637290;
+  }
+
+  .btn-outline-primary:hover {
+    background-color: #637290;
+    color: white;
+  }
+
+  .list-group-item {
+    border: none;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .list-group-item:hover {
+    background-color: #f1f1f1;
+  }
+</style>
 {% endblock %}

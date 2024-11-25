@@ -3,6 +3,38 @@
 {% block title %}COCO - 首頁{% endblock %}
 
 {% block content %}
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* 防止水平滾動 */
+  }
+
+  .carousel {
+    margin-top: 0; /* 移除默認頂部間距 */
+    padding-top: 0;
+  }
+
+  .carousel-item {
+    height: 500px; /* 設置輪播圖片的高度 */
+    position: relative;
+  }
+
+  .fade-in-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 圖片填滿容器，保持比例 */
+    object-position: center;
+  }
+    /* 自定義的黑色按鈕樣式 */
+  .btn-blue {
+    background-color: #637290; /* 按鈕背景黑色 */
+    border-color: #637290; /* 邊框顏色 */
+    color: #ffffff; /* 文字顏色為白色 */
+  }
+
+  
+</style>
 <!-- Carousel 區域 -->
 <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
   <div class="carousel-indicators">
@@ -12,32 +44,29 @@
   </div>
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100 fade-in-image" alt="First slide">
+      <img src="{% static 'carousel_images/001.png' %}" class="d-block w-100 fade-in-image" alt="First slide">
       <div class="container">
         <div class="carousel-caption text-start fade-in-up">
-          <h1>Example headline.</h1>
-          <p>Some representative placeholder content for the first slide of the carousel.</p>
-          <p><a class="btn btn-lg btn-primary animate-button" href="#">Sign up today</a></p>
+          <p><a class="btn btn-lg btn-primary animate-button btn-blue" href="#">Sign up today</a></p>
         </div>
       </div>
+    
+    
     </div>
     <div class="carousel-item">
-      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100 fade-in-image" alt="First slide">
+      <img src="{% static 'carousel_images/002.png' %}" class="d-block w-100 fade-in-image" alt="First slide">
       <div class="container">
         <div class="carousel-caption fade-in-up">
-          <h1>Another example headline.</h1>
-          <p>Some representative placeholder content for the second slide of the carousel.</p>
-          <p><a class="btn btn-lg btn-primary animate-button" href="#">Learn more</a></p>
+
+          <p><a class="btn btn-lg btn-primary animate-button btn-blue" href="#">Learn more</a></p>
         </div>
       </div>
     </div>
     <div class="carousel-item">
-      <img src="{% static 'carousel_images/DJI_0728.jpg' %}" class="d-block w-100 fade-in-image" alt="First slide">
+      <img src="{% static 'carousel_images/004.png' %}" class="d-block w-100 fade-in-image" alt="First slide">
       <div class="container">
         <div class="carousel-caption text-end fade-in-up">
-          <h1>One more for good measure.</h1>
-          <p>Some representative placeholder content for the third slide of this carousel.</p>
-          <p><a class="btn btn-lg btn-primary animate-button" href="#">Browse gallery</a></p>
+          <p><a class="btn btn-lg btn-primary animate-button btn-blue" href="#">Browse gallery</a></p>
         </div>
       </div>
     </div>
@@ -61,8 +90,9 @@
           <div class="icon mb-3">
             <i class="fas fa-chalkboard-teacher fa-3x text-primary"></i>
           </div>
-          <h4 class="h5 mb-3">客製化服務</h4>
-          <p class="text-muted">我們很棒很厲害很偉大。</p>
+          <h4 class="h5 mb-3">贊助媒合機制</h4>
+          <p class="text-muted">學生社團與品牌方的精準對接平台，助學生快速尋找資源、品牌高效觸達校園需求，實現雙方共贏。
+          </p>
         </div>
       </div>
       <div class="col-md-3 mb-4 d-flex">
@@ -70,8 +100,8 @@
           <div class="icon mb-3">
             <i class="fas fa-database fa-3x text-success"></i>
           </div>
-          <h4 class="h5 mb-3">豐富的資源</h4>
-          <p class="text-muted">我們有原住民的山豬肉</p>
+          <h4 class="h5 mb-3">智能活動工具</h4>
+          <p class="text-muted">AI聊天機器人，為活動方和品牌方提供清晰的活動流程指導。</p>
         </div>
       </div>
       <div class="col-md-3 mb-4 d-flex">
@@ -79,8 +109,8 @@
           <div class="icon mb-3">
             <i class="fas fa-graduation-cap fa-3x text-info"></i>
           </div>
-          <h4 class="h5 mb-3">多元化</h4>
-          <p class="text-muted">要幹嘛都可以各式各樣多元化</p>
+          <h4 class="h5 mb-3">搶佔年輕人心智</h4>
+          <p class="text-muted">大學校園是培養年輕消費者從「品牌認知」到「品牌忠誠」的關鍵黃金四年。</p>
         </div>
       </div>
       <div class="col-md-3 mb-4 d-flex">
@@ -88,8 +118,8 @@
           <div class="icon mb-3">
             <i class="fas fa-chart-line fa-3x text-warning"></i>
           </div>
-          <h4 class="h5 mb-3">領先產業</h4>
-          <p class="text-muted">跟隨產業發展的最新趨勢。</p>
+          <h4 class="h5 mb-3">行銷超值性價比</h4>
+          <p class="text-muted">校園社團活動自帶流量優勢，品牌贊助可藉助其影響力，以小預算實現低風險、高曝光的營銷效果。</p>
         </div>
       </div>
     </div>
@@ -202,7 +232,7 @@
   }
   .animate-button:hover {
     transform: scale(1.05);
-    background-color: #0056b3;
+    background-color: #303848;
   }
 
   /* 卡片圖片淡入效果 */

@@ -44,6 +44,7 @@
 </div>
 
 <style>
+    /* 動畫 */
     .animate-fade-in {
         animation: fadeIn 0.6s ease-out forwards;
         opacity: 0;
@@ -77,117 +78,128 @@
         100% { transform: scale(1); }
     }
     
+    /* 全局背景與主要漸變色 */
     .bg-primary-gradient {
-        background: linear-gradient(135deg, #007bff, #0056b3);
+        background: linear-gradient(135deg, #637290, #4e5c75);
     }
     
-    .custom-file-label::after {
-        content: "瀏覽";
-    }
-    
-    .form-control:focus {
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    }
-    
+    /* 卡片樣式 */
     .card {
         transition: all 0.3s ease;
         border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #ffffff, #f9fafc);
+        border: 1px solid #e0e0e0;
     }
     
     .card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
     }
     
+    /* 表單輸入框 */
     .form-control, .custom-file-input {
-        border-radius: 0.25rem;
+        border-radius: 10px;
         border: 1px solid #ced4da;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
     }
     
     .form-control:focus, .custom-file-input:focus {
-        border-color: #80bdff;
-        outline: 0;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        border-color: #637290;
+        box-shadow: 0 0 0 0.2rem rgba(99, 114, 144, 0.25);
     }
     
+    /* 按鈕樣式 */
     .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
+        background: linear-gradient(135deg, #637290, #4e5c75);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 12px 20px;
+        border-radius: 50px;
+        box-shadow: 0 4px 8px rgba(99, 114, 144, 0.2);
         transition: all 0.3s ease;
     }
     
     .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
+        background: linear-gradient(135deg, #4e5c75, #394255);
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        box-shadow: 0 6px 12px rgba(99, 114, 144, 0.3);
     }
+    
+    /* 表格樣式 */
     table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: #ffffff;
-}
-
-table thead th {
-    background-color: #007bff;
-    color: #ffffff;
-    padding: 12px;
-    font-weight: bold;
-    text-align: left;
-}
-
-table tbody tr {
-    border-bottom: 1px solid #f1f1f1;
-}
-
-table tbody tr:hover {
-    background-color: #f9f9f9;
-}
-
-table tbody td {
-    padding: 12px;
-    border-right: 1px solid #f1f1f1;
-    text-align: left;
-}
-
-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-table tbody td:first-child {
-    border-radius: 10px 0 0 10px;
-}
-
-table tbody td:last-child {
-    border-radius: 0 10px 10px 0;
-    border-right: none;
-}
-
-/* 改善表格外觀的陰影效果 */
-table {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-/* 表格圓角和陰影 */
-table, th, td {
-    border-collapse: collapse;
-    border-radius: 8px;
-}
-
-/* 表格內文顏色和字體 */
-table tbody td {
-    color: #333333;
-    font-size: 14px;
-}
-
-
-</style>
-
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #ffffff, #f9fafc);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    table thead th {
+        background: linear-gradient(135deg, #637290, #4e5c75);
+        color: #fff;
+        padding: 16px;
+        font-weight: bold;
+        text-align: left;
+        font-size: 14px;
+        border-bottom: 2px solid #dee2e6;
+    }
+    
+    table tbody tr {
+        transition: background-color 0.3s ease;
+    }
+    
+    table tbody tr:hover {
+        background-color: #f1f3f5;
+    }
+    
+    table tbody td {
+        padding: 12px;
+        font-size: 14px;
+        color: #495057;
+        border-bottom: 1px solid #e9ecef;
+        border-radius: 10px; /* 圓角處理 */
+    }
+    
+    table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* 文件選擇框樣式 */
+    .custom-file-label {
+        border-radius: 10px;
+        background: #f8f9fa;
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    
+    .custom-file-input:focus + .custom-file-label {
+        border-color: #637290;
+        background: #e9f5ff;
+    }
+    
+    /* 微妙陰影效果與過渡 */
+    table tbody td {
+        color: #333333;
+        font-size: 14px;
+    }
+    
+    table tbody td:first-child {
+        border-radius: 10px 0 0 10px;
+    }
+    
+    table tbody td:last-child {
+        border-radius: 0 10px 10px 0;
+        border-right: none;
+    }
+    
+    </style>
+    
 <script>
 document.addEventListener('DOMContentLoaded', (event) => {
     var forms = document.querySelectorAll('.needs-validation')
