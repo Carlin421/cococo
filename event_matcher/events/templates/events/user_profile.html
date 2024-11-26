@@ -2,75 +2,72 @@
 {% load django_bootstrap5 %}
 {% load static %}
 
-
 {% block content %}
-<div class="container mt-5">
-    <div class="text-center mb-4">
+<div class="container py-5">
+    <div class="text-center mb-5">
         <h1 class="display-5">Welcome, {{ user.username }}!</h1>
     </div>
     {% if user.id != request.user.id %}
-    <div class="mt-4">
-        <a href="{% url 'chatroom' chat_id=chat_id %}" class="btn btn-primary">
+    <div class="d-flex justify-content-center mb-4">
+        <a href="{% url 'chatroom' chat_id=chat_id %}" class="btn btn-outline-primary rounded-pill px-4 py-2">
             與 {{ user.username }} 聊天
         </a>
     </div>
     {% endif %}
-    <div class="row gy-4 justify-content-center">
+    <div class="row gy-4">
         <!-- Profile Card -->
         <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Your Profile Information</h5>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                <!--    <h5 class="mb-0 text-primary fw-bold">Your Profile Information</h5> -->
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <!-- 第一列 -->
-                        <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="me-4">
                             {% if user_extend.photo %}
-                            <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded mb-4">
+                            <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
                             {% else %}
-                            <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="max-width: 150px;">
+                            <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
                             {% endif %}
                         </div>
-                        <!-- 第二列 -->
-                        <div class="col-md-6">
-                            <p><strong>Description:</strong> {{ user_extend.description }}</p>
-                            <p><strong>Username:</strong> {{ user.username }}</p>
-                            <p><strong>Email:</strong> {{ user.email }}</p>
-                            <p><strong>First Name:</strong> {{ user.first_name }}</p>
-                            <p><strong>Last Name:</strong> {{ user.last_name }}</p>
-                            <p><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                        <div>
+                            <p class="mb-1"><strong>Username:</strong> {{ user.username }}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{ user.email }}</p>
+                            <p class="mb-1"><strong>First Name:</strong> {{ user.first_name }}</p>
+                            <p class="mb-1"><strong>Last Name:</strong> {{ user.last_name }}</p>
+                            <p class="mb-0"><strong>Date Joined:</strong> {{ user.date_joined }}</p>
                         </div>
                     </div>
+                    <p class="text-muted"><strong></strong> {{ user_extend.description }}</p>
                 </div>
             </div>
         </div>
-    
-        <!-- Favorites Section -->
+
+        <!-- Activities Section -->
         <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-warning text-white">
-                    <h5 class="mb-0">我發布的活動</h5>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0 fw-bold" style="color: #637290;">我發布的活動</h5>
                 </div>
                 <div class="card-body">
                     {% if user_activities %}
-                        <ul class="list-group">
-                            {% for activity in user_activities %}
-                                {% if activity.check_status %}
-                                <li class="list-group-item">
-                                    <a href="{% url 'activity_detail' activity.id %}">
-                                        {{ activity.title }}
-                                    </a>
-                                </li>
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
+                    <ul class="list-group list-group-flush">
+                        {% for activity in user_activities %}
+                        {% if activity.check_status %}
+                        <li class="list-group-item px-0">
+                            <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">
+                                {{ activity.title }}
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
                     {% else %}
-                        <p class="text-muted">你還沒有發布任何活動。</p>
+                    <p class="text-muted mb-0">你還沒有發布任何活動。</p>
                     {% endif %}
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 </div>
 {% endblock %}

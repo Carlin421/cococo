@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_bootstrap5',
     'social_django',
     'django_extensions',
+    'widget_tweaks',
 ]
 
 
