@@ -44,7 +44,15 @@
                 <h5 class="card-title fw-bold">
                   <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">{{ sponsorship.title }}</a>
                 </h5>
-<p class="card-text text-muted small mb-2"><i class="fas fa-user me-2"></i>贊助者：<a href="{% url 'user_profile' sponsorship.organizer.id %}" class="text-decoration-none text-primary">{{ sponsorship.organizer }}</a></p>      
+                <p class="card-text text-muted small mb-2">
+                  <i class="fas fa-user me-2"></i>贊助者：
+                  {% if sponsorship.organizer and sponsorship.organizer.id %}
+                      <a href="{% url 'user_profile' sponsorship.organizer.id %}" class="text-decoration-none text-primary">{{ sponsorship.organizer }}</a>
+                  {% else %}
+                      <span class="text-muted">無贊助者資訊</span>
+                  {% endif %}
+              </p>
+              
 <p class="card-text text-muted small mb-2"><i class="fas fa-map-marker-alt me-2"></i>地點：{{ sponsorship.location }}</p>    
 <p class="card-text text-muted small mb-2"><i class="fas fa-dollar-sign me-2"></i>金額：{{ sponsorship.amount }}</p>
 <p class="card-text text-muted small"><i class="fas fa-calendar-alt me-2"></i>發布日期：{{ sponsorship.date_posted }}</p>

@@ -79,16 +79,26 @@
     }
     
     /* 全局背景與主要漸變色 */
-    .bg-primary-gradient {
+    .bg-primary {
         background: linear-gradient(135deg, #637290, #4e5c75);
     }
     
     /* 卡片樣式 */
+    .card-header {
+        background-color: #637290; /* 更新背景色為指定色號 */
+        color: #ffffff; /* 確保文字顏色在深色背景上可見 */
+        text-align: center;
+        padding: 1rem;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+
     .card {
         transition: all 0.3s ease;
         border-radius: 15px;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
         background: linear-gradient(135deg, #ffffff, #f9fafc);
+        background-color: #637290; 
         border: 1px solid #e0e0e0;
     }
     
