@@ -4,211 +4,125 @@
 {% block title %}新增活動{% endblock %}
 
 {% block content %}
-<div class="container my-5 animate-fade-in">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg rounded-lg">
-                <div class="card-header bg-primary text-white text-center py-4">
-                    <h2 class="mb-0">新增活動</h2>
-                </div>
-                <div class="card-body p-5">
-                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        {% for field in form %}
-                            <div class="mb-4 animate-slide-up" style="animation-delay: {{ forloop.counter0 }}00ms;">
-                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                {% if field.field.widget.input_type == 'file' %}
-                                    <div class="custom-file">
-                                        {{ field }}
-                                        <label class="custom-file-label" for="{{ field.id_for_label }}">選擇文件</label>
-                                    </div>
-                                {% else %}
-                                    {{ field }}
-                                {% endif %}
-                                {% if field.help_text %}
-                                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                                {% endif %}
-                                {% for error in field.errors %}
-                                    <div class="invalid-feedback">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                        <div class="d-grid gap-2 mt-5">
-                            <button type="submit" class="btn btn-primary btn-lg animate-pulse">創建活動</button>
+<div class="container my-5">
+    <div class="row">
+        <!-- 左側背景區域 -->
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-start bg-info text-white p-4">
+            <h2 class="mb-3">新增活動</h2>
+            <p>馬上開始創建社團活動吧<br>不知道怎麼寫文案的話也可以點選右下角的文案小助手㊣</p>
+        </div>
+        <!-- 右側表單區域 -->
+        <div class="col-md-6">
+            <form method="post" enctype="multipart/form-data" class="needs-validation p-4" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group mb-4">
+                        <label for="{{ field.id_for_label }}" class="form-label text-muted">{{ field.label }}</label>
+                        {% if field.field.widget.input_type == 'file' %}
+                        <div class="custom-file">
+                            {{ field }}
+                            <label class="custom-file-label" for="{{ field.id_for_label }}">選擇文件</label>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    {% else %}
+                            {{ field }}
+                    {% endif %}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary w-100">創建活動</button>
+            </form>
         </div>
     </div>
 </div>
 
-<style>
-    /* 動畫 */
-    .animate-fade-in {
-        animation: fadeIn 0.6s ease-out forwards;
-        opacity: 0;
-    }
-    
-    .animate-slide-up {
-        animation: slideUp 0.6s ease-out forwards;
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    
-    .animate-pulse {
-        animation: pulse 2s infinite;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    @keyframes slideUp {
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    
-    /* 全局背景與主要漸變色 */
-    .bg-primary {
-        background: linear-gradient(135deg, #637290, #4e5c75);
-    }
-    
-    /* 卡片樣式 */
-    .card-header {
-        background-color: #637290; /* 更新背景色為指定色號 */
-        color: #ffffff; /* 確保文字顏色在深色背景上可見 */
-        text-align: center;
-        padding: 1rem;
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
-    }
 
-    .card {
-        transition: all 0.3s ease;
-        border-radius: 15px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
-        background: linear-gradient(135deg, #ffffff, #f9fafc);
-        background-color: #637290; 
-        border: 1px solid #e0e0e0;
-    }
-    
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    }
-    
-    /* 表單輸入框 */
-    .form-control, .custom-file-input {
-        border-radius: 10px;
-        border: 1px solid #ced4da;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        transition: all 0.2s ease;
-    }
-    
-    .form-control:focus, .custom-file-input:focus {
-        border-color: #637290;
-        box-shadow: 0 0 0 0.2rem rgba(99, 114, 144, 0.25);
-    }
-    
-    /* 按鈕樣式 */
-    .btn-primary {
-        background: linear-gradient(135deg, #637290, #4e5c75);
-        border: none;
-        color: #fff;
-        font-weight: 600;
-        padding: 12px 20px;
-        border-radius: 50px;
-        box-shadow: 0 4px 8px rgba(99, 114, 144, 0.2);
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-        background: linear-gradient(135deg, #4e5c75, #394255);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(99, 114, 144, 0.3);
-    }
-    
-    /* 表格樣式 */
-    table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        border-radius: 10px;
-        overflow: hidden;
-        background: linear-gradient(135deg, #ffffff, #f9fafc);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    }
-    
-    table thead th {
-        background: linear-gradient(135deg, #637290, #4e5c75);
-        color: #fff;
-        padding: 16px;
-        font-weight: bold;
-        text-align: left;
-        font-size: 14px;
-        border-bottom: 2px solid #dee2e6;
-    }
-    
-    table tbody tr {
-        transition: background-color 0.3s ease;
-    }
-    
-    table tbody tr:hover {
-        background-color: #f1f3f5;
-    }
-    
-    table tbody td {
-        padding: 12px;
-        font-size: 14px;
-        color: #495057;
-        border-bottom: 1px solid #e9ecef;
-        border-radius: 10px; /* 圓角處理 */
-    }
-    
-    table tbody tr:last-child td {
-        border-bottom: none;
-    }
-    
-    /* 文件選擇框樣式 */
-    .custom-file-label {
-        border-radius: 10px;
-        background: #f8f9fa;
-        padding: 10px 12px;
-        border: 1px solid #ced4da;
-        transition: background 0.2s ease, border-color 0.2s ease;
-    }
-    
-    .custom-file-input:focus + .custom-file-label {
-        border-color: #637290;
-        background: #e9f5ff;
-    }
-    
-    /* 微妙陰影效果與過渡 */
-    table tbody td {
-        color: #333333;
-        font-size: 14px;
-    }
-    
-    table tbody td:first-child {
-        border-radius: 10px 0 0 10px;
-    }
-    
-    table tbody td:last-child {
-        border-radius: 0 10px 10px 0;
-        border-right: none;
-    }
-    
- </style>
+
+<style>
+.bg-info {
+    background: linear-gradient(135deg, #637290, #4e5c75);
+    color: #ffffff;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+/* 表單樣式 */
+.form-control {
+    background: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    padding: 10px 12px;
+    font-size: 14px;
+    box-shadow: none;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #637290;
+    background: #ffffff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(99, 114, 144, 0.25);
+}
+
+/* 文件選擇框樣式 */
+.custom-file-label {
+    border-radius: 5px;
+    background: #f8f9fa;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.custom-file-input:focus + .custom-file-label {
+    border-color: #637290;
+    background: #e9f5ff;
+}
+
+/* 按鈕樣式 */
+.btn-primary {
+    background: linear-gradient(135deg, #637290, #4e5c75);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 8px rgba(99, 114, 144, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4e5c75, #394255);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(99, 114, 144, 0.3);
+}
+
+/* 標籤樣式 */
+.form-label {
+    font-weight: 500;
+    font-size: 14px;
+    color: #6c757d; /* 淡灰色 */
+    margin-bottom: 5px;
+}
+
+/* 表單間距 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* 卡片樣式 */
+.card {
+    transition: all 0.3s ease;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    border: none;
+}
+
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', (event) => {
     // 表單驗證
