@@ -244,17 +244,28 @@ def activitynew_list(request):
 #     return redirect('activitynew_list')
 
 def sponsorship_list(request, page=1):
-    sponsorships = Sponsorshipnew.objects.all().order_by('-date_posted')
+    query = request.GET.get('q')
+    sponsorships = Sponsorshipnew.objects.all()
     paginator = Paginator(sponsorships, 10)  # 每頁顯示 10 個項目
-    
+
+    if query:
+        activities = activities.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(location__icontains=query) |
+            Q(date__icontains=query)
+        )
     try:
         sponsorships = paginator.page(page)
     except PageNotAnInteger:
         sponsorships = paginator.page(1)
     except EmptyPage:
         sponsorships = paginator.page(paginator.num_pages)
-    
-    return render(request, 'events/sponsorship_list.html', {'sponsorships': sponsorships})
+    context = {
+        'sponsorships': sponsorships,
+        'query': query
+    }  
+    return render(request, 'events/sponsorship_list.html', context)
 
 # @login_required
 # def toggle_sponsorshipnew_favorite(request, sponsorship_id):
@@ -317,7 +328,7 @@ def add_sponsorship(request):
         form = SponsorshipForm(request.POST, request.FILES)
         if form.is_valid():
             sponsorship = form.save(commit=False)
-            sponsorship.sponsor = request.user
+            sponsorship.organizer = request.user
             sponsorship.save()
             messages.success(request, '贊助已成功創建!')
             return redirect('sponsor_detail', sponsorship_id=sponsorship.id)

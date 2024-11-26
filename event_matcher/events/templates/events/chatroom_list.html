@@ -1,24 +1,56 @@
-<!-- 在 event_matcher/events/templates/events/chatroom_list.html 文件中 -->
 {% extends 'base.html' %}
 
 {% block title %}聊天室列表{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>聊天室列表</h2>
-    {% if chatrooms %}
-        <ul class="list-group">
-        {% for chatroom in chatrooms %}
-            <li class="list-group-item">
-                <a href="{% url 'chatroom' chat_id=chatroom.id %}">
-                    與 {{ chatroom.other_user }} 的聊天
-                </a>
-                <small class="text-muted">最後消息: {{ chatroom.last_message|truncatechars:30 }}</small>
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>您目前沒有任何聊天室。</p>
-    {% endif %}
+    <!--<h2 class="mb-4">聊天室列表</h2>-->
+    <div class="list-group">
+        {% if chatrooms %}
+            {% for chatroom in chatrooms %}
+            <div class="list-group-item d-flex align-items-center">
+                <!-- 圖片部分 -->
+                <div class="avatar me-3">
+                    {% if chatroom.other_user_avatar %}
+                        <img src="{{ chatroom.other_user_avatar }}" alt="{{ chatroom.other_user }}" class="rounded-circle" width="50" height="50">
+                    {% else %}
+                        <!-- 預設頭像 -->
+                        <div class="rounded-circle text-center d-flex align-items-center justify-content-center avatar-placeholder" style="width: 50px; height: 50px; background-color: #637290; color: white;">
+                            <span>{{ chatroom.other_user|slice:":1" }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- 聊天室資訊 -->
+                <div class="flex-grow-1">
+                    <h5 class="mb-1">
+                        <a href="{% url 'chatroom' chat_id=chatroom.id %}" class="text-decoration-none">
+                            {{ chatroom.other_user }}
+                        </a>
+                    </h5>
+                    <!-- <p class="mb-0 text-muted">最後消息: {{ chatroom.last_message|truncatechars:30 }}</p>-->
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">您目前沒有任何聊天室。</p>
+        {% endif %}
+    </div>
 </div>
+<style>
+    .avatar img {
+        object-fit: cover;
+        border: 2px solid #ddd;
+    }
+    .list-group-item {
+        transition: background-color 0.3s;
+    }
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+    .avatar-placeholder {
+        font-size: 18px;
+        font-weight: bold;
+        border: 2px solid #ddd;
+    }
+</style>
 {% endblock %}
