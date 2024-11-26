@@ -15,8 +15,8 @@
                     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                         {% csrf_token %}
                         {% for field in form %}
-                            <div class="mb-4 animate-slide-up" style="animation-delay: {{ forloop.counter0 }}00ms;">
-                                <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                            <div class="mb-4 animate-slide-up" style="animation-delay: {{ forloop.counter0|add:"00" }}ms;">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-normal">{{ field.label }}</label>
                                 {% if field.field.widget.input_type == 'file' %}
                                     <div class="custom-file">
                                         {{ field }}
