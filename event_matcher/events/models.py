@@ -49,5 +49,6 @@ class Sponsorshipnew(models.Model):
         null=True,
         blank=True
     )
+    
 
 # Create your models here.

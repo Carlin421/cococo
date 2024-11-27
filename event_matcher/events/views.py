@@ -248,21 +248,24 @@ def activitynew_list(request):
 def sponsorship_list(request, page=1):
     query = request.GET.get('q')
     sponsorships = Sponsorshipnew.objects.all()
-    paginator = Paginator(sponsorships, 10)  # 每頁顯示 10 個項目
-
+    
     if query:
-        activities = activities.filter(
+        sponsorships = sponsorships.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query) |
             Q(location__icontains=query) |
             Q(date__icontains=query)
         )
+    
+    paginator = Paginator(sponsorships, 10)  # 每頁顯示 10 個項目
+    
     try:
         sponsorships = paginator.page(page)
     except PageNotAnInteger:
         sponsorships = paginator.page(1)
     except EmptyPage:
         sponsorships = paginator.page(paginator.num_pages)
+    
     context = {
         'sponsorships': sponsorships,
         'query': query
@@ -337,3 +340,4 @@ def add_sponsorship(request):
     else:
         form = SponsorshipForm()
     return render(request, 'events/add_sponsorship.html', {'form': form})
+
