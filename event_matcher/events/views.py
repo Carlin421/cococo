@@ -182,7 +182,8 @@ def toggle_activity_favorite(request, event_id):
     event = get_object_or_404(Activitynew, id=event_id)
     event.is_favorited = not event.is_favorited
     event.save()
-    return redirect('activity_list')
+    referer = request.META.get('HTTP_REFERER')
+    return redirect(referer)
 
 # 用於贊助的收藏切換
 @login_required
@@ -191,7 +192,8 @@ def toggle_sponsorship_favorite(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
     sponsorship.is_favorited = not sponsorship.is_favorited
     sponsorship.save()
-    return redirect('activity_list')
+    referer = request.META.get('HTTP_REFERER')
+    return redirect(referer)
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(data=request.POST)

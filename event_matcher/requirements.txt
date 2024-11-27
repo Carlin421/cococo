@@ -1,0 +1,6 @@
+django
+firebase-admin
+django_bootstrap5
+social-auth-app-django
+django-extensions
+django-widget-tweaks
