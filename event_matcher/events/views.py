@@ -341,3 +341,13 @@ def add_sponsorship(request):
         form = SponsorshipForm()
     return render(request, 'events/add_sponsorship.html', {'form': form})
 
+@login_required
+def toggle_activity_status(request, activity_id):
+    activity = get_object_or_404(Activitynew, id=activity_id)
+    if request.user == activity.organizer or request.user.is_staff:
+        activity.check_status = not activity.check_status
+        activity.save()
+        messages.success(request, '活動狀態已更新')
+    else:
+        messages.error(request, '您沒有權限執行此操作')
+    return redirect('activity_detail', activity_id=activity.id)

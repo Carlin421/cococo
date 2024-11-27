@@ -102,6 +102,11 @@
                                     <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">
                                         {{ activity.title }}
                                     </a>
+                                    {% if activity.check_status %}
+                                        <span class="badge bg-success">已上架</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">已下架</span>
+                                    {% endif %}
                                 </li>
                             {% endfor %}
                         </ul>

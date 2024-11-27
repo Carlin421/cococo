@@ -88,7 +88,14 @@
                     {% endif %}
                 </div>
             </div>
-
+            {% if user == activity.organizer or user.is_staff %}
+            <form method="POST" action="{% url 'toggle_activity_status' activity.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning w-100 mt-3">
+                    {% if activity.check_status %}下架活動{% else %}上架活動{% endif %}
+                </button>
+            </form>
+        {% endif %}
             {% if related_activities %}
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">

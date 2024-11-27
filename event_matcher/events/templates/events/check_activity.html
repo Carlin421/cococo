@@ -24,6 +24,9 @@
           <th scope="col">活動日期</th>
           <th scope="col">活動地點</th>
           <th scope="col">審核狀態</th>
+          {% if user.is_staff %}
+            <th scope="col">上架狀態</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -43,12 +46,23 @@
                 <span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> 審核中</span>
               {% endif %}
             </td>
+            {% if user.is_staff %}
+              <td>
+                <form method="POST" action="{% url 'toggle_activity_status' activity.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-warning btn-sm">
+                    {% if activity.check_status %}下架活動{% else %}上架活動{% endif %}
+                  </button>
+                </form>
+              </td>
+            {% endif %}
           </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
+
 {% else %}
 <h2 class="text-center">請先登入</h2>
 {% endif %}
