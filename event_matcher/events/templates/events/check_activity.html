@@ -3,95 +3,143 @@
 {% block title %}COCO - 管理頁面{% endblock %}
 
 {% block content %}
-<!-- 最新贊助區 -->
+<!-- 最新活動區 -->
 {% if user.is_staff %}
 <div class="container marketing py-5 bg-light fade-in-up">
-  <div class="container marketing py-5 fade-in-up">
-    <a href="{% url 'check_sponsorship' %}" class="btn btn-primary">贊助</a>
-    <a href="{% url 'check_activity' %}" class="btn btn-primary">活動</a>
-    <h2 class="text-center mb-4">活動列表</h2>
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover animate-card">
-        <thead class="table-light">
+  <h2 class="text-center mb-4">活動列表</h2>
+  
+  <!-- 按鈕 -->
+  <div class="text-center mb-3">
+    <a href="{% url 'check_sponsorship' %}" class="btn btn-primary mx-2">贊助</a>
+    <a href="{% url 'check_activity' %}" class="btn btn-primary mx-2">活動</a>
+  </div>
+  
+  <div class="table-wrapper">
+    <table class="table table-modern">
+      <thead>
+        <tr>
+          <th scope="col">圖片</th>
+          <th scope="col">活動名稱</th>
+          <th scope="col">主辦方</th>
+          <th scope="col">活動日期</th>
+          <th scope="col">活動地點</th>
+          <th scope="col">審核狀態</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for activity in activities %}
           <tr>
-            <th scope="col">圖片</th>
-            <th scope="col">活動名稱</th>
-            <th scope="col">活動詳情</th>
-            <th scope="col">活動日期</th>
-            <th scope="col">活動地點</th>
-            <th scope="col">審核狀態</th>
+            <td><img src="{{ activity.image.url }}" class="img-thumbnail" alt="{{ activity.title }}"></td>
+            <td>
+              <a href="{% url 'activity_detail' activity.id %}" class="text-link">{{ activity.title }}</a>
+            </td>
+            <td>{{ activity.organizer }}</td>
+            <td>{{ activity.date }}</td>
+            <td>{{ activity.location }}</td>
+            <td>
+              {% if activity.check_status %}
+                <span class="badge badge-success"><i class="fas fa-check"></i> 審核完成</span>
+              {% else %}
+                <span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> 審核中</span>
+              {% endif %}
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {% for activity in activities %}
-            <tr>
-              <td><img src="{{ activity.image.url }}" class="img-thumbnail" alt="{{ activity.title }}" style="max-width: 150px;"></td>
-              <td>
-                <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">{{ activity.title }}</a>
-              </td>
-              <td>{{ activity.description }}</td>
-              <td>{{ activity.location }}</td>
-              <td>{{ activity.date }}</td>
-              <td>
-                {% if activity.check_status %}<i class="fas fa-heart"></i> 審核完成{% else %}<i class="far fa-heart"></i> 審核中{% endif %}
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
-  <div class="text-center mt-4">
-    <a href="#" class="btn btn-primary animate-button">查看更多贊助</a>
-  </div>
-</div>
-
-<hr class="featurette-divider">
 </div>
 {% else %}
-<h2>Please Login First</h2>
+<h2 class="text-center">請先登入</h2>
 {% endif %}
 
-
 <style>
-  /* General Animation */
-  .fade-in-up {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+  /* General Styles */
+  .table-wrapper {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
-  .fade-in-up.active {
-    opacity: 1;
-    transform: translateY(0);
+  
+  /* Modern Table Styling */
+  .table-modern {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "Arial", sans-serif;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
   }
-
-  /* 卡片陰影與懸浮效果 */
-  .animate-card {
-    transition: transform 0.3s, box-shadow 0.3s;
+  
+  .table-modern thead {
+    background: #007bff;
+    color: white;
+    text-transform: uppercase;
   }
-  .animate-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  
+  .table-modern th, .table-modern td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e1e1e1;
   }
-
-  /* 按鈕動畫 */
-  .animate-button {
-    transition: transform 0.2s ease, background-color 0.2s;
+  
+  .table-modern th {
+    font-weight: bold;
   }
-  .animate-button:hover {
-    transform: scale(1.05);
-    background-color: #0056b3;
+  
+  .table-modern tr:hover {
+    background: rgba(0, 123, 255, 0.1);
   }
-
-  /* 卡片圖片淡入效果 */
-  .card-img-fade {
-    transition: opacity 0.4s ease;
+  
+  .table-modern td img {
+    width: 100px;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
-  .card-img-fade:hover {
-    opacity: 0.85;
+  
+  .table-modern .text-link {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .table-modern .text-link:hover {
+    text-decoration: underline;
+  }
+  
+  .badge {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border-radius: 12px;
+    color: white;
+    display: inline-block;
+  }
+  
+  .badge-success {
+    background-color: #28a745;
+  }
+  
+  .badge-warning {
+    background-color: #ffc107;
+  }
+  
+  /* Animation */
+  .table-wrapper {
+    animation: fade-in 0.8s ease-in-out;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
-
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
