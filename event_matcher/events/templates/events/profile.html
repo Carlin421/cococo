@@ -98,11 +98,13 @@
                     {% if user_activities %}
                         <ul class="list-group list-group-flush">
                             {% for activity in user_activities %}
-                                <li class="list-group-item">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">
                                         {{ activity.title }}
                                     </a>
-                                    {% if activity.check_status %}
+                                    {% if not activity.check_status %}
+                                        <span class="badge bg-warning text-dark">審核中</span>
+                                    {% elif activity.check_status and activity.is_active %}
                                         <span class="badge bg-success">已上架</span>
                                     {% else %}
                                         <span class="badge bg-secondary">已下架</span>

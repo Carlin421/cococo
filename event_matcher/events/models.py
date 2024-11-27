@@ -21,6 +21,7 @@ class Activitynew(models.Model):
     image = models.ImageField(upload_to='activitynew_images/', blank=True, null=True)  # 活動圖片
     is_favorited = models.BooleanField(default=False)  # 收藏狀態
     check_status = models.BooleanField(default=False) # 審核狀態
+    is_active = models.BooleanField(default=True)
     organizer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -42,6 +43,7 @@ class Sponsorshipnew(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)  # 贊助發布日期
     is_favorited = models.BooleanField(default=False)   # 收藏狀態
     check_status = models.BooleanField(default=False) # 審核狀態
+    is_active = models.BooleanField(default=True)
     organizer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

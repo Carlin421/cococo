@@ -345,9 +345,33 @@ def add_sponsorship(request):
 def toggle_activity_status(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
     if request.user == activity.organizer or request.user.is_staff:
-        activity.check_status = not activity.check_status
-        activity.save()
-        messages.success(request, '活動狀態已更新')
+        if activity.check_status:  # 只有已審核的活動才能上下架
+            activity.is_active = not activity.is_active
+            activity.save()
+            status = "上架" if activity.is_active else "下架"
+            messages.success(request, f'活動已{status}')
+        else:
+            messages.error(request, '活動尚未通過審核，無法更改狀態')
     else:
         messages.error(request, '您沒有權限執行此操作')
     return redirect('activity_detail', activity_id=activity.id)
+
+@login_required
+def edit_activity(request, activity_id):
+    activity = get_object_or_404(Activitynew, id=activity_id)
+    
+    # 檢查當前用戶是否為活動組織者
+    if request.user != activity.organizer:
+        messages.error(request, '您沒有權限編輯此活動')
+        return redirect('activity_detail', activity_id=activity.id)
+    
+    if request.method == 'POST':
+        form = ActivityForm(request.POST, request.FILES, instance=activity)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '活動已成功更新')
+            return redirect('activity_detail', activity_id=activity.id)
+    else:
+        form = ActivityForm(instance=activity)
+    
+    return render(request, 'events/edit_activity.html', {'form': form, 'activity': activity})
