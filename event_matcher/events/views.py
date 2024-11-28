@@ -339,7 +339,7 @@ def add_activity(request):
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
             activity = form.save(commit=False)
-            activity.organizer = request.user  # 假設您的 Activitynew 模型有一個 organizer 字段
+            activity.organizer = request.user
             activity.save()
             messages.success(request, '活動已成功創建!')
             return redirect('activity_detail', activity_id=activity.id)
@@ -387,7 +387,6 @@ def toggle_activity_status(request, activity_id):
 def edit_activity(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
     
-    # 檢查當前用戶是否為活動組織者
     if request.user != activity.organizer:
         messages.error(request, '您沒有權限編輯此活動')
         return redirect('activity_detail', activity_id=activity.id)

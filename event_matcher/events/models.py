@@ -16,7 +16,9 @@ class UserProfile(models.Model):
 class Activitynew(models.Model):
     title = models.CharField(max_length=200)           # 活動名稱
     description = models.TextField()                   # 活動描述
-    location = models.CharField(max_length=100)        # 活動地點
+    location = models.CharField(max_length=255, verbose_name="活動地點")
+    latitude = models.FloatField(null=True, blank=True, verbose_name="緯度")
+    longitude = models.FloatField(null=True, blank=True, verbose_name="經度")
     date = models.DateField()                          # 活動日期
     image = models.ImageField(upload_to='activitynew_images/', blank=True, null=True)  # 活動圖片
     is_favorited = models.BooleanField(default=False)  # 收藏狀態
