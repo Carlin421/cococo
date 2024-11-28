@@ -243,7 +243,7 @@ def register_view(request):
 
 def activitynew_list(request):
     query = request.GET.get('q')
-    activities = Activitynew.objects.all()
+    activities = Activitynew.objects.filter(check_status=True, is_active=True)
 
     if query:
         activities = activities.filter(
@@ -267,7 +267,7 @@ def activitynew_list(request):
 
 def sponsorship_list(request, page=1):
     query = request.GET.get('q')
-    sponsorships = Sponsorshipnew.objects.all()
+    sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
     
     if query:
         sponsorships = sponsorships.filter(
