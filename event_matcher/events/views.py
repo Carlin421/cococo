@@ -14,8 +14,28 @@ from .forms import SponsorshipForm
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from firebase_admin import firestore
+from .models import Notification
 # 在 event_matcher/events/views.py 文件中
+def notifications(request):
+    if request.user.is_authenticated:
+        notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
+        unread_count = notifications.filter(is_read=False).count()
+        return {
+            'notifications': notifications,
+            'unread_notifications_count': unread_count
+        }
+    return {}
+@login_required
+def notification_list(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'events/notification_list.html', {'notifications': notifications})
 
+@login_required
+def mark_notification_as_read(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    return redirect('notification_list')
 @login_required
 def chatroom_list(request):
     db = firestore.client()
@@ -345,11 +365,18 @@ def add_sponsorship(request):
 def toggle_activity_status(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
     if request.user == activity.organizer or request.user.is_staff:
-        if activity.check_status:  # 只有已審核的活動才能上下架
+        if activity.check_status:
             activity.is_active = not activity.is_active
             activity.save()
             status = "上架" if activity.is_active else "下架"
             messages.success(request, f'活動已{status}')
+            
+            # 創建通知
+            Notification.objects.create(
+                user=activity.organizer,
+                activity=activity,
+                message=f'您的活動 "{activity.title}" 已{status}'
+            )
         else:
             messages.error(request, '活動尚未通過審核，無法更改狀態')
     else:

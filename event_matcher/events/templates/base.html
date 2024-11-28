@@ -1,4 +1,5 @@
 {% load django_bootstrap5 %}
+{% load notification_tags %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="zh-Hant" data-bs-theme="auto">
@@ -104,15 +105,82 @@
         html, body {
           height: 100%;
       }
-      body {
-          display: flex;
-          flex-direction: column;
-      }
+    
+        
+
       main {
           flex: 1 0 auto;
       }
       footer {
           flex-shrink: 0;
+      }
+      /* 通知按鈕樣式 */
+      .nav-item.dropdown > .nav-link {
+        color: #71b8d9 !important; /* 使用醒目的黃色 */
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+      
+      .nav-item.dropdown > .nav-link:hover {
+        color: #8bcbe8 !important; /* 懸停時顏色變亮 */
+        transform: scale(1.05); /* 輕微放大效果 */
+      }
+      
+      /* 通知徽章樣式 */
+      .notification-badge {
+        position: absolute;
+        top: 0;
+        right: -5px;
+        font-size: 0.7rem;
+        padding: 0.25em 0.6em;
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px #343a40; /* 添加邊框，使其在深色背景中更加醒目 */
+        animation: pulse 2s infinite; /* 添加脈衝動畫 */
+      }
+      
+      /* 脈衝動畫 */
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+      }
+      
+      /* 下拉菜單樣式 */
+      .dropdown-menu {
+        border: none;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      }
+      
+      .dropdown-item.fw-bold {
+        background-color: #f8f9fa;
+      }
+      
+      .dropdown-item:hover {
+        background-color: #2c424d;
+      }
+      @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(3px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(3px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(1px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+      }
+      
+      .shake {
+        animation: shake 0.5s;
+        animation-iteration-count: 1;
       }
     </style>
 </head>
@@ -142,6 +210,35 @@
             <a class="nav-button" href="{% url 'check_activity' %}">管理頁面</a> </li>
             {% endif %}
           </ul>
+          <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+              <!-- 其他導航項目 -->
+              <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle position-relative" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    通知
+                    {% if unread_notifications_count > 0 %}
+                      <span class="badge bg-danger notification-badge">{{ unread_notifications_count }}</span>
+                    {% endif %}
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                    {% for notification in notifications %}
+                      <li>
+                        <a class="dropdown-item {% if not notification.is_read %}fw-bold{% endif %}" href="{% url 'mark_notification_as_read' notification.id %}">
+                          {{ notification.message }}
+                          <small class="text-muted d-block">{{ notification.created_at|date:"Y-m-d H:i" }}</small>
+                        </a>
+                      </li>
+                    {% empty %}
+                      <li><a class="dropdown-item" href="#">沒有新通知</a></li>
+                    {% endfor %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'notification_list' %}">查看所有通知</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </nav>
           <div class="d-flex align-items-center">
             {% if user.is_authenticated %}
               <a href="{% url 'logout' %}" class="nav-button">登出</a>
@@ -185,6 +282,47 @@
     document.addEventListener("DOMContentLoaded", function() {
         ScrollReveal().reveal('.feature-box', { interval: 100, origin: 'bottom', distance: '20px', duration: 500 });
     });
+    document.addEventListener('DOMContentLoaded', function() {
+      var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+      var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+          return new bootstrap.Dropdown(dropdownToggleEl)
+      })
+  });
+  document.addEventListener('DOMContentLoaded', function() {
+    var dropdownToggle = document.querySelector('.dropdown-toggle');
+    var dropdownMenu = document.querySelector('.dropdown-menu');
+    
+    dropdownToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!dropdownMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });
+});
+document.addEventListener('DOMContentLoaded', function() {
+  const notificationLink = document.querySelector('#navbarDropdownMenuLink');
+  const badge = notificationLink.querySelector('.notification-badge');
+  
+  if (badge) {
+    notificationLink.classList.add('has-notification');
+    
+    // 添加搖晃動畫
+    function shake() {
+      notificationLink.classList.add('shake');
+      setTimeout(() => {
+        notificationLink.classList.remove('shake');
+      }, 500);
+    }
+
+    // 每隔 5 秒搖晃一次
+    setInterval(shake, 5000);
+  }
+});
 </script>
 
 <!-- 引入 Bootstrap Bundle JS -->
