@@ -2,18 +2,20 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>通知列表</h2>
+    <h2 class="mb-4"> <br> </h2>
     {% if notifications %}
-        <ul class="list-group">
+        <div class="list-group">
         {% for notification in notifications %}
-            <li class="list-group-item {% if not notification.is_read %}list-group-item-info{% endif %}">
-                {{ notification.message }}
-                <small class="text-muted">{{ notification.created_at|date:"Y-m-d H:i" }}</small>
-            </li>
+            <div class="list-group-item d-flex justify-content-between align-items-center py-3 {% if not notification.is_read %}bg-light{% endif %}">
+                <div>
+                    <p class="mb-1">{{ notification.message }}</p>
+                    <small class="text-muted">{{ notification.created_at|date:"Y-m-d H:i" }}</small>
+                </div>
+            </div>
         {% endfor %}
-        </ul>
+        </div>
     {% else %}
-        <p>目前沒有通知。</p>
+        <div class="alert alert-info text-center">目前沒有通知。</div>
     {% endif %}
 </div>
 {% endblock %}
