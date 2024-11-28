@@ -14,8 +14,28 @@ from .forms import SponsorshipForm
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from firebase_admin import firestore
+from .models import Notification
 # 在 event_matcher/events/views.py 文件中
+def notifications(request):
+    if request.user.is_authenticated:
+        notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
+        unread_count = notifications.filter(is_read=False).count()
+        return {
+            'notifications': notifications,
+            'unread_notifications_count': unread_count
+        }
+    return {}
+@login_required
+def notification_list(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'events/notification_list.html', {'notifications': notifications})
 
+@login_required
+def mark_notification_as_read(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    return redirect('notification_list')
 @login_required
 def chatroom_list(request):
     db = firestore.client()
@@ -169,7 +189,7 @@ def check_sponsorship(request) :
 
 
 def activity_list(request):
-    activities = Activitynew.objects.all()
+    activities = Activitynew.objects.filter(check_status=True, is_active=True)
     sponsorships = Sponsorshipnew.objects.all()
     context = {
         'activities': activities,
@@ -223,7 +243,7 @@ def register_view(request):
 
 def activitynew_list(request):
     query = request.GET.get('q')
-    activities = Activitynew.objects.all()
+    activities = Activitynew.objects.filter(check_status=True, is_active=True)
 
     if query:
         activities = activities.filter(
@@ -247,7 +267,7 @@ def activitynew_list(request):
 
 def sponsorship_list(request, page=1):
     query = request.GET.get('q')
-    sponsorships = Sponsorshipnew.objects.all()
+    sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
     
     if query:
         sponsorships = sponsorships.filter(
@@ -289,7 +309,7 @@ def custom_logout(request):
 @login_required
 def profile_view(request):
     # 獲取用戶收藏的活動和贊助
-    favorite_activities = Activitynew.objects.filter(is_favorited=True)
+    favorite_activities = Activitynew.objects.filter(is_favorited=True, check_status=True,is_active=True)
     favorite_sponsorships = Sponsorshipnew.objects.filter(is_favorited=True)
     
     # 獲取用戶發布的活動
@@ -308,7 +328,7 @@ def sponsor_detail(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, pk=sponsorship_id)
     return render(request, 'events/sponsor_detail.html', {'sponsorship': sponsorship})
 def activity_detail(request, activity_id):
-    activity = get_object_or_404(Activitynew, pk=activity_id)
+    activity = get_object_or_404(Activitynew, id=activity_id, check_status=True)
     return render(request, 'events/activity_detail.html', {'activity': activity})
 def about_us(request):
     return render(request, 'events/aboutus.html')
@@ -319,7 +339,7 @@ def add_activity(request):
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
             activity = form.save(commit=False)
-            activity.organizer = request.user  # 假設您的 Activitynew 模型有一個 organizer 字段
+            activity.organizer = request.user
             activity.save()
             messages.success(request, '活動已成功創建!')
             return redirect('activity_detail', activity_id=activity.id)
@@ -345,11 +365,18 @@ def add_sponsorship(request):
 def toggle_activity_status(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
     if request.user == activity.organizer or request.user.is_staff:
-        if activity.check_status:  # 只有已審核的活動才能上下架
+        if activity.check_status:
             activity.is_active = not activity.is_active
             activity.save()
             status = "上架" if activity.is_active else "下架"
             messages.success(request, f'活動已{status}')
+            
+            # 創建通知
+            Notification.objects.create(
+                user=activity.organizer,
+                activity=activity,
+                message=f'您的活動 "{activity.title}" 已{status}'
+            )
         else:
             messages.error(request, '活動尚未通過審核，無法更改狀態')
     else:
@@ -360,7 +387,6 @@ def toggle_activity_status(request, activity_id):
 def edit_activity(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
     
-    # 檢查當前用戶是否為活動組織者
     if request.user != activity.organizer:
         messages.error(request, '您沒有權限編輯此活動')
         return redirect('activity_detail', activity_id=activity.id)

@@ -17,6 +17,12 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><strong>日期：</strong> {{ activity.date }}</li>
                         <li class="list-group-item"><strong>地點：</strong> {{ activity.location }}</li>
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">地圖位置</h5>
+                                <div id="map" style="height: 300px;"></div>
+                            </div>
+                        </div>
                         {% if activity.organizer %}
                             <li class="list-group-item"><strong>主辦方：</strong> {{ activity.organizer }}</li>
                         {% endif %}
@@ -172,4 +178,14 @@
     font-size: 1rem;
   }
 </style>
-{% endblock %}
+<script>
+    var lat = {{ activity.latitude }};
+    var lon = {{ activity.longitude }};
+    
+    var map = L.map('map').setView([lat, lon], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    
+    L.marker([lat, lon]).addTo(map);
+    </script>
+    {% endblock %}
+

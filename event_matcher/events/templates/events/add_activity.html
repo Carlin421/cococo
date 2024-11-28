@@ -17,21 +17,30 @@
                 {% csrf_token %}
                 {% for field in form %}
                     <div class="form-group mb-4">
-                        <label for="{{ field.id_for_label }}" class="form-label text-muted">{{ field.label }}</label>
-                        {% if field.field.widget.input_type == 'file' %}
-                        <div class="custom-file">
+                        {% if field.name != 'latitude' and field.name != 'longitude' %}
+                            <label for="{{ field.id_for_label }}" class="form-label text-muted">{{ field.label }}</label>
+                            {% if field.name == 'location' %}
+                                {{ field }}
+                                <input type="text" id="address" class="form-control mb-2" placeholder="搜尋地址">
+                                <button type="button" class="btn btn-secondary mb-2" onclick="geocode()">搜尋地址</button>
+                                <div id="map" style="height: 300px;" class="mb-2"></div>
+                            {% elif field.field.widget.input_type == 'file' %}
+                                <div class="custom-file">
+                                    {{ field }}
+                                    <label class="custom-file-label" for="{{ field.id_for_label }}">選擇文件</label>
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        {% else %}
                             {{ field }}
-                            <label class="custom-file-label" for="{{ field.id_for_label }}">選擇文件</label>
-                        </div>
-                    {% else %}
-                            {{ field }}
-                    {% endif %}
-                        {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
                         {% endif %}
-                        {% for error in field.errors %}
-                            <div class="invalid-feedback">{{ error }}</div>
-                        {% endfor %}
                     </div>
                 {% endfor %}
                 <button type="submit" class="btn btn-primary w-100">創建活動</button>
@@ -124,27 +133,34 @@
 
 </style>
 <script>
-document.addEventListener('DOMContentLoaded', (event) => {
-    // 表單驗證
-    var forms = document.querySelectorAll('.needs-validation')
-    Array.prototype.slice.call(forms).forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
-            form.classList.add('was-validated')
-        }, false)
-    })
+    var map = L.map('map').setView([23.69781, 120.96051], 7); // 台灣中心點
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-    // 文件輸入框美化
-    document.querySelectorAll('.custom-file-input').forEach(function(input) {
-        input.addEventListener('change', function(e) {
-            var fileName = e.target.files[0].name;
-            var nextSibling = e.target.nextElementSibling
-            nextSibling.innerText = fileName
-        })
-    })
-})
+var marker;
+
+map.on('click', function(e) {
+    if (marker) map.removeLayer(marker);
+    marker = L.marker(e.latlng).addTo(map);
+    document.getElementById('id_latitude').value = e.latlng.lat;
+    document.getElementById('id_longitude').value = e.latlng.lng;
+});
+
+function geocode() {
+    var address = document.getElementById('address').value;
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${address}&countrycodes=tw`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                var lat = parseFloat(data[0].lat);
+                var lon = parseFloat(data[0].lon);
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lon]).addTo(map);
+                map.setView([lat, lon], 13);
+                document.getElementById('id_latitude').value = lat;
+                document.getElementById('id_longitude').value = lon;
+                document.getElementById('id_location').value = address;
+            }
+        });
+}
 </script>
 {% endblock %}

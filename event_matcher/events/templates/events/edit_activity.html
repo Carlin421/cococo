@@ -1,16 +1,79 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}編輯活動 - {{ activity.title }}{% endblock %}
+{% block title %}編輯活動{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h1 class="mb-4">編輯活動</h1>
-    <form method="post" enctype="multipart/form-data">
+<div class="container mt-5">
+    <h2>編輯活動</h2>
+    <form method="post" enctype="multipart/form-data" class="needs-validation p-4" novalidate>
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">保存更改</button>
-        <a href="{% url 'activity_detail' activity.id %}" class="btn btn-secondary">取消</a>
+        {% for field in form %}
+            <div class="form-group mb-4">
+                {% if field.name != 'latitude' and field.name != 'longitude' %}
+                    <label for="{{ field.id_for_label }}" class="form-label text-muted">{{ field.label }}</label>
+                    {% if field.name == 'location' %}
+                        {{ field }}
+                        <input type="text" id="address" class="form-control mb-2" placeholder="搜尋地址">
+                        <button type="button" class="btn btn-secondary mb-2" onclick="geocode()">搜尋地址</button>
+                        <div id="map" style="height: 300px;" class="mb-2"></div>
+                    {% elif field.field.widget.input_type == 'file' %}
+                        <div class="custom-file">
+                            {{ field }}
+                            <label class="custom-file-label" for="{{ field.id_for_label }}">選擇文件</label>
+                        </div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                {% else %}
+                    {{ field }}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-100">更新活動</button>
     </form>
 </div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+var map = L.map('map').setView([{{ activity.latitude|default:23.69781 }}, {{ activity.longitude|default:120.96051 }}], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+var marker;
+
+if ({{ activity.latitude }} && {{ activity.longitude }}) {
+    marker = L.marker([{{ activity.latitude }}, {{ activity.longitude }}]).addTo(map);
+}
+
+map.on('click', function(e) {
+    if (marker) map.removeLayer(marker);
+    marker = L.marker(e.latlng).addTo(map);
+    document.getElementById('id_latitude').value = e.latlng.lat;
+    document.getElementById('id_longitude').value = e.latlng.lng;
+});
+
+function geocode() {
+    var address = document.getElementById('address').value;
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${address}&countrycodes=tw`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length > 0) {
+                var lat = parseFloat(data[0].lat);
+                var lon = parseFloat(data[0].lon);
+                if (marker) map.removeLayer(marker);
+                marker = L.marker([lat, lon]).addTo(map);
+                map.setView([lat, lon], 13);
+                document.getElementById('id_latitude').value = lat;
+                document.getElementById('id_longitude').value = lon;
+                document.getElementById('id_location').value = address;
+            }
+        });
+}
+</script>
 {% endblock %}

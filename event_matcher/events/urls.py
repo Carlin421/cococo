@@ -40,6 +40,8 @@ urlpatterns = [
     path('chatroom_list/', views.chatroom_list, name='chatroom_list'),
     path('toggle_activity_status/<int:activity_id>/', views.toggle_activity_status, name='toggle_activity_status'),
     path('activity/<int:activity_id>/edit/', views.edit_activity, name='edit_activity'),
+    path('notifications/', views.notification_list, name='notification_list'),
+    path('notifications/<int:notification_id>/mark-as-read/', views.mark_notification_as_read, name='mark_notification_as_read'),
 
 ]
 

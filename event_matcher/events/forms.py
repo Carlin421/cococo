@@ -49,9 +49,11 @@ class UserProfileForm(forms.ModelForm):
 class ActivityForm(forms.ModelForm):
     class Meta:
         model = Activitynew
-        fields = ['title', 'description', 'location', 'date', 'image']
+        fields = ['title', 'description', 'location', 'date', 'image','latitude', 'longitude']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput(),
         }
         labels = {
             'title': '活動標題',          
