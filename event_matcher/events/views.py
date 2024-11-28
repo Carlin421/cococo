@@ -189,7 +189,7 @@ def check_sponsorship(request) :
 
 
 def activity_list(request):
-    activities = Activitynew.objects.all()
+    activities = Activitynew.objects.filter(check_status=True, is_active=True)
     sponsorships = Sponsorshipnew.objects.all()
     context = {
         'activities': activities,
@@ -309,7 +309,7 @@ def custom_logout(request):
 @login_required
 def profile_view(request):
     # 獲取用戶收藏的活動和贊助
-    favorite_activities = Activitynew.objects.filter(is_favorited=True)
+    favorite_activities = Activitynew.objects.filter(is_favorited=True, check_status=True,is_active=True)
     favorite_sponsorships = Sponsorshipnew.objects.filter(is_favorited=True)
     
     # 獲取用戶發布的活動
@@ -328,7 +328,7 @@ def sponsor_detail(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, pk=sponsorship_id)
     return render(request, 'events/sponsor_detail.html', {'sponsorship': sponsorship})
 def activity_detail(request, activity_id):
-    activity = get_object_or_404(Activitynew, pk=activity_id)
+    activity = get_object_or_404(Activitynew, id=activity_id, check_status=True)
     return render(request, 'events/activity_detail.html', {'activity': activity})
 def about_us(request):
     return render(request, 'events/aboutus.html')
