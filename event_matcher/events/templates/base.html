@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hant" data-bs-theme="auto">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}COCO{% endblock %}</title>
@@ -63,7 +64,7 @@
         /*background-color: #ffffff; /* 白色背景 */
         padding: 10px 20px; /* 上下內邊距 */
         border-bottom: 1px solid #ddd; /* 添加下邊框 */
-        gap: 1000px; /* 按鈕間距 */
+        gap: 20px;  /* 按鈕間距 */
       }
 
       /* 按鈕樣式 */
@@ -94,9 +95,20 @@
       /* 行動裝置適配 */
       @media (max-width: 768px) {
         .nav-button {
-          font-size: 12px; /* 減小文字大小 */
-          padding: 8px 15px; /* 減少按鈕內邊距 */
-        }
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+    }
+    .leaflet-container {
+    width: 100%;
+    height: 300px; /* 根據需求調整高度 */
+}
+      @media (max-width: 768px) {
+          .leaflet-container {
+              height: 200px; /* 在小螢幕上縮小地圖高度 */
+          }
       }
 
 
@@ -106,7 +118,20 @@
         html, body {
           height: 100%;
       }
-    
+      @media (max-width: 768px) {
+    footer .row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    footer .col-md-3 {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+}
+
         
 
       main {
@@ -184,9 +209,7 @@
         animation-iteration-count: 1;
       }
       .alert-message {
-        position: fixed;
-        top: 80px;  /* 調整這個值以適應你的導航欄高度 */
-        right: 20px;
+        top: calc(env(safe-area-inset-top) + 80px);
         z-index: 9999;
         max-width: 300px;
         padding: 15px;
