@@ -150,3 +150,5 @@ LOGOUT_REDIRECT_URL = '/'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '997069648513-uq2u0l831qemlh3msro1121orc7kd6ra.apps.googleusercontent.com' # Google Consumer Key
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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' # Google Consumer Secret
+
+
