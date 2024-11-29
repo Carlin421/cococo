@@ -122,32 +122,113 @@
 </div>
 
 <style>
-  body {
-    background-color: #f8f9fa;
+/* General Body Styling */
+body {
+  background-color: #f9f9f9;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+/* Card Styling */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  background-color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-footer {
+  background-color: #ffffff;
+  border-top: 1px solid #ebebeb;
+  padding: 0.75rem 1rem;
+}
+
+/* Button Styling */
+.btn {
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-primary {
+  color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0056b3;
+  color: #ffffff;
+}
+
+/* List Group Items */
+.list-group-item {
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f4f4f4;
+}
+
+.badge {
+  font-size: 0.85rem;
+  border-radius: 10px;
+}
+
+/* Badge Colors */
+.bg-warning {
+  background-color: #ffcc00 !important;
+  color: #333;
+}
+
+.bg-success {
+  background-color: #28a745 !important;
+}
+
+.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+/* User Profile Image */
+.img-fluid {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+/* Responsive Layout */
+@media (min-width: 992px) {
+  .row.gy-4 {
+    gap: 1.5rem;
   }
 
-  .card-header {
-    font-weight: bold;
-    font-size: 1.1rem;
+  .col-lg-6 {
+    flex: 0 0 calc(50% - 0.75rem);
   }
+}
 
-  .btn-outline-primary {
-    color: #637290;
-    border-color: #637290;
-  }
+/* Custom Container Padding */
+.container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
 
-  .btn-outline-primary:hover {
-    background-color: #637290;
-    color: white;
-  }
-
-  .list-group-item {
-    border: none;
-    padding: 0.75rem 1.25rem;
-  }
-
-  .list-group-item:hover {
-    background-color: #f1f1f1;
-  }
 </style>
 {% endblock %}

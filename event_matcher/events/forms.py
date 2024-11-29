@@ -49,9 +49,10 @@ class UserProfileForm(forms.ModelForm):
 class ActivityForm(forms.ModelForm):
     class Meta:
         model = Activitynew
-        fields = ['title', 'description', 'location', 'date', 'image','latitude', 'longitude']
+        fields = ['title', 'description', 'location', 'date','registration_deadline', 'image','latitude', 'longitude']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
+            'registration_deadline':forms.DateInput(attrs={'type': 'date'}),
             'latitude': forms.HiddenInput(),
             'longitude': forms.HiddenInput(),
         }
@@ -59,7 +60,8 @@ class ActivityForm(forms.ModelForm):
             'title': '活動標題',          
             'description': '活動描述',    
             'location': '活動位置',    
-            'date': '活動日期',          
+            'date': '活動日期',
+            'registration_deadline': '截止日期',              
             'image': '活動圖片',           
         }
 class SponsorshipForm(forms.ModelForm):
