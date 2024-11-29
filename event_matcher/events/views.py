@@ -16,7 +16,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from firebase_admin import firestore
 from .models import Notification
 # 在 event_matcher/events/views.py 文件中
-def notifications(request):
+def notifications(request):    
     if request.user.is_authenticated:
         notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:5]
         unread_count = notifications.filter(is_read=False).count()
@@ -144,9 +144,21 @@ def get_or_create_chat(user1, user2):
 @login_required
 def toggle_sponsorship_check(request, event_id):
     event = get_object_or_404(Sponsorshipnew, id=event_id)
-    event.check_status = not event.check_status
-    event.save()
-    return redirect('check_activity')
+    if request.user.is_staff:
+        event.check_status = not event.check_status
+        event.save()
+        status = "通過審核" if event.check_status else "取消審核"
+        messages.success(request, f'贊助 "{event.title}" 已{status}')
+    else:
+        messages.error(request, '您沒有權限執行此操作')
+    
+    # 使用 HTTP_REFERER 返回到之前的頁面
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    else:
+        # 如果沒有 referer，則重定向到一個默認頁面
+        return redirect('sponsorship_list')  # 或者其他適當的頁面
 
 @login_required
 def toggle_activity_check(request, event_id):
@@ -243,7 +255,11 @@ def register_view(request):
 
 def activitynew_list(request):
     query = request.GET.get('q')
-    activities = Activitynew.objects.filter(check_status=True, is_active=True)
+    if request.user.is_staff:
+        activities = Activitynew.objects.all()
+    else:
+        activities = Activitynew.objects.filter(check_status=True, is_active=True)
+    
 
     if query:
         activities = activities.filter(
@@ -328,8 +344,11 @@ def sponsor_detail(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, pk=sponsorship_id)
     return render(request, 'events/sponsor_detail.html', {'sponsorship': sponsorship})
 def activity_detail(request, activity_id):
-    activity = get_object_or_404(Activitynew, id=activity_id, check_status=True)
-    return render(request, 'events/activity_detail.html', {'activity': activity})
+    activity = get_object_or_404(Activitynew, id=activity_id)
+    context = {'activity': activity}
+    if not activity.check_status:
+        context['pending_approval'] = True
+    return render(request, 'events/activity_detail.html', context)
 def about_us(request):
     return render(request, 'events/aboutus.html')
 
@@ -401,3 +420,62 @@ def edit_activity(request, activity_id):
         form = ActivityForm(instance=activity)
     
     return render(request, 'events/edit_activity.html', {'form': form, 'activity': activity})
+@login_required
+def toggle_sponsorship_status(request, sponsorship_id):
+    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
+    if request.user == sponsorship.organizer or request.user.is_staff:
+        if sponsorship.check_status:
+            sponsorship.is_active = not sponsorship.is_active
+            sponsorship.save()
+            status = "上架" if sponsorship.is_active else "下架"
+            messages.success(request, f'贊助已{status}')
+            
+            # 創建通知
+            Notification.objects.create(
+                user=sponsorship.organizer,
+                sponsorship=sponsorship,
+                message=f'您的贊助 "{sponsorship.title}" 已{status}'
+            )
+        else:
+            messages.error(request, '贊助尚未通過審核，無法更改狀態')
+    else:
+        messages.error(request, '您沒有權限執行此操作')
+    return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
+
+@login_required
+def edit_sponsorship(request, sponsorship_id):
+    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
+    
+    if request.user != sponsorship.organizer:
+        messages.error(request, '您沒有權限編輯此贊助')
+        return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
+    
+    if request.method == 'POST':
+        form = SponsorshipForm(request.POST, request.FILES, instance=sponsorship)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '贊助已成功更新')
+            return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
+    else:
+        form = SponsorshipForm(instance=sponsorship)
+    
+    return render(request, 'events/edit_sponsorship.html', {'form': form, 'sponsorship': sponsorship})
+
+@login_required
+def delete_activity(request, activity_id):
+    activity = get_object_or_404(Activitynew, id=activity_id)
+    
+    if request.user != activity.organizer and not request.user.is_staff:
+        messages.error(request, '您沒有權限刪除此活動')
+        return redirect('activity_detail', activity_id=activity.id)
+
+    if request.method == 'POST':
+        confirmation = request.POST.get('confirmation', '')
+        if confirmation == activity.title:
+            activity.delete()
+            messages.success(request, '活動已成功刪除')
+            return redirect('activitynew_list')  # 或其他適當的頁面
+        else:
+            messages.error(request, '確認文字不匹配，活動未被刪除')
+    
+    return render(request, 'events/delete_activity.html', {'activity': activity})

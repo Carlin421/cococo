@@ -64,7 +64,23 @@
                     {% else %}
                         <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary w-100 mt-3">登入以收藏</a>
                     {% endif %}
+                    
                 </div>
+                {% if user == sponsorship.organizer or user.is_staff %}
+    {% if sponsorship.check_status %}
+        <form method="POST" action="{% url 'toggle_sponsorship_status' sponsorship.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning w-100 mt-3">
+                {% if sponsorship.is_active %}下架贊助{% else %}上架贊助{% endif %}
+            </button>
+        </form>
+    {% else %}
+        <p class="text-muted">贊助正在審核中，無法更改狀態</p>
+    {% endif %}
+{% endif %}
+                {% if user == sponsorship.organizer %}
+    <a href="{% url 'edit_sponsorship' sponsorship.id %}" class="btn btn-primary">編輯贊助</a>
+{% endif %}
             </div>
         </div>
     </div>

@@ -183,6 +183,49 @@
         animation: shake 0.5s;
         animation-iteration-count: 1;
       }
+      .alert-message {
+        position: fixed;
+        top: 80px;  /* 調整這個值以適應你的導航欄高度 */
+        right: 20px;
+        z-index: 9999;
+        max-width: 300px;
+        padding: 15px;
+        border-radius: 4px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        cursor: pointer;
+    }
+
+    .alert-message.show {
+        opacity: 1;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+    .alert-message::after {
+      content: '\00d7'; /* 添加一個 'x' 符號 */
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      font-size: 20px;
+      font-weight: bold;
+  }
     </style>
 </head>
 <body>
@@ -255,6 +298,9 @@
 </header>
 
 <main>
+  {% if messages %}
+  <div id="alert-container"></div>
+{% endif %}
     {% block content %}
     {% endblock %}
 
@@ -324,6 +370,51 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(shake, 5000);
   }
 });
+document.addEventListener('DOMContentLoaded', function() {
+  var messages = [
+      {% for message in messages %}
+          {
+              message: "{{ message }}",
+              tags: "{{ message.tags }}"
+          },
+      {% endfor %}
+  ];
+
+  var alertContainer = document.getElementById('alert-container');
+
+  messages.forEach(function(msg) {
+      var alertElement = document.createElement('div');
+      alertElement.className = 'alert-message alert-' + msg.tags;
+      alertElement.textContent = msg.message;
+
+      // 添加點擊事件
+      alertElement.addEventListener('click', function() {
+          closeAlert(alertElement);
+      });
+
+      alertContainer.appendChild(alertElement);
+
+      setTimeout(function() {
+          alertElement.classList.add('show');
+      }, 100);
+
+      // 設置自動消失
+      setTimeout(function() {
+          closeAlert(alertElement);
+      }, 5000);  // 5秒後消失
+  });
+
+  // 關閉 alert 的函數
+  function closeAlert(alertElement) {
+      alertElement.classList.remove('show');
+      setTimeout(function() {
+          if (alertElement.parentNode === alertContainer) {
+              alertContainer.removeChild(alertElement);
+          }
+      }, 300);
+  }
+});
+
 </script>
 
 <!-- 引入 Bootstrap Bundle JS -->
