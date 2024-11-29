@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
+from django.core.validators import MinValueValidator
 
 
 #11/19 這塊還未使用在任何介面
@@ -17,6 +18,8 @@ class UserProfile(models.Model):
 class Activitynew(models.Model):
     title = models.CharField(max_length=200)           # 活動名稱
     description = models.TextField()                   # 活動描述
+    max_participants = models.IntegerField(null=True, blank=True)   #參與人數上限
+    current_participants = models.IntegerField(null=True, blank=True)   #目前報名人數
     location = models.CharField(max_length=255, verbose_name="活動地點")
     latitude = models.FloatField(null=True, blank=True, verbose_name="緯度")
     longitude = models.FloatField(null=True, blank=True, verbose_name="經度")
@@ -41,7 +44,7 @@ class Sponsorshipnew(models.Model):
     title = models.CharField(max_length=200)            # 贊助名稱
     description = models.TextField()                    # 贊助描述
     sponsor = models.CharField(max_length=100)          # 贊助者名稱
-    amount = models.DecimalField(max_digits=10, decimal_places=2)  # 贊助金額
+    amount = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(1)])  # 贊助金額
     image = models.ImageField(upload_to='sponsorship_images/', blank=True, null=True)  # 贊助圖片
     location = models.CharField(max_length=100,default="unknown")        # 贊助地點
     date_posted = models.DateTimeField(default=timezone.now)  # 贊助發布日期
