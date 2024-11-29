@@ -42,6 +42,8 @@ urlpatterns = [
     path('activity/<int:activity_id>/edit/', views.edit_activity, name='edit_activity'),
     path('notifications/', views.notification_list, name='notification_list'),
     path('notifications/<int:notification_id>/mark-as-read/', views.mark_notification_as_read, name='mark_notification_as_read'),
-
+    path('toggle_sponsorship_status/<int:sponsorship_id>/', views.toggle_sponsorship_status, name='toggle_sponsorship_status'),
+    path('edit_sponsorship/<int:sponsorship_id>/', views.edit_sponsorship, name='edit_sponsorship'),
+    path('activity/<int:activity_id>/delete/', views.delete_activity, name='delete_activity'),
 ]
 

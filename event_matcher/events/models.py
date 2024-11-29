@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
 
+
 #11/19 這塊還未使用在任何介面
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -56,7 +57,8 @@ class Sponsorshipnew(models.Model):
     
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    activity = models.ForeignKey('Activitynew', on_delete=models.CASCADE, related_name='notifications')
+    activity = models.ForeignKey('Activitynew', on_delete=models.CASCADE, null=True, blank=True)
+    sponsorship = models.ForeignKey('Sponsorshipnew', on_delete=models.CASCADE, null=True, blank=True)
     message = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
