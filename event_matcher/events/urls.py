@@ -45,5 +45,6 @@ urlpatterns = [
     path('toggle_sponsorship_status/<int:sponsorship_id>/', views.toggle_sponsorship_status, name='toggle_sponsorship_status'),
     path('edit_sponsorship/<int:sponsorship_id>/', views.edit_sponsorship, name='edit_sponsorship'),
     path('activity/<int:activity_id>/delete/', views.delete_activity, name='delete_activity'),
+    path('sponsor/<int:sponsorship_id>/delete/', views.delete_sponsorship, name='delete_sponsorship'),
 ]
 

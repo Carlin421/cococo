@@ -81,6 +81,9 @@
                 {% if user == sponsorship.organizer %}
     <a href="{% url 'edit_sponsorship' sponsorship.id %}" class="btn btn-primary">編輯贊助</a>
 {% endif %}
+{% if user == sponsorship.organizer or user.is_staff %}
+    <a href="{% url 'delete_sponsorship' sponsorship.id %}" class="btn btn-danger mt-3">刪除贊助</a>
+{% endif %}
             </div>
         </div>
     </div>

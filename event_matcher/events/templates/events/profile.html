@@ -4,45 +4,35 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="text-center mb-4">
-        <h1 class="display-5">Welcome, {{ user.username }}!</h1>
-    </div>
-
-    <div class="row gy-4 justify-content-center">
-        <!-- Profile Card -->
-        <div class="col-lg-6">
+    <!-- Profile Section -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8 text-center">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-light text-dark">
-                    <h5 class="mb-0">個人資料</h5>
-                </div>
                 <div class="card-body">
-                    <div class="row">
-                        <!-- 左側：照片 -->
-                        <div class="col-md-4 d-flex align-items-center justify-content-center">
-                            {% if user_extend.photo %}
-                            <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded mb-4">
-                            {% else %}
-                            <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="max-width: 150px;">
-                            {% endif %}
-                        </div>
-                        <!-- 右側：用戶信息 -->
-                        <div class="col-md-8">
-                            <p class="mb-2"><strong>Username:</strong> {{ user.username }}</p>
-                            <p class="mb-2"><strong>Email:</strong> {{ user.email }}</p>
-                            <p class="mb-2"><strong>Date Joined:</strong> {{ user.date_joined }}</p>
-                            <p class="mb-2"><strong>Description:</strong> {{ user_extend.description }}</p>
-                        </div>
+                    <!-- Profile Picture -->
+                    <div class="mb-3">
+                        {% if user_extend.photo %}
+                        <img src="{{ user_extend.photo.url }}" alt="{{ user.username }}" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                        <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% endif %}
                     </div>
-                </div>
-                <div class="card-footer bg-light">
+
+                    <!-- User Info -->
+                    <h2 class="mb-1">{{ user.username }}</h2>
+                    <p class="text-muted mb-1">{{ user.email }}</p>
+                    <p class="text-muted">加入日期: {{ user.date_joined|date:"Y-m-d" }}</p>
+                    <p>{{ user_extend.description }}</p>
+
                     <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">編輯個人資料</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Favorites Section -->
-    <div class="row gy-4 mt-5">
+    <!-- Collections Section -->
+    <div class="row gy-4">
+        <!-- My Favorite Activities -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-light text-dark">
@@ -66,6 +56,7 @@
             </div>
         </div>
 
+        <!-- My Favorite Sponsorships -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-light text-dark">
@@ -89,6 +80,7 @@
             </div>
         </div>
 
+        <!-- My Posted Activities -->
         <div class="col-lg-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-light text-dark">
@@ -118,117 +110,95 @@
                 </div>
             </div>
         </div>
+
+        <!-- My Posted Sponsorships -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light text-dark">
+                    <h5 class="mb-0">我發布的贊助</h5>
+                </div>
+                <div class="card-body">
+                    {% if user_sponsorships %}
+                        <ul class="list-group list-group-flush">
+                            {% for sponsorship in user_sponsorships %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">
+                                        {{ sponsorship.title }}
+                                    </a>
+                                    {% if not sponsorship.check_status %}
+                                        <span class="badge bg-warning text-dark">審核中</span>
+                                    {% elif sponsorship.check_status and sponsorship.is_active %}
+                                        <span class="badge bg-success">已上架</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">已下架</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">你還沒有發布任何贊助。</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+
+
+
 <style>
-/* General Body Styling */
+/* Styling for Profile Page */
 body {
-  background-color: #f9f9f9;
-  font-family: 'Inter', sans-serif;
-  color: #333;
+    background-color: #f9f9f9;
+    font-family: 'Inter', sans-serif;
+    color: #333;
 }
-
-/* Card Styling */
 .card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
-
 .card-header {
-  background-color: #ffffff;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 1rem;
-  border-bottom: 1px solid #ebebeb;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ebebeb;
+    font-weight: 600;
 }
-
 .card-body {
-  padding: 1.25rem;
+    padding: 1.25rem;
 }
-
-.card-footer {
-  background-color: #ffffff;
-  border-top: 1px solid #ebebeb;
-  padding: 0.75rem 1rem;
-}
-
-/* Button Styling */
-.btn {
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.btn-outline-primary {
-  color: #0056b3;
-  border-color: #0056b3;
-}
-
-.btn-outline-primary:hover {
-  background-color: #0056b3;
-  color: #ffffff;
-}
-
-/* List Group Items */
-.list-group-item {
-  border: none;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  transition: background-color 0.3s ease;
-}
-
-.list-group-item:hover {
-  background-color: #f4f4f4;
-}
-
-.badge {
-  font-size: 0.85rem;
-  border-radius: 10px;
-}
-
-/* Badge Colors */
-.bg-warning {
-  background-color: #ffcc00 !important;
-  color: #333;
-}
-
-.bg-success {
-  background-color: #28a745 !important;
-}
-
-.bg-secondary {
-  background-color: #6c757d !important;
-}
-
-/* User Profile Image */
 .img-fluid {
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
+    border-radius: 50%;
+    object-fit: cover;
 }
-
-/* Responsive Layout */
-@media (min-width: 992px) {
-  .row.gy-4 {
-    gap: 1.5rem;
-  }
-
-  .col-lg-6 {
-    flex: 0 0 calc(50% - 0.75rem);
-  }
+.btn-outline-primary {
+    color: #0056b3;
+    border-color: #0056b3;
 }
-
-/* Custom Container Padding */
-.container {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+.btn-outline-primary:hover {
+    background-color: #0056b3;
+    color: #ffffff;
 }
-
+.list-group-item {
+    border: none;
+    padding: 0.75rem 1rem;
+    transition: background-color 0.3s ease;
+}
+.list-group-item:hover {
+    background-color: #f4f4f4;
+}
+.badge {
+    font-size: 0.85rem;
+    border-radius: 10px;
+}
+.bg-warning {
+    background-color: #ffcc00 !important;
+    color: #333;
+}
+.bg-success {
+    background-color: #28a745 !important;
+}
+.bg-secondary {
+    background-color: #6c757d !important;
+}
 </style>
 {% endblock %}

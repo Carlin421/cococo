@@ -255,6 +255,11 @@
             <li class="nav-item">
               <a class="nav-button" href="{% url 'chatroom_list' %}">聊天室列表</a>
             </li>
+            {% if user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-button" href="{% url 'check_activity' %}">審核頁</a>
+            </li>
+            {% endif %}
           </ul>
 
           <!-- 通知和用戶操作 -->

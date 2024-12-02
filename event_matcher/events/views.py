@@ -328,8 +328,9 @@ def profile_view(request):
     favorite_activities = Activitynew.objects.filter(is_favorited=True, check_status=True,is_active=True)
     favorite_sponsorships = Sponsorshipnew.objects.filter(is_favorited=True)
     
-    # 獲取用戶發布的活動
+    # 獲取用戶發布的活動和贊助
     user_activities = Activitynew.objects.filter(organizer=request.user)
+    user_sponsorships = Sponsorshipnew.objects.filter(organizer=request.user)
     
     # 用戶的照片跟描述
     user_extend = UserProfile.objects.get(user=request.user)
@@ -337,6 +338,7 @@ def profile_view(request):
         'favorite_activities': favorite_activities,
         'favorite_sponsorships': favorite_sponsorships,
         'user_activities': user_activities,
+        'user_sponsorships':user_sponsorships,
         'user_extend': user_extend
     }
     return render(request, 'events/profile.html', context)
@@ -479,3 +481,22 @@ def delete_activity(request, activity_id):
             messages.error(request, '確認文字不匹配，活動未被刪除')
     
     return render(request, 'events/delete_activity.html', {'activity': activity})
+
+@login_required
+def delete_sponsorship(request, sponsorship_id):
+    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
+    
+    if request.user != sponsorship.organizer and not request.user.is_staff:
+        messages.error(request, '您沒有權限刪除此贊助')
+        return redirect('sponsorship_detail', sponsorship_id=sponsorship_id)
+
+    if request.method == 'POST':
+        confirmation = request.POST.get('confirmation', '')
+        if confirmation ==  sponsorship.title:
+            sponsorship.delete()
+            messages.success(request, '贊助已成功刪除')
+            return redirect('sponsorship_list')  # 或其他適當的頁面
+        else:
+            messages.error(request, '確認文字不匹配，贊助未被刪除')
+    
+    return render(request, 'events/delete_sponsorship.html', {'sponsorship': sponsorship})

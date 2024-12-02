@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>刪除贊助</h2>
+    <p>您確定要刪除贊助 "{{ sponsorship.title }}" 嗎？此操作不可逆。</p>
+    <p>請輸入贊助名稱以確認刪除：</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="text" name="confirmation" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-danger mt-3">確認刪除</button>
+    </form>
+    <a href="{% url 'sponsor_detail' sponsorship.id %}" class="btn btn-secondary mt-3">取消</a>
+</div>
+{% endblock %}

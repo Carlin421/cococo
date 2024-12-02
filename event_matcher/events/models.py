@@ -44,9 +44,15 @@ class Sponsorshipnew(models.Model):
     title = models.CharField(max_length=200)            # 贊助名稱
     description = models.TextField()                    # 贊助描述
     sponsor = models.CharField(max_length=100)          # 贊助者名稱
-    amount = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(1)])  # 贊助金額
+    item = models.CharField(max_length=100,default=" ") #贊助商品
+    people = models.TextField(max_length=100,default=" ") #宣傳模式
+    amount = models.DecimalField(
+    max_digits=10, 
+    decimal_places=2, 
+    validators=[MinValueValidator(0)]  # 0作最小值
+)  # 贊助金額
     image = models.ImageField(upload_to='sponsorship_images/', blank=True, null=True)  # 贊助圖片
-    location = models.CharField(max_length=100,default="unknown")        # 贊助地點
+    location = models.CharField(max_length=100,default=" ")        # 贊助地點
     date_posted = models.DateTimeField(default=timezone.now)  # 贊助發布日期
     is_favorited = models.BooleanField(default=False)   # 收藏狀態
     check_status = models.BooleanField(default=False) # 審核狀態

@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Activitynew,Sponsorshipnew,UserProfile
+from django.contrib.auth.hashers import make_password
+
 
 class UserPhotoForm(forms.ModelForm):
     class Meta:
@@ -33,10 +35,18 @@ class RegisterForm(forms.ModelForm):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         password_confirm = cleaned_data.get("password_confirm")
-        
+
         if password != password_confirm:
             self.add_error('password_confirm', "Passwords do not match.")
         return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.password = make_password(self.cleaned_data["password"])  # 加密密碼
+        if commit:
+            user.save()
+        return user
+
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
@@ -69,10 +79,12 @@ class ActivityForm(forms.ModelForm):
 class SponsorshipForm(forms.ModelForm):
     class Meta:
         model = Sponsorshipnew
-        fields = ['title', 'description', 'amount', 'location', 'image']
+        fields = ['title', 'description', 'item','amount','people', 'location', 'image']
         labels = {
             'title': '贊助標題',          
-            'description': '贊助描述',   
+            'description': '贊助介紹',
+            'item':'贊助商品',
+            'people': '宣傳模式',
             'amount': '贊助金額',        
             'location': '贊助地點',      
             'image': '贊助圖片',     
