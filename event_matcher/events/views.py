@@ -351,15 +351,11 @@ def activitynew_list(request):
         )
     
     if request.user.is_authenticated:
-        # 为每个活动添加 is_favorited 属性
-        activities = activities.annotate(
-            is_favorited=Exists(
-                Favorite.objects.filter(
-                    user=request.user,
-                    activity=OuterRef('pk')
-                )
-            )
-        )
+        for activity in activities:
+            activity.is_favorited = activity.favorite_set.filter(user=request.user).exists()
+    else:
+        for activity in activities:
+            activity.is_favorited = False
     context = {
         'activity_list': activities,
         'query': query
@@ -389,14 +385,11 @@ def sponsorship_list(request, page=1):
     
     # 添加收藏狀態
     if request.user.is_authenticated:
-        sponsorships = sponsorships.annotate(
-            is_favorited=Exists(
-                Favorite.objects.filter(
-                    user=request.user,
-                    sponsorship=OuterRef('pk')
-                )
-            )
-        )
+        for sponsorship in sponsorships:
+            sponsorship.is_favorited = sponsorship.favorite_set.filter(user=request.user).exists()
+    else:
+        for sponsorship in sponsorships:
+            sponsorship.is_favorited = False
     
     paginator = Paginator(sponsorships, 10)  # 每頁顯示 10 個項目
     
@@ -467,11 +460,14 @@ def add_activity(request):
     if not request.user.profile.is_club:
                 messages.error(request, '只有社團方可以新增活動。')
     if request.method == 'POST':
-        form = ActivityForm(request.POST, request.FILES)
-        if form.is_valid():
-            if not request.user.profile.is_club:
-                messages.error(request, '只有社團方可以新增活動。')
-            else:
+        if not request.user.is_authenticated:
+            messages.error(request, '請先登入才能創建活動。')
+            return redirect('login')  # 替換成您的登入頁面 URL 名稱
+        
+        if not request.user.profile.is_club:  # 假設您有一個 profile 模型來存儲用戶類型
+            messages.error(request, '只有社團方可以創建活動。')
+            return redirect('activity_list') 
+        else:
                 activity = form.save(commit=False)
                 activity.organizer = request.user
                 activity.save()
@@ -492,11 +488,14 @@ def add_sponsorship(request):
     if not request.user.profile.is_brand:
                 messages.error(request, '只有品牌方可以新增贊助。')
     if request.method == 'POST':
-        form = SponsorshipForm(request.POST, request.FILES)
-        if form.is_valid():
-            if not request.user.profile.is_brand:
-                messages.error(request, '只有品牌方可以新增贊助。')
-            else:
+        if not request.user.is_authenticated:
+            messages.error(request, '請先登入才能創建贊助。')
+            return redirect('login')  # 替換成您的登入頁面 URL 名稱
+        
+        if not request.user.profile.is_brand:  # 假設您有一個 profile 模型來存儲用戶類型
+            messages.error(request, '只有品牌方可以創建贊助。')
+            return redirect('sponsorship_list') 
+        else:
                 sponsorship = form.save(commit=False)
                 sponsorship.organizer = request.user
                 sponsorship.save()
