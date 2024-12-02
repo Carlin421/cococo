@@ -48,6 +48,8 @@ def chatroom_list(request):
         
         # 檢查是否有消息，如果沒有，設置一個默認值
         messages = chat_dict.get('messages', {})
+    
+    # 導回通知列表
         if messages:
             last_message_key = max(messages, key=lambda k: messages[k]['timestamp'])
             last_message = messages[last_message_key].get('content', '暫無消息')
@@ -202,7 +204,7 @@ def check_sponsorship(request) :
 
 def activity_list(request):
     activities = Activitynew.objects.filter(check_status=True, is_active=True)
-    sponsorships = Sponsorshipnew.objects.all()
+    sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
     context = {
         'activities': activities,
         'sponsorships': sponsorships
@@ -283,7 +285,12 @@ def activitynew_list(request):
 
 def sponsorship_list(request, page=1):
     query = request.GET.get('q')
-    sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
+    if request.user.is_staff:
+        sponsorships = Sponsorshipnew.objects.all()
+    else:
+        sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
+    
+    
     
     if query:
         sponsorships = sponsorships.filter(
