@@ -285,7 +285,12 @@ def activitynew_list(request):
 
 def sponsorship_list(request, page=1):
     query = request.GET.get('q')
-    sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
+    if request.user.is_staff:
+        sponsorships = Sponsorshipnew.objects.all()
+    else:
+        sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
+    
+    
     
     if query:
         sponsorships = sponsorships.filter(
