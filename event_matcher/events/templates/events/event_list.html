@@ -196,7 +196,7 @@
 <div class="container marketing py-5 fade-in-up">
   <h2 class="text-center mb-4">最新活動</h2>
   <div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for activity in activities %}
+    {% for activity in activities|slice:":3" %}
     {% if activity.check_status%}
       <div class="col">
         <div class="card h-100 shadow-lg rounded border-0 animate-card">
@@ -208,6 +208,10 @@
             <p class="card-text text-muted">{{ activity.description|truncatewords:20 }}</p>
           </div>
           <ul class="list-group list-group-flush">
+            <li class="list-group-item"><i class="fas fa-user me-2"></i>
+              <a href="{% url 'user_profile' activity.organizer.id %}" class="text-decoration-none text-primary">
+                {{ activity.organizer }}
+              </a>
             <li class="list-group-item"><i class="fas fa-map-marker-alt me-2"></i>{{ activity.location }}</li>
             <li class="list-group-item"><i class="fas fa-calendar-alt me-2"></i>{{ activity.date }}</li>
           </ul>
@@ -233,7 +237,7 @@
 <div class="container marketing py-5 bg-light fade-in-up">
   <h2 class="text-center mb-4">最新贊助</h2>
   <div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for sponsorship in sponsorships %}
+    {% for sponsorship in sponsorships|slice:":3" %}
     {% if sponsorship.check_status%}
       <div class="col">
         <div class="card h-100 shadow-lg rounded border-0 animate-card">
@@ -245,7 +249,11 @@
             <p class="card-text text-muted">{{ sponsorship.description|truncatewords:20 }}</p>
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item"><i class="fas fa-user me-2"></i>{{ sponsorship.organizer }}</li>
+            <li class="list-group-item"><i class="fas fa-user me-2"></i>
+              <a href="{% url 'user_profile' sponsorship.organizer.id %}" class="text-decoration-none text-primary">
+                {{ sponsorship.organizer }}
+              </a>
+            </li>
             <li class="list-group-item"><i class="fas fa-dollar-sign me-2"></i>{{ sponsorship.amount }}</li>
             <li class="list-group-item"><i class="fas fa-dollar-sign me-2"></i>{{ sponsorship.item }}</li>
             <li class="list-group-item"><i class="fas fa-map-marker-alt me-2"></i>{{ sponsorship.location }}</li>

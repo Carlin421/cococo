@@ -16,4 +16,9 @@ class Migration(migrations.Migration):
             name='date_posted',
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
+        migrations.AlterField(
+            model_name='activitynew',
+            name='date_posted',
+            field=models.DateTimeField(default=django.utils.timezone.now),
+        ),
     ]

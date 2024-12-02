@@ -4,9 +4,8 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-5">Welcome, {{ user.username }}!</h1>
-    </div>
+    <!-- 頭部 -->
+
     {% if user.id != request.user.id %}
     <div class="d-flex justify-content-center mb-4">
         <a href="{% url 'chatroom' chat_id=chat_id %}" class="btn btn-outline-primary rounded-pill px-4 py-2">
@@ -14,37 +13,28 @@
         </a>
     </div>
     {% endif %}
-    <div class="row gy-4">
-        <!-- Profile Card -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0">
-                <!--    <h5 class="mb-0 text-primary fw-bold">Your Profile Information</h5> -->
-                </div>
+
+    <div class="row">
+        <!-- 左側個人資訊 -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center">
                 <div class="card-body">
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="me-4">
-                            {% if user_extend.photo %}
-                            <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
-                            {% else %}
-                            <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
-                            {% endif %}
-                        </div>
-                        <div>
-                            <p class="mb-1"><strong>Username:</strong> {{ user.username }}</p>
-                            <p class="mb-1"><strong>Email:</strong> {{ user.email }}</p>
-                            <p class="mb-1"><strong>First Name:</strong> {{ user.first_name }}</p>
-                            <p class="mb-1"><strong>Last Name:</strong> {{ user.last_name }}</p>
-                            <p class="mb-0"><strong>Date Joined:</strong> {{ user.date_joined }}</p>
-                        </div>
+                    <div class="mb-3">
+                        {% if user_extend.photo %}
+                        <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                        <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% endif %}
                     </div>
-                    <p class="text-muted"><strong></strong> {{ user_extend.description }}</p>
+                    <h5 class="fw-bold">{{ user.username }}</h5>
+                    <p class="text-muted mb-1">{{ user.email }}</p>
+                    <p class="mb-3">{{ user_extend.description }}</p>
                 </div>
             </div>
         </div>
 
-        <!-- Activities Section -->
-        <div class="col-lg-6">
+        <!-- 中間發佈的活動 -->
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0 fw-bold" style="color: #637290;">我發布的活動</h5>
@@ -53,13 +43,11 @@
                     {% if user_activities %}
                     <ul class="list-group list-group-flush">
                         {% for activity in user_activities %}
-                        {% if activity.check_status %}
                         <li class="list-group-item px-0">
                             <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">
                                 {{ activity.title }}
                             </a>
                         </li>
-                        {% endif %}
                         {% endfor %}
                     </ul>
                     {% else %}
@@ -69,38 +57,36 @@
             </div>
         </div>
 
-        <!-- sponsorship Section -->
-        <div class="col-lg-6">
+        <!-- 右側贊助 -->
+        <div class="col-md-4">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white border-0">
                     <h5 class="mb-0 fw-bold" style="color: #637290;">我發布的贊助</h5>
                 </div>
                 <div class="card-body">
                     {% if user_sponsorships %}
-                        <ul class="list-group list-group-flush">
-                            {% for sponsorship in user_sponsorships %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">
-                                        {{ sponsorship.title }}
-                                    </a>
-                                    {% if not sponsorship.check_status %}
-                                        <span class="badge bg-warning text-dark">審核中</span>
-                                    {% elif sponsorship.check_status and sponsorship.is_active %}
-                                        <span class="badge bg-success">已上架</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary">已下架</span>
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
+                    <ul class="list-group list-group-flush">
+                        {% for sponsorship in user_sponsorships %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">
+                                {{ sponsorship.title }}
+                            </a>
+                            {% if not sponsorship.check_status %}
+                            <span class="badge bg-warning text-dark">審核中</span>
+                            {% elif sponsorship.check_status and sponsorship.is_active %}
+                            <span class="badge bg-success">已上架</span>
+                            {% else %}
+                            <span class="badge bg-secondary">已下架</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
                     {% else %}
-                        <p class="text-muted">你還沒有發布任何贊助。</p>
+                    <p class="text-muted">你還沒有發布任何贊助。</p>
                     {% endif %}
                 </div>
             </div>
         </div>
-
     </div>
 </div>
-
 {% endblock %}

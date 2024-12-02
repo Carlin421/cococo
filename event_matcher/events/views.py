@@ -173,14 +173,13 @@ def toggle_activity_check(request, event_id):
 @login_required
 def check_activity(request) :
     if request.user.is_staff:
-        activities = Activitynew.objects.all()
-        sponsorships = Sponsorshipnew.objects.all()
+        activities = list(Activitynew.objects.all().order_by('-date_posted'))  # 強制排序
+        sponsorships = list(Sponsorshipnew.objects.all().order_by('-date_posted') ) # 強制排序
         context = {
             'activities': activities,
             'sponsorships': sponsorships
         }
         # 如果是 Staff，用特定的方式顯示
-        sponsorships = Sponsorshipnew.objects.all().order_by('-date_posted')
         return render(request, 'events/check_activity.html', context)
     else:
         # 如果不是 Staff，顯示其他內容或重定向
@@ -189,14 +188,13 @@ def check_activity(request) :
 @login_required
 def check_sponsorship(request) :
     if request.user.is_staff:
-        activities = Activitynew.objects.all()
-        sponsorships = Sponsorshipnew.objects.all()
+        activities = list(Activitynew.objects.all().order_by('-date_posted'))
+        sponsorships = list(Sponsorshipnew.objects.all().order_by('-date_posted') )
         context = {
             'activities': activities,
             'sponsorships': sponsorships
         }
         # 如果是 Staff，用特定的方式顯示
-        sponsorships = Sponsorshipnew.objects.all().order_by('-date_posted')
         return render(request, 'events/check_sponsorship.html', context)
     else:
         # 如果不是 Staff，顯示其他內容或重定向
@@ -540,4 +538,6 @@ def delete_sponsorship(request, sponsorship_id):
             messages.error(request, '確認文字不匹配，贊助未被刪除')
     
     return render(request, 'events/delete_sponsorship.html', {'sponsorship': sponsorship})
+
+
 

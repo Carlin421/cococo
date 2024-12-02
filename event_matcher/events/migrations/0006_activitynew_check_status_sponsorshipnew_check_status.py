@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("events", "0005_alter_sponsorshipnew_date_posted"),
+        ("events", "0005_alter_sponsorshipnew_date_posted"),
     ]
 
     operations = [
