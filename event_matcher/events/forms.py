@@ -22,11 +22,12 @@ class RegisterForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     password_confirm = forms.CharField(widget=forms.PasswordInput)
     role = forms.ChoiceField(choices=[('brand', '品牌方'), ('club', '社團方')], required=True)
+    
     class Meta:
         model = User
         fields = ['username', 'email', 'password', 'role']
         labels = {
-            'username': '照片',
+            'username': '使用者名稱',
             'email': '電子郵件',
             'password': '密碼',
             'role': '角色',
@@ -38,14 +39,17 @@ class RegisterForm(forms.ModelForm):
         password_confirm = cleaned_data.get("password_confirm")
 
         if password != password_confirm:
-            self.add_error('password_confirm', "Passwords do not match.")
+            self.add_error('password_confirm', "密碼不匹配。")
+        
         return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.password = make_password(self.cleaned_data["password"])  # 加密密碼
+        user.password = make_password(self.cleaned_data["password"])
         if commit:
             user.save()
+            # 创建 UserProfile 并设置角色
+            UserProfile.objects.create(user=user, role=self.cleaned_data['role'])
         return user
 
 class UserProfileForm(forms.ModelForm):
