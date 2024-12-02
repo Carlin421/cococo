@@ -336,6 +336,7 @@ def custom_logout(request):
 
 @login_required
 def profile_view(request):
+    user_extend, created = UserProfile.objects.get_or_create(user=request.user)
     # 獲取用戶收藏的活動和贊助
     favorite_activities = Activitynew.objects.filter(is_favorited=True, check_status=True,is_active=True)
     favorite_sponsorships = Sponsorshipnew.objects.filter(is_favorited=True)
