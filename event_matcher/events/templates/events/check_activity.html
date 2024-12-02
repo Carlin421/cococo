@@ -32,7 +32,13 @@
       <tbody>
         {% for activity in activities %}
           <tr>
-            <td><img src="{{  activity.image.url }}" class="img-thumbnail" alt="{{ activity.title }}"></td>
+            <td>
+              {% if activity.image %}
+                  <img src="{{ activity.image.url }}" class="img-thumbnail" alt="{{ activity.title }}">
+              {% else %}
+                  <img src="/static/default_image.jpg" class="img-thumbnail" alt="Default image">
+              {% endif %}
+          </td>
             <td>
               <a href="{% url 'activity_detail' activity.id %}" class="text-link">{{ activity.title }}</a>
             </td>

@@ -25,7 +25,7 @@ class Activitynew(models.Model):
     longitude = models.FloatField(null=True, blank=True, verbose_name="經度")
     date = models.DateField()                          # 活動日期
     registration_deadline = models.DateField(null=True, blank=True) #活動截止日期
-    image = models.ImageField(upload_to='activitynew_images/', blank=True, null=True)  # 活動圖片
+    image = models.ImageField(upload_to='activitynew_images/', blank=True, null=True,default=None)  # 活動圖片
     is_favorited = models.BooleanField(default=False)  # 收藏狀態
     check_status = models.BooleanField(default=False) # 審核狀態
     is_active = models.BooleanField(default=True)
