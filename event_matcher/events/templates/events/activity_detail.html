@@ -134,7 +134,9 @@
                           {% if is_favorited %}取消收藏{% else %}收藏{% endif %}
                         </button>
                     </form>
-                {% endif %}
+                {% else%}
+                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary w-100 mt-3">登入以收藏</a>
+            {% endif %}
                 </div>
             </div>
         
