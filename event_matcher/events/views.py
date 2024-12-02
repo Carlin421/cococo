@@ -113,7 +113,7 @@ def user_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
     user_extend = UserProfile.objects.get(user=user)
     user_activities = Activitynew.objects.filter(organizer=user)
-
+    user_sponsorships = Sponsorshipnew.objects.filter(organizer=user)
     # 檢查聊天室是否存在
     db = firestore.client()
     chat_id = get_or_create_chat(request.user.username, user.username)
@@ -122,6 +122,7 @@ def user_profile(request, user_id):
         'user': user,
         'user_extend': user_extend,
         'user_activities': user_activities,
+        'user_sponsorships':user_sponsorships,
         'chat_id': chat_id
     }
     return render(request, 'events/user_profile.html', context)
