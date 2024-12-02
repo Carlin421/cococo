@@ -21,8 +21,7 @@
   }
 
   .fade-in-image {
-    width: 100%;
-    height: 100%;
+
     object-fit: contain; /* 圖片完全顯示，周圍填充空白 */
     background-color: #fff; /* 默認背景顏色，避免透明 */
   }
@@ -246,8 +245,9 @@
             <p class="card-text text-muted">{{ sponsorship.description|truncatewords:20 }}</p>
           </div>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item"><i class="fas fa-user me-2"></i>{{ sponsorship.sponsor }}</li>
+            <li class="list-group-item"><i class="fas fa-user me-2"></i>{{ sponsorship.organizer }}</li>
             <li class="list-group-item"><i class="fas fa-dollar-sign me-2"></i>{{ sponsorship.amount }}</li>
+            <li class="list-group-item"><i class="fas fa-dollar-sign me-2"></i>{{ sponsorship.item }}</li>
             <li class="list-group-item"><i class="fas fa-map-marker-alt me-2"></i>{{ sponsorship.location }}</li>
             <li class="list-group-item"><i class="fas fa-calendar-alt me-2"></i>{{ sponsorship.date_posted }}</li>
           </ul>

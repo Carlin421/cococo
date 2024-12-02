@@ -13,8 +13,11 @@
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
+
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <style>
  /* 基本樣式 */
@@ -344,8 +347,47 @@
 
 <main>
   {% if messages %}
-  <div id="alert-container"></div>
-{% endif %}
+  <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050; margin-right: 30px; margin-top: 30px;">
+      {% for message in messages %}
+      <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="2000">
+          <div class="d-flex">
+              <div class="toast-body">
+                  <i class="bi bi-shield-exclamation me-2"></i>{{ message }}
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+      </div>
+      {% endfor %}
+  </div>
+  {% endif %}
+<style>
+  .toast {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.toast-body {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bi-shield-exclamation {
+    font-size: 18px;
+}
+
+</style>  
+<script>
+  document.querySelectorAll('.toast').forEach((toastEl) => {
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+});
+
+</script>
+  
+
+
     {% block content %}
     {% endblock %}
 

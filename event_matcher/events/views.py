@@ -363,6 +363,12 @@ def add_activity(request):
             activity.organizer = request.user
             activity.save()
             messages.success(request, '活動已成功創建!')
+            # 創建通知
+            Notification.objects.create(
+                user=activity.organizer,
+                activity=activity,
+                message=f'您的活動"{activity.title}"已成功創建'
+            )
             return redirect('activity_detail', activity_id=activity.id)
     else:
         form = ActivityForm()
@@ -377,6 +383,13 @@ def add_sponsorship(request):
             sponsorship.organizer = request.user
             sponsorship.save()
             messages.success(request, '贊助已成功創建!')
+
+            # 創建通知
+            Notification.objects.create(
+                user=sponsorship.organizer,
+                sponsorship=sponsorship,
+                message=f'您的贊助"{sponsorship.title}"已成功創建'
+            )
             return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
     else:
         form = SponsorshipForm()
@@ -457,6 +470,13 @@ def edit_sponsorship(request, sponsorship_id):
         if form.is_valid():
             form.save()
             messages.success(request, '贊助已成功更新')
+
+            # 創建通知
+            Notification.objects.create(
+                user=sponsorship.organizer,
+                sponsorship=sponsorship,
+                message=f'贊助 "{sponsorship.title}" 已成功更新'
+            )
             return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
     else:
         form = SponsorshipForm(instance=sponsorship)
@@ -474,8 +494,15 @@ def delete_activity(request, activity_id):
     if request.method == 'POST':
         confirmation = request.POST.get('confirmation', '')
         if confirmation == activity.title:
-            activity.delete()
+            
             messages.success(request, '活動已成功刪除')
+             # 創建通知
+            Notification.objects.create(
+                user=activity.organizer,
+                message=f'活動 "{activity.title}" 已成功刪除'
+            )
+            activity.delete()
+            
             return redirect('activitynew_list')  # 或其他適當的頁面
         else:
             messages.error(request, '確認文字不匹配，活動未被刪除')
@@ -493,10 +520,16 @@ def delete_sponsorship(request, sponsorship_id):
     if request.method == 'POST':
         confirmation = request.POST.get('confirmation', '')
         if confirmation ==  sponsorship.title:
-            sponsorship.delete()
+            
             messages.success(request, '贊助已成功刪除')
+            Notification.objects.create(
+                user=sponsorship.organizer,
+                message=f'贊助 "{sponsorship.title}" 已成功刪除'
+            )
+            sponsorship.delete()
             return redirect('sponsorship_list')  # 或其他適當的頁面
         else:
             messages.error(request, '確認文字不匹配，贊助未被刪除')
     
     return render(request, 'events/delete_sponsorship.html', {'sponsorship': sponsorship})
+

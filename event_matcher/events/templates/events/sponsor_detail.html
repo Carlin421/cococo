@@ -17,8 +17,10 @@
                     <h5 class="card-title">贊助詳情</h5>
                     <p class="card-text">{{ sponsorship.description }}</p>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>贊助商：</strong> {{ sponsorship.sponsor }}</li>
+                        <li class="list-group-item"><strong>贊助商：</strong> {{ sponsorship.organizer }}</li>
+                        <li class="list-group-item"><strong>贊助商品：</strong> {{ sponsorship.item}}</li>
                         <li class="list-group-item"><strong>金額：</strong> {{ sponsorship.amount }}</li>
+                        <li class="list-group-item"><strong>宣傳模式：</strong> {{ sponsorship.people}}</li>
                         <li class="list-group-item"><strong>地點：</strong> {{ sponsorship.location }}</li>
                         <li class="list-group-item"><strong>發布日期：</strong> {{ sponsorship.date_posted }}</li>
                     </ul>
