@@ -127,14 +127,14 @@
                         {% endif %}
                     {% endif %}
         
-                    {% if user.is_authenticated and user != activity.organizer %}
-                        <form method="POST" action="{% url 'toggle_activity_favorite' activity.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary w-100">
-                                {% if activity.is_favorited %}取消收藏{% else %}收藏活動{% endif %}
-                            </button>
-                        </form>
-                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <form method="POST" action="{% url 'toggle_activity_favorite' event_id=activity.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">
+                          {% if is_favorited %}取消收藏{% else %}收藏{% endif %}
+                        </button>
+                    </form>
+                {% endif %}
                 </div>
             </div>
         

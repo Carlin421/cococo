@@ -34,7 +34,6 @@ class Activitynew(models.Model):
     registration_deadline = models.DateField(null=True, blank=True) #活動截止日期
     image = models.ImageField(upload_to='activitynew_images/', blank=True, null=True,default=None)  # 活動圖片
     date_posted = models.DateTimeField(default=timezone.now)  # 活動發布日期
-    is_favorited = models.BooleanField(default=False)  # 收藏狀態
     check_status = models.BooleanField(default=False) # 審核狀態
     is_active = models.BooleanField(default=True)
     organizer = models.ForeignKey(
@@ -62,7 +61,6 @@ class Sponsorshipnew(models.Model):
     image = models.ImageField(upload_to='sponsorship_images/', blank=True, null=True)  # 贊助圖片
     location = models.CharField(max_length=100,default=" ")        # 贊助地點
     date_posted = models.DateTimeField(default=timezone.now)  # 贊助發布日期
-    is_favorited = models.BooleanField(default=False)   # 收藏狀態
     check_status = models.BooleanField(default=False) # 審核狀態
     is_active = models.BooleanField(default=True)
     organizer = models.ForeignKey(
@@ -87,3 +85,14 @@ class Notification(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.message}"
 # Create your models here.
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
+    activity = models.ForeignKey('Activitynew', on_delete=models.CASCADE, null=True, blank=True)
+    sponsorship = models.ForeignKey('Sponsorshipnew', on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = [['user', 'activity'], ['user', 'sponsorship']]
+
+    def __str__(self):
+        return f"{self.user.username}'s favorite: {self.activity or self.sponsorship}"

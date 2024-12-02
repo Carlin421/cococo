@@ -60,12 +60,16 @@
               </div>
               <div class="card-footer bg-white d-flex justify-content-between align-items-center">
                 {% if user.is_authenticated %}
-                <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship.id %}" class="mb-0">
+                <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship.id %}" data-ajax-submit>
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-outline-primary btn-sm">
-                    {% if sponsorship.is_favorited %}<i class="fas fa-heart"></i> 已收藏{% else %}<i class="far fa-heart"></i> 收藏{% endif %}
+                  <button type="submit" class="btn btn-outline-primary btn-sm favorite-btn" id="favorite-btn-{{ sponsorship.id }}">
+                      {% if sponsorship.is_favorited %}
+                          <i class="fas fa-heart"></i> 取消收藏
+                      {% else %}
+                          <i class="far fa-heart"></i> 收藏
+                      {% endif %}
                   </button>
-                </form>
+              </form>
                 {% else %}
                   <a href="{% url 'login' %}?next={% url 'sponsorship_list' %}" class="btn btn-sm btn-outline-secondary">收藏</a>
                 {% endif %}
@@ -163,4 +167,40 @@
     opacity: 0.9;
   }
 </style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('form[data-ajax-submit]').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var button = form.find('button');
+        var sponsorshipId = button.attr('id').split('-')[2];  // 獲取贊助 ID
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: form.serialize(),
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            success: function(response) {
+                if (response.status === 'success') {
+                    updateFavoriteButton(sponsorshipId, response.is_favorited);
+                } else {
+                    console.error('Error:', response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+
+    function updateFavoriteButton(sponsorshipId, isFavorited) {
+        var button = $('#favorite-btn-' + sponsorshipId);
+        if (isFavorited) {
+            button.html('<i class="fas fa-heart"></i> 取消收藏');
+        } else {
+            button.html('<i class="far fa-heart"></i> 收藏');
+        }
+    }
+});
+</script>
 {% endblock %}

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate,get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import LoginForm, RegisterForm,UserPhotoForm
-from .models import Activitynew,Sponsorshipnew,UserProfile
+from .models import Activitynew,Sponsorshipnew,UserProfile, Favorite
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -15,6 +15,11 @@ from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from firebase_admin import firestore
 from .models import Notification
+from django.db.models import Exists, OuterRef
+from django.db import IntegrityError
+import logging
+from django.views.decorators.http import require_POST
+logger = logging.getLogger(__name__)
 # 在 event_matcher/events/views.py 文件中
 def notifications(request):    
     if request.user.is_authenticated:
@@ -211,31 +216,93 @@ def check_sponsorship(request) :
 
 
 def activity_list(request):
+
+
     activities = Activitynew.objects.filter(check_status=True, is_active=True)
     sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
-    context = {
-        'activities': activities,
-        'sponsorships': sponsorships
-    }
-    return render(request, 'events/event_list.html', context)
+
+
+
+    # 添加收藏狀態
+    if request.user.is_authenticated:
+        activities = activities.annotate(
+            is_favorited=Exists(
+                Favorite.objects.filter(
+                    user=request.user,
+                    activity=OuterRef('pk')
+                )
+            )
+        )
+        sponsorships = sponsorships.annotate(
+            is_favorited=Exists(
+                Favorite.objects.filter(
+                    user=request.user,
+                    sponsorship=OuterRef('pk')
+                )
+            )
+        )
+
+
+    return render(request, 'events/event_list.html', {'activities': activities, 'sponsorships': sponsorships})
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Activitynew, Sponsorshipnew, Favorite
 
 @login_required
+@require_POST
 def toggle_activity_favorite(request, event_id):
-    event = get_object_or_404(Activitynew, id=event_id)
-    event.is_favorited = not event.is_favorited
-    event.save()
-    referer = request.META.get('HTTP_REFERER')
-    return redirect(referer)
+    try:
+        activity = get_object_or_404(Activitynew, id=event_id)
+        favorite, created = Favorite.objects.get_or_create(user=request.user, activity=activity)
+        
+        if not created:
+            favorite.delete()
+            is_favorited = False
+        else:
+            is_favorited = True
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'success', 'is_favorited': is_favorited})
+        else:
+            return redirect(request.META.get('HTTP_REFERER', 'activitynew_list'))
+    except IntegrityError:
+        logger.error(f"IntegrityError for user {request.user.id} and activity {event_id}")
+        return JsonResponse({'status': 'error', 'message': 'Database integrity error'}, status=500)
+    except Exception as e:
+        logger.error(f"Error in toggle_activity_favorite: {str(e)}")
+        return JsonResponse({'status': 'error', 'message': 'An unexpected error occurred'}, status=500)
 
-# 用於贊助的收藏切換
 @login_required
+@require_POST
 def toggle_sponsorship_favorite(request, sponsorship_id):
-    
-    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
-    sponsorship.is_favorited = not sponsorship.is_favorited
-    sponsorship.save()
-    referer = request.META.get('HTTP_REFERER')
-    return redirect(referer)
+    try:
+        sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
+        favorite, created = Favorite.objects.get_or_create(user=request.user, sponsorship=sponsorship)
+        
+        if not created:
+            favorite.delete()
+        
+        is_favorited = created  # 如果創建了新的收藏，則為 True；否則為 False
+
+        return JsonResponse({
+            'status': 'success',
+            'is_favorited': is_favorited
+        })
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+def is_favorited(user, obj):
+    if not user.is_authenticated:
+        return False
+    if isinstance(obj, Activitynew):
+        return Favorite.objects.filter(user=user, activity=obj).exists()
+    elif isinstance(obj, Sponsorshipnew):
+        return Favorite.objects.filter(user=user, sponsorship=obj).exists()
+    return False
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(data=request.POST)
@@ -282,7 +349,17 @@ def activitynew_list(request):
             Q(location__icontains=query) |
             Q(date__icontains=query)
         )
-
+    
+    if request.user.is_authenticated:
+        # 为每个活动添加 is_favorited 属性
+        activities = activities.annotate(
+            is_favorited=Exists(
+                Favorite.objects.filter(
+                    user=request.user,
+                    activity=OuterRef('pk')
+                )
+            )
+        )
     context = {
         'activity_list': activities,
         'query': query
@@ -302,8 +379,6 @@ def sponsorship_list(request, page=1):
     else:
         sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
     
-    
-    
     if query:
         sponsorships = sponsorships.filter(
             Q(title__icontains=query) |
@@ -312,17 +387,28 @@ def sponsorship_list(request, page=1):
             Q(date__icontains=query)
         )
     
+    # 添加收藏狀態
+    if request.user.is_authenticated:
+        sponsorships = sponsorships.annotate(
+            is_favorited=Exists(
+                Favorite.objects.filter(
+                    user=request.user,
+                    sponsorship=OuterRef('pk')
+                )
+            )
+        )
+    
     paginator = Paginator(sponsorships, 10)  # 每頁顯示 10 個項目
     
     try:
-        sponsorships = paginator.page(page)
+        sponsorships_page = paginator.page(page)
     except PageNotAnInteger:
-        sponsorships = paginator.page(1)
+        sponsorships_page = paginator.page(1)
     except EmptyPage:
-        sponsorships = paginator.page(paginator.num_pages)
+        sponsorships_page = paginator.page(paginator.num_pages)
     
     context = {
-        'sponsorships': sponsorships,
+        'sponsorships': sponsorships_page,
         'query': query
     }  
     return render(request, 'events/sponsorship_list.html', context)
@@ -345,8 +431,8 @@ def custom_logout(request):
 def profile_view(request):
     user_extend, created = UserProfile.objects.get_or_create(user=request.user)
     # 獲取用戶收藏的活動和贊助
-    favorite_activities = Activitynew.objects.filter(is_favorited=True, check_status=True,is_active=True)
-    favorite_sponsorships = Sponsorshipnew.objects.filter(is_favorited=True)
+    favorite_activities = Activitynew.objects.filter(favorite__user=request.user)
+    favorite_sponsorships = Sponsorshipnew.objects.filter(favorite__user=request.user)
     
     # 獲取用戶發布的活動和贊助
     user_activities = Activitynew.objects.filter(organizer=request.user)
@@ -362,15 +448,17 @@ def profile_view(request):
         'user_extend': user_extend
     }
     return render(request, 'events/profile.html', context)
-def sponsor_detail(request, sponsorship_id):
-    sponsorship = get_object_or_404(Sponsorshipnew, pk=sponsorship_id)
-    return render(request, 'events/sponsor_detail.html', {'sponsorship': sponsorship})
 def activity_detail(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
-    context = {'activity': activity}
-    if not activity.check_status:
-        context['pending_approval'] = True
+    is_fav = is_favorited(request.user, activity) if request.user.is_authenticated else False
+    context = {'activity': activity, 'is_favorited': is_fav}
     return render(request, 'events/activity_detail.html', context)
+
+def sponsor_detail(request, sponsorship_id):
+    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
+    is_fav = is_favorited(request.user, sponsorship) if request.user.is_authenticated else False
+    context = {'sponsorship': sponsorship, 'is_favorited': is_fav}
+    return render(request, 'events/sponsor_detail.html', context)
 def about_us(request):
     return render(request, 'events/aboutus.html')
 

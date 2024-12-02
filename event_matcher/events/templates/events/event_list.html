@@ -216,12 +216,16 @@
             <li class="list-group-item"><i class="fas fa-calendar-alt me-2"></i>{{ activity.date }}</li>
           </ul>
           <div class="card-footer bg-transparent">
-            <form method="POST" action="{% url 'toggle_activity_favorite' activity.id %}" onsubmit="checkLoginAndFavorite(event, '{% url 'login' %}')">
+            <form method="POST" action="{% url 'toggle_activity_favorite' activity.id %}" data-ajax-submit>
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline-primary btn-sm animate-button">
-                {% if activity.is_favorited %}<i class="fas fa-heart"></i> 取消收藏{% else %}<i class="far fa-heart"></i> 收藏{% endif %}
+              <button type="submit" class="btn btn-outline-primary btn-sm favorite-btn" id="favorite-btn-{{ activity.id }}">
+                  {% if activity.is_favorited %}
+                      <i class="fas fa-heart"></i> 取消收藏
+                  {% else %}
+                      <i class="far fa-heart"></i> 收藏
+                  {% endif %}
               </button>
-            </form>
+          </form>
           </div>
         </div>
       </div>
@@ -260,12 +264,16 @@
             <li class="list-group-item"><i class="fas fa-calendar-alt me-2"></i>{{ sponsorship.date_posted }}</li>
           </ul>
           <div class="card-footer bg-transparent">
-            <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship.id %}" onsubmit="checkLoginAndFavorite(event, '{% url 'login' %}')">
+            <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship.id %}" data-ajax-submit>
               {% csrf_token %}
-              <button type="submit" class="btn btn-outline-primary btn-sm animate-button">
-                {% if sponsorship.is_favorited %}<i class="fas fa-heart"></i> 取消收藏{% else %}<i class="far fa-heart"></i> 收藏{% endif %}
+              <button type="submit" class="btn btn-outline-primary btn-sm favorite-btn" id="favorite-btn-{{ sponsorship.id }}">
+                  {% if sponsorship.is_favorited %}
+                      <i class="fas fa-heart"></i> 取消收藏
+                  {% else %}
+                      <i class="far fa-heart"></i> 收藏
+                  {% endif %}
               </button>
-            </form>
+          </form>
           </div>
         </div>
       </div>
@@ -337,5 +345,34 @@
     }, { threshold: 0.1 });
     fadeElems.forEach(elem => observer.observe(elem));
   });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+$(document).ready(function() {
+    $('form[data-ajax-submit]').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+        var button = form.find('button[type="submit"]');
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: form.serialize(),
+            success: function(response) {
+                if (response.is_favorited) {
+                    button.html('<i class="fas fa-heart"></i> 取消收藏');
+                } else {
+                    button.html('<i class="far fa-heart"></i> 收藏');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+});
+</script>
 </script>
 {% endblock %}

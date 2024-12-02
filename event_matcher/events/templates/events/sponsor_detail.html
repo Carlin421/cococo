@@ -28,65 +28,72 @@
             </div>
         </div>
 
-        <!-- 右側附加資訊 -->
-        <div class="col-lg-4">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">聯絡資訊</h5>
-                    <ul class="list-unstyled">
-                        {% if sponsorship.contact_email %}
-                            <li><strong>聯絡信箱：</strong> {{ sponsorship.contact_email }}</li>
-                        {% endif %}
-                        {% if sponsorship.contact_phone %}
-                            <li><strong>聯絡電話：</strong> {{ sponsorship.contact_phone }}</li>
-                        {% endif %}
-                        {% if sponsorship.website %}
-                            <li><strong>官方網站：</strong> <a href="{{ sponsorship.website }}" target="_blank">{{ sponsorship.website }}</a></li>
-                        {% endif %}
-                    </ul>
+<!-- 右側附加資訊 -->
+<div class="col-lg-4">
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">聯絡資訊</h5>
+            <ul class="list-unstyled">
+                {% if sponsorship.contact_email %}
+                    <li><strong>聯絡信箱：</strong> {{ sponsorship.contact_email }}</li>
+                {% endif %}
+                {% if sponsorship.contact_phone %}
+                    <li><strong>聯絡電話：</strong> {{ sponsorship.contact_phone }}</li>
+                {% endif %}
+                {% if sponsorship.website %}
+                    <li><strong>官方網站：</strong> <a href="{{ sponsorship.website }}" target="_blank">{{ sponsorship.website }}</a></li>
+                {% endif %}
+            </ul>
 
-                    {% if user.is_staff %}
-                        <form method="POST" action="{% url 'toggle_sponsorship_check' sponsorship.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary w-100 mt-3">
-                                {% if sponsorship.check_status %}取消審核{% else %}審核通過{% endif %}
-                            </button>
-                        </form>
-                    {% elif user.is_authenticated %}
-                        <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary w-100 mt-3">
-                                {% if sponsorship.is_favorited %}取消收藏{% else %}收藏活動{% endif %}
-                            </button>
-                        </form>
-                        <div class="card-body mt-3">
-                            <h5 class="card-title">審核狀態</h5>
-                            {% if sponsorship.check_status %}<i class="fas fa-check-circle text-success"></i> 審核完成{% else %}<i class="fas fa-clock text-warning"></i> 審核中{% endif %}
-                        </div>
-                    {% else %}
-                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary w-100 mt-3">登入已收藏</a>
-                    {% endif %}
-                    
-                </div>
-                {% if user == sponsorship.organizer or user.is_staff %}
-    {% if sponsorship.check_status %}
-        <form method="POST" action="{% url 'toggle_sponsorship_status' sponsorship.id %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-warning w-100 mt-3">
-                {% if sponsorship.is_active %}下架贊助{% else %}上架贊助{% endif %}
-            </button>
-        </form>
-    {% else %}
-        <p class="text-muted">贊助正在審核中，無法更改狀態</p>
-    {% endif %}
-{% endif %}
-                {% if user == sponsorship.organizer %}
-    <a href="{% url 'edit_sponsorship' sponsorship.id %}" class="btn btn-primary">編輯贊助</a>
-{% endif %}
-{% if user == sponsorship.organizer or user.is_staff %}
-    <a href="{% url 'delete_sponsorship' sponsorship.id %}" class="btn btn-danger mt-3">刪除贊助</a>
-{% endif %}
-            </div>
+            <h5 class="card-title mt-4">審核狀態</h5>
+            <p>
+                {% if sponsorship.check_status %}
+                    <i class="fas fa-check-circle text-success"></i> 審核完成
+                {% else %}
+                    <i class="fas fa-clock text-warning"></i> 審核中
+                {% endif %}
+            </p>
+
+            {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'toggle_sponsorship_favorite' sponsorship_id=sponsorship.id %}" class="mt-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        {% if is_favorited %}取消收藏{% else %}收藏{% endif %}
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary w-100 mt-3">登入以收藏</a>
+            {% endif %}
+
+            {% if user.is_staff %}
+                <form method="POST" action="{% url 'toggle_sponsorship_check' sponsorship.id %}" class="mt-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary w-100">
+                        {% if sponsorship.check_status %}取消審核{% else %}審核通過{% endif %}
+                    </button>
+                </form>
+            {% endif %}
+
+            {% if user == sponsorship.organizer or user.is_staff %}
+                {% if sponsorship.check_status %}
+                    <form method="POST" action="{% url 'toggle_sponsorship_status' sponsorship.id %}" class="mt-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning w-100">
+                            {% if sponsorship.is_active %}下架贊助{% else %}上架贊助{% endif %}
+                        </button>
+                    </form>
+                {% else %}
+                    <p class="text-muted mt-3">贊助正在審核中，無法更改狀態</p>
+                {% endif %}
+            {% endif %}
+
+            {% if user == sponsorship.organizer %}
+                <a href="{% url 'edit_sponsorship' sponsorship.id %}" class="btn btn-primary w-100 mt-3">編輯贊助</a>
+            {% endif %}
+
+            {% if user == sponsorship.organizer or user.is_staff %}
+                <a href="{% url 'delete_sponsorship' sponsorship.id %}" class="btn btn-danger w-100 mt-3">刪除贊助</a>
+            {% endif %}
         </div>
     </div>
 </div>
