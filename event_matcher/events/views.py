@@ -246,13 +246,17 @@ def register_view(request):
             user = form.save()
             user_profile = form_userprofile.save(commit=False)
             user_profile.user = user
+            
+            # 保存用戶角色
+            user_profile.role = form.cleaned_data['role']
+            
             user_profile.save()
             return redirect('login')  # 註冊完成後重定向到登入頁面
     else:
         form = RegisterForm()
         form_userprofile = UserPhotoForm()
 
-    return render(request, 'events/register.html',{'form': form,'form_userprofile': form_userprofile})
+    return render(request, 'events/register.html', {'form': form, 'form_userprofile': form_userprofile})
 
 def activitynew_list(request):
     query = request.GET.get('q')
@@ -330,6 +334,7 @@ def custom_logout(request):
 
 @login_required
 def profile_view(request):
+    user_extend, created = UserProfile.objects.get_or_create(user=request.user)
     # 獲取用戶收藏的活動和贊助
     favorite_activities = Activitynew.objects.filter(is_favorited=True, check_status=True,is_active=True)
     favorite_sponsorships = Sponsorshipnew.objects.filter(is_favorited=True)

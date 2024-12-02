@@ -5,12 +5,19 @@ from django.conf import settings
 from django.core.validators import MinValueValidator
 
 
-#11/19 這塊還未使用在任何介面
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     photo = models.ImageField(upload_to='user_photos/', blank=True, null=True,default='user_photos/default.jpg')
     description = models.TextField(blank=True, null=True)
+    role = models.CharField(max_length=20, choices=[('brand', '品牌方'), ('club', '社團方')], blank=True)
+    @property
+    def is_brand(self):
+        return self.role == 'brand'
 
+    @property
+    def is_club(self):
+        return self.role == 'club'
     def __str__(self):
         return f"{self.user.username}'s profile"
 

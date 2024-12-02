@@ -19,12 +19,40 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center">
                 <div class="card-body">
+<<<<<<< HEAD
                     <div class="mb-3">
                         {% if user_extend.photo %}
                         <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                         {% else %}
                         <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                         {% endif %}
+=======
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="me-4">
+                            {% if user_extend.photo %}
+                            <img src="{{ user_extend.photo.url }}" alt="{{ user_extend.user }}" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                            {% else %}
+                            <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="mb-1"><strong>Username:</strong> {{ user.username }}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{ user.email }}</p>
+                            <p class="mb-1"><strong>First Name:</strong> {{ user.first_name }}</p>
+                            <p class="mb-1"><strong>Last Name:</strong> {{ user.last_name }}</p>
+                            <p class="mb-0"><strong>Date Joined:</strong> {{ user.date_joined }}</p>.
+                            <p class="mb-2">
+                                <strong>身份：</strong>
+                                {% if user_profile.role == 'brand' %}
+                                    <span class="badge bg-primary">品牌方</span>
+                                {% elif user_profile.role == 'club' %}
+                                    <span class="badge bg-success">社團方</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">一般用戶</span>
+                                {% endif %}
+                            </p>
+                        </div>
+>>>>>>> dde7a2aa7e8446bbaa4c1cdffa7e6a761cec3b10
                     </div>
                     <h5 class="fw-bold">{{ user.username }}</h5>
                     <p class="text-muted mb-1">{{ user.email }}</p>
