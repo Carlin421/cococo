@@ -35,7 +35,17 @@
                             <p class="mb-1"><strong>Email:</strong> {{ user.email }}</p>
                             <p class="mb-1"><strong>First Name:</strong> {{ user.first_name }}</p>
                             <p class="mb-1"><strong>Last Name:</strong> {{ user.last_name }}</p>
-                            <p class="mb-0"><strong>Date Joined:</strong> {{ user.date_joined }}</p>
+                            <p class="mb-0"><strong>Date Joined:</strong> {{ user.date_joined }}</p>.
+                            <p class="mb-2">
+                                <strong>身份：</strong>
+                                {% if user_profile.role == 'brand' %}
+                                    <span class="badge bg-primary">品牌方</span>
+                                {% elif user_profile.role == 'club' %}
+                                    <span class="badge bg-success">社團方</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">一般用戶</span>
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
                     <p class="text-muted"><strong></strong> {{ user_extend.description }}</p>

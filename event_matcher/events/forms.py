@@ -21,14 +21,15 @@ class LoginForm(AuthenticationForm):
 class RegisterForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
     password_confirm = forms.CharField(widget=forms.PasswordInput)
-
+    role = forms.ChoiceField(choices=[('brand', '品牌方'), ('club', '社團方')], required=True)
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password', 'role']
         labels = {
             'username': '照片',
             'email': '電子郵件',
             'password': '密碼',
+            'role': '角色',
         }
 
     def clean(self):
