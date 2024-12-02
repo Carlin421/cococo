@@ -367,41 +367,50 @@ def about_us(request):
 
 @login_required
 def add_activity(request):
+    if not request.user.profile.is_club:
+                messages.error(request, '只有社團方可以新增活動。')
     if request.method == 'POST':
         form = ActivityForm(request.POST, request.FILES)
         if form.is_valid():
-            activity = form.save(commit=False)
-            activity.organizer = request.user
-            activity.save()
-            messages.success(request, '活動已成功創建!')
-            # 創建通知
-            Notification.objects.create(
-                user=activity.organizer,
-                activity=activity,
-                message=f'您的活動"{activity.title}"已成功創建'
-            )
-            return redirect('activity_detail', activity_id=activity.id)
+            if not request.user.profile.is_club:
+                messages.error(request, '只有社團方可以新增活動。')
+            else:
+                activity = form.save(commit=False)
+                activity.organizer = request.user
+                activity.save()
+                messages.success(request, '活動已成功創建!')
+                # 創建通知
+                Notification.objects.create(
+                    user=activity.organizer,
+                    activity=activity,
+                    message=f'您的活動"{activity.title}"已成功創建'
+                )
+                return redirect('activity_detail', activity_id=activity.id)
     else:
         form = ActivityForm()
     return render(request, 'events/add_activity.html', {'form': form})
 
 @login_required
 def add_sponsorship(request):
+    if not request.user.profile.is_brand:
+                messages.error(request, '只有品牌方可以新增贊助。')
     if request.method == 'POST':
         form = SponsorshipForm(request.POST, request.FILES)
         if form.is_valid():
-            sponsorship = form.save(commit=False)
-            sponsorship.organizer = request.user
-            sponsorship.save()
-            messages.success(request, '贊助已成功創建!')
-
-            # 創建通知
-            Notification.objects.create(
-                user=sponsorship.organizer,
-                sponsorship=sponsorship,
-                message=f'您的贊助"{sponsorship.title}"已成功創建'
-            )
-            return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
+            if not request.user.profile.is_brand:
+                messages.error(request, '只有品牌方可以新增贊助。')
+            else:
+                sponsorship = form.save(commit=False)
+                sponsorship.organizer = request.user
+                sponsorship.save()
+                messages.success(request, '贊助已成功創建!')
+                # 創建通知
+                Notification.objects.create(
+                    user=sponsorship.organizer,
+                    sponsorship=sponsorship,
+                    message=f'您的贊助"{sponsorship.title}"已成功創建'
+                )
+                return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
     else:
         form = SponsorshipForm()
     return render(request, 'events/add_sponsorship.html', {'form': form})
