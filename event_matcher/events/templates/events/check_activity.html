@@ -32,7 +32,7 @@
       <tbody>
         {% for activity in activities %}
           <tr>
-            <td><img src="{{ activity.image.url }}" class="img-thumbnail" alt="{{ activity.title }}"></td>
+            <td><img src="{{  activity.image.url }}" class="img-thumbnail" alt="{{ activity.title }}"></td>
             <td>
               <a href="{% url 'activity_detail' activity.id %}" class="text-link">{{ activity.title }}</a>
             </td>

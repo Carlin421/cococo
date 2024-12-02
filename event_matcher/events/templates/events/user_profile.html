@@ -68,6 +68,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- sponsorship Section -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h5 class="mb-0 fw-bold" style="color: #637290;">我發布的贊助</h5>
+                </div>
+                <div class="card-body">
+                    {% if user_sponsorships %}
+                    <ul class="list-group list-group-flush">
+                        {% for sponsorship in user_sponsorships %}
+                        {% if sponsorship.check_status %}
+                        <li class="list-group-item px-0">
+                            <a href="{% url 'sponsorship_detail' sponsorship.id %}" class="text-decoration-none text-dark">
+                                {{ sponsorship.title }}
+                            </a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted mb-0">你還沒有發布任何贊助。</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
+
 {% endblock %}
