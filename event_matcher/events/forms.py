@@ -8,10 +8,14 @@ from django.contrib.auth.hashers import make_password
 class UserPhotoForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['photo', 'description']
+        fields = ['photo', 'description', 'role']
         labels = {
             'photo': '照片',
-            'description': '描述',  # 如果也想改 description 的标签
+            'description': '描述',
+            'role': '身分別',
+        }
+        widgets = {
+            'role': forms.Select(choices=[('brand', '品牌方'), ('club', '社團方')])
         }
         
 class LoginForm(AuthenticationForm):
