@@ -96,7 +96,16 @@ def edit_profile(request):
 
         if form.is_valid() and form_userprofile.is_valid():
             form.save()
-            form_userprofile.save()
+            profile = form_userprofile.save(commit=False)
+            
+            # 檢查身分別是否有變更
+            old_role = request.user.profile.role
+            new_role = form_userprofile.cleaned_data['role']
+            
+            if old_role != new_role:
+                messages.info(request, f'您的身分別已從 {old_role} 更改為 {new_role}')
+            
+            profile.save()
             messages.success(request, '個人檔案已經更新')
             return redirect('profile')
     else:

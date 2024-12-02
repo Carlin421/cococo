@@ -27,7 +27,22 @@
                         {% endif %}
                     </div>
                     <h5 class="fw-bold">{{ user.username }}</h5>
-                    <p class="text-muted mb-1">{{ user.email }}</p>
+                    <p class="text-muted mb-1">
+                        <span id="user-email" class="cursor-pointer" onclick="copyEmail()" title="點擊複製">
+                            {{ user.email }}
+                        </span>
+                        <i class="fas fa-copy ml-1" style="font-size: 0.8em;"></i>
+                    </p>
+                    <p class="mb-2">
+                        <strong>身分別：</strong>
+                        {% if user_extend.role == 'brand' %}
+                            <span class="badge bg-primary">品牌方</span>
+                        {% elif user_extend.role == 'club' %}
+                            <span class="badge bg-success">社團方</span>
+                        {% else %}
+                            <span class="badge bg-secondary">未設置</span>
+                        {% endif %}
+                    </p>
                     <p class="mb-3">{{ user_extend.description }}</p>
                 </div>
             </div>
@@ -89,4 +104,24 @@
         </div>
     </div>
 </div>
+<script>
+    function copyEmail() {
+        var email = document.getElementById("user-email").innerText;
+        navigator.clipboard.writeText(email).then(function() {
+            alert("Email 已複製到剪貼簿");
+        }, function(err) {
+            console.error('無法複製: ', err);
+        });
+    }
+    </script>
+    
+    
+<style>
+    .cursor-pointer {
+        cursor: pointer;
+    }
+    .cursor-pointer:hover {
+        text-decoration: underline;
+    }
+    </style>
 {% endblock %}
