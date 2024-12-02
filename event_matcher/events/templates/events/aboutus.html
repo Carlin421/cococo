@@ -3,16 +3,14 @@
 
 {% block title %}COCO - 關於我們{% endblock %}
 
-
-
 {% block content %}
 <!-- Hero Section -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <section class="hero-section mb-5">
-    <div class="container">
-        <h1 class="display-2 mb-4">關於 COCO</h1>
-        <p class="lead">連接夢想，成就精彩</p>
+    <div class="container text-center text-white">
+        <h1 class="hero-title">關於 COCO</h1>
+        <p class="hero-subtitle">連接夢想，成就精彩</p>
     </div>
 </section>
 
@@ -20,60 +18,58 @@
     <!-- Mission Section -->
     <div class="row mb-5 fade-in">
         <div class="col-lg-8 offset-lg-2 text-center">
-            <h3 class="display-4 mb-4">我們的使命</h3>
-            <p class="lead">歡迎來到coco校園行銷贊助平台，這是一個專為學生社團與品牌打造的創新媒合平台。目標是通過智能化工具與創新行銷策略，連結校園活動與企業贊助資源，為雙方創造最大的價值。</p>
+            <h2 class="section-title">我們的使命</h2>
+            <p class="section-text">歡迎來到coco校園行銷贊助平台，這是一個專為學生社團與品牌打造的創新媒合平台。目標是通過智能化工具與創新行銷策略，連結校園活動與企業贊助資源，為雙方創造最大的價值。</p>
         </div>
     </div>
 
     <!-- Story Section -->
-    <div class="row mb-5 fade-in">
-        <div class="col-md-6">
-            <img src="{% static 'aboutus images/002.jpg' %}" alt="Our Story" class="img-fluid rounded shadow-lg">
+    <div class="row mb-5 align-items-center fade-in">
+        <div class="col-md-6 order-md-2">
+            <img src="{% static 'aboutus images/002.jpg' %}" alt="Our Story" class="img-fluid rounded shadow-lg transform-img">
         </div>
-        <div class="col-md-6 d-flex align-items-center">
-            <div>
-                <h2 class="display-4 mb-4">我們的故事</h2>
-                <p>COCO 誕生於一群熱愛活動策劃的年輕人之手。我們深知活動組織者在尋找贊助時所面臨的挑戰，也了解贊助商在尋找合適活動時的困難。因此，我們決定打造一個平台，讓這兩個群體能夠輕鬆地找到彼此。</p>
-            </div>
+        <div class="col-md-6 order-md-1">
+            <h2 class="section-title">我們的故事</h2>
+            <p class="section-text">COCO 誕生於一群熱愛活動策劃的年輕人之手。我們深知活動組織者在尋找贊助時所面臨的挑戰，也了解贊助商在尋找合適活動時的困難。因此，我們決定打造一個平台，讓這兩個群體能夠輕鬆地找到彼此。</p>
         </div>
     </div>
 
     <!-- Values Section -->
-    <h2 class="display-4 text-center mb-5 fade-in">我們的價值觀</h2>
+    <h2 class="section-title text-center fade-in">我們的價值觀</h2>
     <div class="row mb-5">
-        <div class="col-md-3 mb-4 fade-in">
-            <div class="card value-card h-100 shadow">
+        <div class="col-md-3 fade-in">
+            <div class="card value-card shadow h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-lightbulb fa-3x mb-3 text-primary"></i>
-                    <h3 class="card-title">創新</h3>
-                    <p class="card-text">我們不斷探索新的方式來改善用戶體驗。</p>
+                    <i class="fas fa-lightbulb fa-2x mb-3 text-primary"></i>
+                    <h3 class="value-title">創新</h3>
+                    <p class="value-text">我們不斷探索新的方式來改善用戶體驗。</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4 fade-in">
-            <div class="card value-card h-100 shadow">
+        <div class="col-md-3 fade-in">
+            <div class="card value-card shadow h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-handshake fa-3x mb-3 text-success"></i>
-                    <h3 class="card-title">誠信</h3>
-                    <p class="card-text">我們重視透明度，確保平台上的所有資訊都是真實可靠的。</p>
+                    <i class="fas fa-handshake fa-2x mb-3 text-success"></i>
+                    <h3 class="value-title">誠信</h3>
+                    <p class="value-text">我們重視透明度，確保平台上的所有資訊都是真實可靠的。</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4 fade-in">
-            <div class="card value-card h-100 shadow">
+        <div class="col-md-3 fade-in">
+            <div class="card value-card shadow h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-users fa-3x mb-3 text-info"></i>
-                    <h3 class="card-title">合作</h3>
-                    <p class="card-text">我們相信通過合作，可以創造出更大的價值。</p>
+                    <i class="fas fa-users fa-2x mb-3 text-info"></i>
+                    <h3 class="value-title">合作</h3>
+                    <p class="value-text">我們相信通過合作，可以創造出更大的價值。</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 mb-4 fade-in">
-            <div class="card value-card h-100 shadow">
+        <div class="col-md-3 fade-in">
+            <div class="card value-card shadow h-100">
                 <div class="card-body text-center">
-                    <i class="fas fa-globe fa-3x mb-3 text-warning"></i>
-                    <h3 class="card-title">多元性</h3>
-                    <p class="card-text">我們歡迎各種類型的活動和贊助，促進文化交流和創意激盪。</p>
+                    <i class="fas fa-globe fa-2x mb-3 text-warning"></i>
+                    <h3 class="value-title">多元性</h3>
+                    <p class="value-text">我們歡迎各種類型的活動和贊助，促進文化交流和創意激盪。</p>
                 </div>
             </div>
         </div>
@@ -83,20 +79,20 @@
     <div class="row fade-in">
         <div class="col-lg-8 offset-lg-2">
             <div class="card shadow-lg">
-                <div class="card-body">
-                    <h2 class="display-4 mb-4 text-center">聯絡我們</h2>
-                    <p class="text-center mb-4">如果您有任何問題、建議或合作提案，歡迎隨時與我們聯繫：</p>
+                <div class="card-body text-center">
+                    <h2 class="section-title">聯絡我們</h2>
+                    <p class="section-text">如果您有任何問題、建議或合作提案，歡迎隨時與我們聯繫：</p>
                     <div class="row">
-                        <div class="col-md-4 text-center mb-3">
-                            <i class="fas fa-envelope fa-2x mb-2 text-primary"></i>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-envelope fa-2x text-primary"></i>
                             <p>info@coco-events.com</p>
                         </div>
-                        <div class="col-md-4 text-center mb-3">
-                            <i class="fas fa-phone fa-2x mb-2 text-success"></i>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-phone fa-2x text-success"></i>
                             <p>(02) 1234-5678</p>
                         </div>
-                        <div class="col-md-4 text-center mb-3">
-                            <i class="fas fa-map-marker-alt fa-2x mb-2 text-danger"></i>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-map-marker-alt fa-2x text-danger"></i>
                             <p>台北市信義區信義路5段7號</p>
                         </div>
                     </div>
@@ -105,8 +101,6 @@
         </div>
     </div>
 </div>
-
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -124,7 +118,44 @@
         fadeElems.forEach(elem => observer.observe(elem));
     });
 </script>
+
 <style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{% static "aboutus images/our-story.jpg" %}') no-repeat center center;
+        background-size: cover;
+        height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .hero-subtitle {
+        font-size: 1.5rem;
+        font-weight: 400;
+    }
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .section-text {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: #555;
+    }
+    .value-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+    .value-text {
+        font-size: 0.9rem;
+        color: #777;
+    }
     .fade-in {
         opacity: 0;
         transform: translateY(20px);
@@ -134,21 +165,12 @@
         opacity: 1;
         transform: translateY(0);
     }
-    .hero-section {
-        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{% static "aboutus images/our-story.jpg" %}') no-repeat center center;
-        background-size: cover;
-        height: 60vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        text-align: center;
+    .transform-img {
+        transform: scale(1);
+        transition: transform 0.5s ease-in-out;
     }
-    .value-card {
-        transition: transform 0.3s ease-in-out;
-    }
-    .value-card:hover {
-        transform: translateY(-10px);
+    .transform-img:hover {
+        transform: scale(1.1);
     }
 </style>
 {% endblock %}
