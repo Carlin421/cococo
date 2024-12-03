@@ -117,11 +117,29 @@
     
     
 <style>
-    .cursor-pointer {
-        cursor: pointer;
+@media screen and (max-width: 1200px) {
+    .container {
+        width: 100%;
+        padding: 0 15px;
     }
-    .cursor-pointer:hover {
-        text-decoration: underline;
+    .row {
+        flex-direction: column;
     }
+    .col-md-4 {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .card {
+        width: 100%;
+    }
+    .card-body {
+        text-align: center;
+    }
+    .card-header {
+        text-align: center;
+    }
+    
+}
+
     </style>
 {% endblock %}

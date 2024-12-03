@@ -84,6 +84,7 @@
     display: inline-block;
   }
 
+  
   .nav-button {
     padding: 10px 15px;
     border-radius: 25px;
@@ -109,7 +110,34 @@
 
 
 /* 1199px 以下 (行動裝置模式) */
+
 @media (max-width: 1199px) {
+    .navbar-collapse {
+        display: none !important; /* 強制隱藏普通 Navbar */
+    }
+    .offcanvas {
+        display: block !important; /* 強制顯示 Offcanvas */
+    }
+    .nav-button {
+        padding: 5px 10px; /* 縮小按鈕大小 */
+        margin: 5px 0;    /* 減少按鈕間距 */
+        width: 100%;      /* 滿版按鈕 */
+        text-align: center;
+    }
+    .offcanvas-header {
+        background-color: #f0f0f0;
+        color: #637290;
+    }
+}
+
+@media (max-width: 1199px) {
+  .navbar-expand-lg .navbar-collapse {
+        display: none !important;
+    }
+    .navbar-expand-lg .offcanvas {
+        display: block !important;
+    }
+
   .navbar-toggler {
     background-color: #637290; /* 收合按鈕背景顏色 */
     border-color: white;
@@ -200,7 +228,7 @@
 
 <!-- 頁首導航欄 -->
 <header data-bs-theme="dark">
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top custom-navbar">
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
     <div class="container-fluid">
       <!-- Logo -->
       <a class="navbar-brand" href="{% url 'event_list' %}">COCO</a>
@@ -503,6 +531,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }, 300);
   }
 });
+
+
 
 </script>
 
