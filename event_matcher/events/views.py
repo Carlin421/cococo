@@ -705,6 +705,10 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 
 from .models import Activitynew, Photo  # 確保引入 Photo 模型
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from .models import Activitynew, Photo
 
 @login_required
 def toggle_close_activity(request, activity_id):
@@ -712,37 +716,41 @@ def toggle_close_activity(request, activity_id):
 
     if request.user == activity.organizer or request.user.is_staff:
         if request.method == "POST":
-            activity.is_closed = not activity.is_closed  # 切換結案狀態
-
-            # 如果結案並且有照片上傳
-            if activity.is_closed and 'result_photos' in request.FILES:
-                photos = request.FILES.getlist('result_photos')  # 獲取所有上傳的文件
-                if len(photos) + activity.photos.count() > 20:  # 限制總數最多20張
-                    messages.error(request, "照片數量超過限制（最多 20 張）。")
-                    return redirect('activity_detail', activity_id=activity.id)
-
-                for photo in photos:
-                    # 文件格式驗證
-                    if photo.content_type not in ['image/jpeg', 'image/png']:
-                        messages.error(request, f"文件 {photo.name} 格式無效，僅支持 JPEG 或 PNG。")
-                        continue
-                    # 文件大小驗證
-                    if photo.size > 5 * 1024 * 1024:  # 限制文件大小為5MB
-                        messages.error(request, f"文件 {photo.name} 大小超過 5MB。")
-                        continue
-                    # 儲存照片到 Photo 模型
-                    Photo.objects.create(activity=activity, image=photo)
-
-            activity.save()
+            # 切換結案狀態
+            activity.is_closed = not activity.is_closed
 
             if activity.is_closed:
+                # 如果結案並且有照片上傳
+                if 'result_photos' in request.FILES:
+                    photos = request.FILES.getlist('result_photos')  # 獲取所有上傳的文件
+                    if len(photos) + activity.photos.count() > 20:  # 限制總數最多20張
+                        messages.error(request, "照片數量超過限制（最多 20 張）。")
+                        return redirect('activity_detail', activity_id=activity.id)
+
+                    for photo in photos:
+                        # 文件格式驗證
+                        if photo.content_type not in ['image/jpeg', 'image/png']:
+                            messages.error(request, f"文件 {photo.name} 格式無效，僅支持 JPEG 或 PNG。")
+                            continue
+                        # 文件大小驗證
+                        if photo.size > 5 * 1024 * 1024:  # 限制文件大小為5MB
+                            messages.error(request, f"文件 {photo.name} 大小超過 5MB。")
+                            continue
+                        # 儲存照片到 Photo 模型
+                        Photo.objects.create(activity=activity, image=photo)
+
                 messages.success(request, "活動已成功結案，照片已保存！")
             else:
-                messages.success(request, "活動結案狀態已取消！")
+                # 如果取消結案，刪除所有相關照片
+                activity.photos.all().delete()
+                messages.success(request, "活動結案狀態已取消，所有成果照片已刪除！")
+
+            activity.save()
             return redirect('activity_detail', activity_id=activity.id)
 
     messages.error(request, "您無權執行此操作。")
     return redirect('activity_detail', activity_id=activity.id)
+
 
 
 from django.shortcuts import render, get_object_or_404, redirect
