@@ -17,6 +17,13 @@
                     {% if activity.image %}
                         <img src="{{ activity.image.url }}" alt="{{ activity.title }}" class="img-fluid rounded mb-4" style="max-height: 300px; object-fit: cover;">
                     {% endif %}
+                    {% if activity.organizer %}
+                    <li class="list-group-item">
+                      <strong>主辦方：</strong> 
+                      <a href="{% url 'user_profile' activity.organizer.id %}">
+                          {{ activity.organizer }}
+                      </a>
+                  </li>
                     <h5 class="card-title">活動詳情</h5>
                     <p class="card-text">{{ activity.description }}</p>
                     <ul class="list-group list-group-flush">
@@ -28,8 +35,8 @@
                                 <div id="map" style="height: 300px;"></div>
                             </div>
                         </div>
-                        {% if activity.organizer %}
-                            <li class="list-group-item"><strong>主辦方：</strong> {{ activity.organizer }}</li>
+
+                      
                         {% endif %}
                     </ul>
                 </div>
