@@ -20,6 +20,14 @@ from django.db import IntegrityError
 import logging
 from django.views.decorators.http import require_POST
 logger = logging.getLogger(__name__)
+@login_required
+def check_profile_completion(request):
+    user_profile = request.user.profile
+    if request.user.social_auth.filter(provider='google-oauth2').exists():
+        if not user_profile.role or not user_profile.description:
+            messages.warning(request, '請完成您的個人資料設置。')
+            return redirect('edit_profile')
+    return redirect('event_list')  # 或其他適當的主頁
 # 在 event_matcher/events/views.py 文件中
 def notifications(request):    
     if request.user.is_authenticated:
