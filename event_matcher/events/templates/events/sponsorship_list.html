@@ -11,22 +11,95 @@
         <h1 class="fw-bold display-6">贊助活動清單</h1>
         <p class="lead text-muted">探索多元的贊助活動，並找到您感興趣的項目。</p>
         <!-- 搜索表單 -->
-        <form class="d-flex justify-content-center mb-4" method="GET" action="{% url 'sponsorship_list' %}">
-          <div class="input-group search-bar" style="max-width: 500px;">
-            <input type="text" class="form-control" placeholder="搜索贊助..." name="q" value="{{ query|default_if_none:'' }}">
-            <button class="btn btn-outline-primary" type="submit">搜索</button>
+        <!-- 搜索表單 -->
+        <div class="search-container mb-4">
+          <form class="d-flex justify-content-center" method="GET" action="{% url 'sponsorship_list' %}">
+            <div class="input-group" style="max-width: 500px;">
+              <input type="text" class="form-control" placeholder="搜索贊助..." name="q" value="{{ query|default_if_none:'' }}">
+              <button class="btn btn-outline-primary" type="submit">搜索</button>
+            </div>
+          </form>
+
+          <!-- 篩選選單 -->
+          <form class="mt-2 d-flex justify-content-center" method="GET" action="{% url 'sponsorship_list' %}">
+            <div class="input-group" style="max-width: 300px;">
+              <select class="form-select" name="sort" onchange="this.form.submit()">
+                <option value="" {% if sort == '' %}selected{% endif %}>排序方式</option>
+                <option value="date_posted_asc" {% if sort == 'date_posted_asc' %}selected{% endif %}>發布日期（最早發佈）</option>
+                <option value="date_posted_desc" {% if sort == 'date_posted_desc' %}selected{% endif %}>發布日期（最新發佈）</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <!-- <div class="results-container">
+          <p>共找到 {{ sponsorships.paginator.count }} 條結果</p> 
+          <div class="row">
+            {% for sponsorship in sponsorships %}
+              <div class="col-md-4">
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ sponsorship.title }}</h5>
+                    <p class="card-text">發布日期：{{ sponsorship.date_posted }}</p>
+                    {% if sponsorship.is_favorited %}
+                      <p class="text-success">已收藏</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
           </div>
-        </form>
+        </div>-->
       </div>
     </div>
   </section>
+  <style>
+    .search-container {
+  text-align: center;
+}
+
+.results-container {
+  margin-top: 20px;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+  </style>
 
   <div class="album py-4 bg-light">
     <div class="container">
       {% if query %}
-        <h2 class="mb-4 text-center">搜索結果: "{{ query }}"</h2>
-      {% endif %}
+      <div class="search-result-container mb-4 text-center">
+        <p class="search-result-title">🔍  搜索結果: "<span class="query-highlight">{{  query  }}</span>"</p>
+      </div>
+    {% endif %}
 
+<style>
+.search-result-container {
+  margin-bottom: 20px;      /* 與下方元素保持距離 */
+}
+
+.search-result-title {
+  font-size: 1rem;          /* 與排序方式文字一致的大小 */
+  font-weight: normal;      /* 普通字重 */
+  color: #333;              /* 深色文字 */
+  margin: 0;                /* 去掉多餘的間距 */
+}
+
+.query-highlight {
+  color: #007bff;           /* 突出顯示的關鍵字顏色 */
+  font-weight: bold;        /* 加粗 */
+}
+
+</style>    
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for sponsorship in sponsorships %}
         {% if sponsorship.check_status %}

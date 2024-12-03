@@ -368,21 +368,33 @@ def activitynew_list(request):
 #     activity.save()
 #     return redirect('activitynew_list')
 
+from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 def sponsorship_list(request, page=1):
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')
+    sort = request.GET.get('sort', '')  # 新增的參數
+    
     if request.user.is_staff:
         sponsorships = Sponsorshipnew.objects.all()
     else:
         sponsorships = Sponsorshipnew.objects.filter(check_status=True, is_active=True)
     
+    # 搜索功能
     if query:
         sponsorships = sponsorships.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query) |
             Q(location__icontains=query) |
-            Q(date__icontains=query)
+            Q(date_posted__icontains=query)
         )
     
+    # 排序功能
+    if sort == 'date_posted_asc':
+        sponsorships = sponsorships.order_by('date_posted')
+    elif sort == 'date_posted_desc':
+        sponsorships = sponsorships.order_by('-date_posted')
+
     # 添加收藏狀態
     if request.user.is_authenticated:
         for sponsorship in sponsorships:
@@ -391,8 +403,8 @@ def sponsorship_list(request, page=1):
         for sponsorship in sponsorships:
             sponsorship.is_favorited = False
     
+    # 分頁處理
     paginator = Paginator(sponsorships, 10)  # 每頁顯示 10 個項目
-    
     try:
         sponsorships_page = paginator.page(page)
     except PageNotAnInteger:
@@ -402,9 +414,11 @@ def sponsorship_list(request, page=1):
     
     context = {
         'sponsorships': sponsorships_page,
-        'query': query
-    }  
+        'query': query,
+        'sort': sort,  # 傳遞排序參數到模板
+    }
     return render(request, 'events/sponsorship_list.html', context)
+
 
 # @login_required
 # def toggle_sponsorshipnew_favorite(request, sponsorship_id):
