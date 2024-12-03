@@ -38,16 +38,51 @@
                         {% if activity.photos.exists %}
                         <div class="card mb-4 shadow-sm">
                             <div class="card-body">
-                                <h5 class="card-title">活動成果相簿</h5>
-                                <a href="{% url 'edit_activity_photos' activity.id %}" class="btn btn-info w-100 mt-3">編輯照片</a>
-                                <div class="row">
-                                    {% for photo in activity.photos.all %}
-                                        <div class="col-md-3 mb-3">
-                                            <img src="{{ photo.image.url }}" alt="成果照片" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
+                              <h5 class="mb-3">活動成果相簿</h5>
+                              <div class="edit-button-container">
+                                  <a href="{% url 'edit_activity_photos' activity.id %}" class="btn btn-secondary btn-edit">編輯照片</a>
+                              </div>
+                              <div class="row mt-3">
+                                  {% for photo in activity.photos.all %}
+                                      <div class="col-md-3 mb-3">
+                                          <img src="{{ photo.image.url }}" alt="活動成果照片" class="img-fluid rounded">
+                                      </div>
+                                  {% endfor %}
+                              </div>
+                          </div>
+                          <style>
+                                                        /* 容器樣式 */
+                            .photo-section {
+                                position: relative; /* 為按鈕定位提供參考點 */
+                                margin-bottom: 1rem;
+                            }
+
+                            /* 編輯按鈕容器樣式 */
+                            .edit-button-container {
+                                text-align: left; /* 讓按鈕對齊到左側 */
+                                margin-bottom: 1rem; /* 與圖片保持適當距離 */
+                            }
+
+                            /* 按鈕樣式 */
+                            .btn-edit {
+                                background-color: #6C7EA5; /* 按鈕背景顏色 */
+                                color: #fff; /* 按鈕文字顏色 */
+                                border: none;
+                                border-radius: 8px; /* 按鈕圓角 */
+                                padding: 8px 16px; /* 調整按鈕內邊距 */
+                                font-size: 14px; /* 按鈕字體大小 */
+                                font-weight: bold; /* 字體加粗 */
+                                text-align: center;
+                                display: inline-block;
+                                cursor: pointer;
+                                transition: background-color 0.3s ease;
+                            }
+
+                            .btn-edit:hover {
+                                background-color: #5A6A90; /* 懸停時的背景顏色 */
+                            }
+
+                          </style>
                         </div>
                         {% endif %}
                       {% endif %}
@@ -212,7 +247,7 @@
   /* General container and card styling */
 .container {
   font-family: 'Arial', sans-serif;
-  color: #333;
+  color: #fff;
 }
 
 .card {
