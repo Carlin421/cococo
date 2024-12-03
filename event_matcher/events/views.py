@@ -697,5 +697,25 @@ def delete_sponsorship(request, sponsorship_id):
     
     return render(request, 'events/delete_sponsorship.html', {'sponsorship': sponsorship})
 
+#處理結案功能
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
+@login_required
+def toggle_close_activity(request, activity_id):
+    activity = get_object_or_404(Activitynew, id=activity_id)
+    if request.user == activity.organizer or request.user.is_staff:
+        if request.method == "POST":
+            activity.is_closed = not activity.is_closed  # 切換結案狀態
+            if activity.is_closed and 'result_photo' in request.FILES:
+                activity.result_photo = request.FILES['result_photo']  # 儲存成果照片
+            activity.save()
+            if activity.is_closed:
+                messages.success(request, "活動已成功結案！")
+            else:
+                messages.success(request, "活動結案狀態已取消！")
+            return redirect('activity_detail', activity_id=activity.id)
+    messages.error(request, "您無權執行此操作。")
+    return redirect('activity_detail', activity_id=activity.id)
 

@@ -86,18 +86,22 @@
             </div>
         
             <!-- 活動狀態卡片 -->
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">活動狀態</h5>
-                    {% if not activity.check_status %}
-                        <span class="badge bg-warning text-dark">審核中</span>
-                    {% elif activity.check_status and activity.is_active %}
-                        <span class="badge bg-success">已上架</span>
-                    {% else %}
-                        <span class="badge bg-secondary">已下架</span>
-                    {% endif %}
-                </div>
-            </div>
+            <div class="card-body">
+              <h5 class="card-title">活動狀態</h5>
+              {% if not activity.check_status %}
+                  <span class="badge bg-warning text-dark">審核中</span>
+              {% else %}
+                  {% if activity.is_closed %}
+                      <span class="badge bg-primary">已結案</span>
+                  {% elif activity.check_status and activity.is_active %}
+                      <span class="badge bg-success">已上架</span>
+                  {% else %}
+                      <span class="badge bg-secondary">已下架</span>
+                  {% endif %}
+              {% endif %}
+          </div>
+          
+          
         
             <!-- 活動操作卡片 -->
             <div class="card mb-4 shadow-sm">
@@ -167,11 +171,29 @@
 <a href="{% url 'edit_activity' activity.id %}" class="btn btn-info w-100 mb-3">
     編輯活動
 </a>
+<form method="POST" enctype="multipart/form-data" action="{% url 'toggle_close_activity' activity.id %}">
+  {% csrf_token %}
+  {% if activity.is_closed %}
+      <button type="submit" class="btn btn-danger w-100 mt-3">
+          取消結案
+      </button>
+  {% else %}
+      <button type="submit" class="btn btn-warning w-100 mt-3">
+          結案活動
+      </button>
+      <div class="mt-3">
+          <label for="resultPhoto" class="form-label">上傳成果照片</label>
+          <input type="file" name="result_photo" id="resultPhoto" class="form-control">
+      </div>
+  {% endif %}
+</form>
+
 {% endif %}
 {% if user == activity.organizer or user.is_staff %}
     <a href="{% url 'delete_activity' activity.id %}" class="btn btn-danger mt-3">刪除活動</a>
 {% endif %}
         </div>
+
 
 <style>
   /* General container and card styling */

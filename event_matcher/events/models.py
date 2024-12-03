@@ -35,6 +35,8 @@ class Activitynew(models.Model):
     image = models.ImageField(upload_to='activitynew_images/', blank=True, null=True,default=None)  # 活動圖片
     date_posted = models.DateTimeField(default=timezone.now)  # 活動發布日期
     check_status = models.BooleanField(default=False) # 審核狀態
+    is_closed = models.BooleanField(default=False)  # 用於標記活動是否已結案
+    result_photo = models.ImageField(upload_to='activity_results/', blank=True, null=True)  # 成果照片
     is_active = models.BooleanField(default=True)
     organizer = models.ForeignKey(
         settings.AUTH_USER_MODEL,

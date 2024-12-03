@@ -28,6 +28,7 @@ urlpatterns = [
     path('activities/', views.activity_list, name='activity_list'),
     path('', views.activity_list, name='activity_list'),  # 主頁面
     path('logout/', LogoutView.as_view(), name='logout'),  # 添加登出路由
+    
 ]
 
 if settings.DEBUG:
