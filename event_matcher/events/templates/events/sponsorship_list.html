@@ -37,8 +37,8 @@
                   id="amount_range"
                   name="amount"
                   min="0"
-                  max="15000"
-                  step="100"
+                  max="100000"
+                  step="1000"
                   value="{{ selected_amount|default:100000 }}"
                   oninput="document.getElementById('amount_display').textContent = this.value;"
                 />
@@ -62,14 +62,81 @@
               </form>
             </div>
       
-            <!-- 搜索結果 -->
-            {% if query %}
-              <div class="search-result-container mb-4">
-                <p class="search-result-title">🔍 搜索結果: "<span class="query-highlight">{{ query }}</span>"</p>
+            <!-- 贊助品牌列表 -->
+            <div class="brand-list mb-4">
+              <h5>贊助品牌</h5>
+              <div class="brand-buttons">
+                {% for sponsorship in sponsorships|slice:":5" %}
+                  <a href="{% url 'user_profile' sponsorship.organizer.id %}" class="brand-button">
+                    {{ sponsorship.organizer }}
+                  </a>
+                {% endfor %}
               </div>
-            {% endif %}
-        </div>
-      </div>
+              <button
+                class="btn btn-link text-decoration-none text-primary mt-2"
+                id="show-more-button"
+                onclick="toggleBrandList()"
+              >
+                查看更多
+              </button>
+            </div>
+            
+            <script>
+              const toggleBrandList = () => {
+                const brandContainer = document.querySelector('.brand-buttons');
+                const button = document.getElementById('show-more-button');
+            
+                if (button.textContent.trim() === '查看更多') {
+                  // 顯示所有品牌
+                  brandContainer.innerHTML = `
+                    {% for sponsorship in sponsorships %}
+                      <a href="{% url 'user_profile' sponsorship.organizer.id %}" class="brand-button">
+                        {{ sponsorship.organizer }}
+                      </a>
+                    {% endfor %}
+                  `;
+                  button.textContent = '收起';
+                } else {
+                  // 只顯示前三個品牌
+                  brandContainer.innerHTML = `
+                    {% for sponsorship in sponsorships|slice:":5" %}
+                      <a href="{% url 'user_profile' sponsorship.organizer.id %}" class="brand-button">
+                        {{ sponsorship.organizer }}
+                      </a>
+                    {% endfor %}
+                  `;
+                  button.textContent = '查看更多';
+                }
+              };
+            </script>
+            <style>
+                          .brand-buttons {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px; /* 按鈕之間的間距 */
+              margin-top: 10px;
+            }
+
+            .brand-button {
+              display: inline-block;
+              background-color: #6c8ebf; /* 按鈕背景色 */
+              color: white; /* 按鈕文字顏色 */
+              padding: 10px 20px; /* 按鈕內邊距 */
+              border-radius: 20px; /* 圓角效果 */
+              text-decoration: none; /* 去掉超鏈接下劃線 */
+              font-size: 14px; /* 字體大小 */
+              text-align: center;
+              transition: all 0.3s ease; /* 動態效果 */
+            }
+
+            .brand-button:hover {
+              background-color: #5072a7; /* 滑鼠懸停背景色 */
+              box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* 滑鼠懸停陰影 */
+            }
+
+            </style>
+            
+                        
       
 
         <!-- <div class="results-container">
@@ -148,6 +215,30 @@
   font-weight: bold;
   color: #007bff;
 }
+.brand-list {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.brand-list h5 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.list-group-item {
+  border: none;
+}
+
+.list-group-item a {
+  color: #007bff;
+}
+
+.list-group-item a:hover {
+  text-decoration: underline;
+}
 
 
   </style>
@@ -156,6 +247,7 @@
     <div class="container">
       {% if query %}
       <div class="search-result-container mb-4 text-center">
+        <p class="search-result-title">🔍  搜索結果: "<span class="query-highlight">{{  query  }}</span>"</p>
       </div>
     {% endif %}
 

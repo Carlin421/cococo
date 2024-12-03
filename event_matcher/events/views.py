@@ -372,10 +372,13 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
+from django.db.models import Q
+
 def sponsorship_list(request, page=1):
     query = request.GET.get('q', '')
     sort = request.GET.get('sort', '')
     amount = request.GET.get('amount', None)
+    organizer = request.GET.get('organizer', None)
 
     if request.user.is_staff:
         sponsorships = Sponsorshipnew.objects.all()
@@ -395,19 +398,18 @@ def sponsorship_list(request, page=1):
     if amount:
         sponsorships = sponsorships.filter(amount__lte=amount)
 
+    # 品牌篩選
+    if organizer:
+        sponsorships = sponsorships.filter(organizer__iexact=organizer)
+
     # 排序功能
     if sort == 'date_posted_asc':
         sponsorships = sponsorships.order_by('date_posted')
     elif sort == 'date_posted_desc':
         sponsorships = sponsorships.order_by('-date_posted')
 
-    # 添加收藏狀態
-    if request.user.is_authenticated:
-        for sponsorship in sponsorships:
-            sponsorship.is_favorited = sponsorship.favorite_set.filter(user=request.user).exists()
-    else:
-        for sponsorship in sponsorships:
-            sponsorship.is_favorited = False
+    # 獲取所有品牌名稱
+    brands = Sponsorshipnew.objects.values_list('organizer', flat=True).distinct()
 
     # 分頁處理
     paginator = Paginator(sponsorships, 10)
@@ -422,9 +424,11 @@ def sponsorship_list(request, page=1):
         'sponsorships': sponsorships_page,
         'query': query,
         'sort': sort,
-        'selected_amount': amount,  # 傳遞金額篩選的值
+        'selected_amount': amount,
+        'brands': brands,  # 傳遞品牌列表到模板
     }
     return render(request, 'events/sponsorship_list.html', context)
+
 
 
 
@@ -479,59 +483,81 @@ def about_us(request):
 
 @login_required
 def add_activity(request):
+    # Initialize `form` to ensure it is defined
+    form = None
+
+    # Check if the user is a club organizer
     if not request.user.profile.is_club:
-                messages.error(request, '只有社團方可以新增活動。')
+        messages.error(request, '只有社團方可以新增活動。')
+        return redirect('activitynew_list')  # Redirect to a suitable page, e.g., activity list
+
     if request.method == 'POST':
+        form = ActivityForm(request.POST, request.FILES)  # Initialize form with POST data
         if not request.user.is_authenticated:
             messages.error(request, '請先登入才能創建活動。')
-            return redirect('login')  # 替換成您的登入頁面 URL 名稱
-        
-        if not request.user.profile.is_club:  # 假設您有一個 profile 模型來存儲用戶類型
-            messages.error(request, '只有社團方可以創建活動。')
-            return redirect('activity_list') 
+            return redirect('login')  # Redirect to login page
+
+        if form.is_valid():  # Validate the form input
+            activity = form.save(commit=False)
+            activity.organizer = request.user
+            activity.save()
+            messages.success(request, '活動已成功創建!')
+
+            # Create a notification
+            Notification.objects.create(
+                user=activity.organizer,
+                activity=activity,
+                message=f'您的活動"{activity.title}"已成功創建'
+            )
+            return redirect('activity_detail', activity_id=activity.id)
         else:
-                activity = form.save(commit=False)
-                activity.organizer = request.user
-                activity.save()
-                messages.success(request, '活動已成功創建!')
-                # 創建通知
-                Notification.objects.create(
-                    user=activity.organizer,
-                    activity=activity,
-                    message=f'您的活動"{activity.title}"已成功創建'
-                )
-                return redirect('activity_detail', activity_id=activity.id)
+            messages.error(request, '請檢查表單是否正確填寫。')
     else:
-        form = ActivityForm()
+        form = ActivityForm()  # Initialize a blank form for GET request
+
+    # Render the form for both GET and POST requests
     return render(request, 'events/add_activity.html', {'form': form})
+
 
 @login_required
 def add_sponsorship(request):
+    # Initialize the form to ensure it is defined in all cases
+    form = None
+
+    # Check if the user is a brand
     if not request.user.profile.is_brand:
-                messages.error(request, '只有品牌方可以新增贊助。')
+        messages.error(request, '只有品牌方可以新增贊助。')
+        return redirect('sponsorship_list')  # Redirect to an appropriate page
+
     if request.method == 'POST':
+        form = SponsorshipForm(request.POST, request.FILES)  # Initialize form with POST data
         if not request.user.is_authenticated:
             messages.error(request, '請先登入才能創建贊助。')
-            return redirect('login')  # 替換成您的登入頁面 URL 名稱
-        
-        if not request.user.profile.is_brand:  # 假設您有一個 profile 模型來存儲用戶類型
+            return redirect('login')  # Redirect to login page
+
+        if not request.user.profile.is_brand:
             messages.error(request, '只有品牌方可以創建贊助。')
-            return redirect('sponsorship_list') 
+            return redirect('sponsorship_list')  # Redirect to sponsorship list
+        elif form.is_valid():  # Validate form input
+            sponsorship = form.save(commit=False)
+            sponsorship.organizer = request.user
+            sponsorship.save()
+            messages.success(request, '贊助已成功創建!')
+
+            # Create a notification
+            Notification.objects.create(
+                user=sponsorship.organizer,
+                sponsorship=sponsorship,
+                message=f'您的贊助"{sponsorship.title}"已成功創建'
+            )
+            return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
         else:
-                sponsorship = form.save(commit=False)
-                sponsorship.organizer = request.user
-                sponsorship.save()
-                messages.success(request, '贊助已成功創建!')
-                # 創建通知
-                Notification.objects.create(
-                    user=sponsorship.organizer,
-                    sponsorship=sponsorship,
-                    message=f'您的贊助"{sponsorship.title}"已成功創建'
-                )
-                return redirect('sponsor_detail', sponsorship_id=sponsorship.id)
+            messages.error(request, '請檢查表單是否正確填寫。')
     else:
-        form = SponsorshipForm()
+        form = SponsorshipForm()  # Default form for GET request
+
     return render(request, 'events/add_sponsorship.html', {'form': form})
+
 
 @login_required
 def toggle_activity_status(request, activity_id):

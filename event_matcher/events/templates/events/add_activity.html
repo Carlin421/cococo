@@ -12,41 +12,47 @@
             <p>馬上開始創建社團活動吧<br>不知道怎麼寫文案的話也可以點選右下角的文案小助手㊣</p>
         </div>
         <!-- 右側表單區域 -->
+        <!-- 右側表單區域 -->
         <div class="col-md-6">
             <form method="post" enctype="multipart/form-data" class="needs-validation p-4" novalidate>
                 {% csrf_token %}
                 {% for field in form %}
-                    <div class="form-group mb-4">
-                        {% if field.name != 'latitude' and field.name != 'longitude' %}
-                            <label for="{{ field.id_for_label }}" class="form-label text-muted">{{ field.label }}</label>
-                            {% if field.name == 'location' %}
-                                {{ field }}
-                                <input type="text" id="address" class="form-control mb-2" placeholder="搜尋地址">
-                                <button type="button" class="btn btn-secondary mb-2" onclick="geocode()">搜尋地址</button>
-                                <div id="map" style="height: 300px;" class="mb-2"></div>
-                            {% elif field.field.widget.input_type == 'file' %}
+                <div class="form-group mb-4">
+                    {% if field.name != 'latitude' and field.name != 'longitude' %}
+                        <label for="{{ field.id_for_label }}" class="form-label text-muted">{{ field.label }}</label>
+                        
+                        {% if field.name == 'location' %}
+                            {{ field }}
+                            <input type="text" id="address" class="form-control mb-2" placeholder="搜尋地址">
+                            <button type="button" class="btn btn-secondary mb-2" onclick="geocode()">搜尋地址</button>
+                            <div id="map" style="height: 300px;" class="mb-2"></div>
+                        {% else %}
+                            {% if field.field.widget.input_type == 'file' %}
                                 <div class="custom-file">
                                     {{ field }}
-                                    <label class="custom-file-label" for="{{ field.id_for_label }}">選擇文件</label>
+                                 <!--     <label class="custom-file-label" for="{{ field.id_for_label }}">選擇文件</label> -->
                                 </div>
                             {% else %}
                                 {{ field }}
                             {% endif %}
-                            {% if field.help_text %}
-                                <small class="form-text text-muted">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% for error in field.errors %}
-                                <div class="invalid-feedback">{{ error }}</div>
-                            {% endfor %}
-                        {% else %}
-                            {{ field }}
                         {% endif %}
-                    </div>
-                {% endfor %}
+                        
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                </div>
+            {% endfor %}
                 <button type="submit" class="btn btn-primary w-100">創建活動</button>
             </form>
         </div>
     </div>
+</div>
 </div>
 
 
