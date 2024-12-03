@@ -36,7 +36,7 @@ class Activitynew(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)  # 活動發布日期
     check_status = models.BooleanField(default=False) # 審核狀態
     is_closed = models.BooleanField(default=False)  # 用於標記活動是否已結案
-    result_photo = models.ImageField(upload_to='activity_results/', blank=True, null=True)  # 成果照片
+    result_photo = models.ImageField(upload_to='result_photos/', blank=True, null=True,default=None)
     is_active = models.BooleanField(default=True)
     organizer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -98,3 +98,10 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s favorite: {self.activity or self.sponsorship}"
+
+from django import forms
+
+class CloseActivityForm(forms.ModelForm):
+    class Meta:
+        model = Activitynew
+        fields = ['result_photo']

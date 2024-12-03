@@ -702,6 +702,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+from django.core.exceptions import ValidationError
+
 @login_required
 def toggle_close_activity(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
@@ -709,7 +711,14 @@ def toggle_close_activity(request, activity_id):
         if request.method == "POST":
             activity.is_closed = not activity.is_closed  # 切換結案狀態
             if activity.is_closed and 'result_photo' in request.FILES:
-                activity.result_photo = request.FILES['result_photo']  # 儲存成果照片
+                result_photo = request.FILES['result_photo']
+                if result_photo.content_type not in ['image/jpeg', 'image/png']:
+                    messages.error(request, "僅支持上傳JPEG或PNG格式的照片。")
+                    return redirect('activity_detail', activity_id=activity.id)
+                if result_photo.size > 5 * 1024 * 1024:  # 限制文件大小為5MB
+                    messages.error(request, "上傳的照片不能超過5MB。")
+                    return redirect('activity_detail', activity_id=activity.id)
+                activity.result_photo = result_photo  # 儲存成果照片
             activity.save()
             if activity.is_closed:
                 messages.success(request, "活動已成功結案！")
@@ -718,4 +727,5 @@ def toggle_close_activity(request, activity_id):
             return redirect('activity_detail', activity_id=activity.id)
     messages.error(request, "您無權執行此操作。")
     return redirect('activity_detail', activity_id=activity.id)
+
 

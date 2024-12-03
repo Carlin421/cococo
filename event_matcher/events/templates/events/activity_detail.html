@@ -35,9 +35,15 @@
                                 <div id="map" style="height: 300px;"></div>
                             </div>
                         </div>
-
-                      
-                        {% endif %}
+                        {% if activity.result_photo %}
+                        <div class="card mb-4 shadow-sm">
+                          <div class="card-body">
+                              <h5 class="card-title">活動成果照片</h5>
+                              <img src="{{ activity.result_photo.url }}" alt="活動成果照片" class="img-fluid rounded mb-4" style="max-height: 400px; object-fit: cover;">
+                          </div>
+                      </div>
+                      {% endif %}
+                      {% endif %}
                     </ul>
                 </div>
             </div>
