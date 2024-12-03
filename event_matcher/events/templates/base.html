@@ -403,6 +403,17 @@
 
 .bi-shield-exclamation {
     font-size: 18px;
+    html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
 }
 
 </style>  
@@ -425,18 +436,123 @@
 </main>
 
 <!-- 頁腳 -->
-<footer class="bg-dark text-white mt-5">
-    <div class="container py-4">
-        <div class="row">
-            <div class="col-md-3"><h5>關於我們</h5><p>COCO 是一個連接品牌和社團的平台，致力於促進活動和贊助的交流與合作。</p></div>
-            <div class="col-md-3"><h5>快速連結</h5><ul class="list-unstyled"><li><a href="{% url 'event_list' %}" class="text-white">首頁</a></li><li><a href="#" class="text-white">找活動</a></li></ul></div>
-            <div class="col-md-3"><h5>合作夥伴</h5><ul class="list-unstyled"><li><a href="#" class="text-white">夥伴一</a></li></ul></div>
-            <div class="col-md-3"><h5>關注我們</h5><a href="#" class="text-white me-3"><i class="fab fa-facebook fa-2x"></i></a><a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a></div>
-        </div>
-        <hr class="bg-white">
-        <div class="text-center"><p class="mb-0">&copy; 2024 COCO. 版權所有。</p></div>
-    </div>
+<footer>
+  <div class="container">
+      <div class="row">
+          <!-- Useful Links -->
+          <div class="col-md-4">
+              <h5>快速連結</h5>
+              <ul>
+                  <li><a href="{% url 'event_list' %}">首頁</a></li>
+                  <li><a href="{% url 'activitynew_list' %}">找活動</a></li>
+                  <li><a href="{% url 'sponsorship_list' %}">找贊助</a></li>
+                  <li><a href="#">聯絡我們</a></li>
+              </ul>
+          </div>
+          <!-- Newsletter -->
+          <div class="col-md-4">
+              <h5>訂閱電子報</h5>
+              <div class="newsletter">
+                  <input type="email" placeholder="Your Email Address">
+                  <button>訂閱</button>
+              </div>
+          </div>
+          <!-- Contact -->
+          <div class="col-md-4">
+              <h5>聯絡資訊</h5>
+              <p>54561埔里鎮大學路1號</p>
+              <p>南投縣, 台灣</p>
+              <div class="social-icons">
+                  <a href="#"><i class="fab fa-facebook"></i></a>
+                  <a href="#"><i class="fab fa-twitter"></i></a>
+                  <a href="#"><i class="fab fa-instagram"></i></a>
+              </div>
+          </div>
+      </div>
+  </div>
+  <style>
+    html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    background-color: #343a40; /* 深色背景 */
+    color: white; /* 白色文字 */
+    padding: 40px 0;
+    margin-top: auto; /* 自動推到頁面底部 */
+}
+    footer {
+        background-color: #343a40; /* 深色背景 */
+        color: white; /* 白色文字 */
+        padding: 40px 0;
+    }
+
+    footer h5 {
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+
+    footer ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    footer ul li {
+        margin-bottom: 10px;
+    }
+
+    footer ul li a {
+        color: white;
+        text-decoration: none;
+    }
+
+    footer ul li a:hover {
+        text-decoration: underline;
+    }
+
+    .newsletter input[type="email"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .newsletter button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-transform: uppercase;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .newsletter button:hover {
+        background-color: #218838;
+    }
+
+    .social-icons a {
+        margin-right: 15px;
+        color: white;
+        font-size: 20px;
+    }
+
+    .social-icons a:hover {
+        color: #adb5bd;
+    }
+</style>
 </footer>
+
 
 <!-- 引入 ScrollReveal 動畫庫 -->
 <script src="https://unpkg.com/scrollreveal"></script>
