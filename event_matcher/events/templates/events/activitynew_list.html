@@ -24,9 +24,29 @@
   <div class="album py-4 bg-light">
     <div class="container">
       {% if query %}
-        <h2 class="mb-4 text-center">搜索結果: "{{ query }}"</h2>
-      {% endif %}
-      
+      <div class="search-result-container mb-4 text-center">
+        <p class="search-result-title">🔍  搜索結果: "<span class="query-highlight">{{  query  }}</span>"</p>
+      </div>
+    {% endif %}
+
+<style>
+  .search-result-container {
+    margin-bottom: 20px;      /* 與下方元素保持距離 */
+  }
+  
+  .search-result-title {
+    font-size: 1rem;          /* 與排序方式文字一致的大小 */
+    font-weight: normal;      /* 普通字重 */
+    color: #333;              /* 深色文字 */
+    margin: 0;                /* 去掉多餘的間距 */
+  }
+  
+  .query-highlight {
+    color: #007bff;           /* 突出顯示的關鍵字顏色 */
+    font-weight: bold;        /* 加粗 */
+  }
+</style> 
+     
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for activity in activity_list %}
         {% if activity.check_status %}

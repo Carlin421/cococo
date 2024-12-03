@@ -10,27 +10,68 @@
       <div class="col-lg-8 col-md-10 mx-auto">
         <h1 class="fw-bold display-6">贊助活動清單</h1>
         <p class="lead text-muted">探索多元的贊助活動，並找到您感興趣的項目。</p>
-        <!-- 搜索表單 -->
-        <!-- 搜索表單 -->
-        <div class="search-container mb-4">
-          <form class="d-flex justify-content-center" method="GET" action="{% url 'sponsorship_list' %}">
-            <div class="input-group" style="max-width: 500px;">
-              <input type="text" class="form-control" placeholder="搜索贊助..." name="q" value="{{ query|default_if_none:'' }}">
-              <button class="btn btn-outline-primary" type="submit">搜索</button>
+      <!-- 搜索表單 -->
+      <div class="container mt-4">
+        <div class="row">
+          <!-- 左側篩選區 -->
+          <div class="col-md-3">
+            <div class="filter-section">
+              <h5 class="mb-3">篩選條件</h5>
+      
+              <!-- 排序方式 -->
+              <form method="GET" action="{% url 'sponsorship_list' %}" class="mb-4">
+                <label for="sort" class="form-label">排序方式</label>
+                <select class="form-select" id="sort" name="sort" onchange="this.form.submit()">
+                  <option value="" {% if sort == '' %}selected{% endif %}>排序方式</option>
+                  <option value="date_posted_asc" {% if sort == 'date_posted_asc' %}selected{% endif %}>發布日期（最早發佈）</option>
+                  <option value="date_posted_desc" {% if sort == 'date_posted_desc' %}selected{% endif %}>發布日期（最新發佈）</option>
+                </select>
+              </form>
+      
+              <!-- 金額篩選 -->
+              <form method="GET" action="{% url 'sponsorship_list' %}">
+                <label for="amount_range" class="form-label">篩選贊助金額</label>
+                <input
+                  type="range"
+                  class="form-range"
+                  id="amount_range"
+                  name="amount"
+                  min="0"
+                  max="15000"
+                  step="100"
+                  value="{{ selected_amount|default:100000 }}"
+                  oninput="document.getElementById('amount_display').textContent = this.value;"
+                />
+                <div class="d-flex justify-content-between">
+                  <span>0</span>
+                  <span id="amount_display">{{ selected_amount|default:100000 }}</span>
+                </div>
+                <button class="btn btn-outline-primary mt-2 w-100" type="submit">篩選</button>
+              </form>
             </div>
-          </form>
-
-          <!-- 篩選選單 -->
-          <form class="mt-2 d-flex justify-content-center" method="GET" action="{% url 'sponsorship_list' %}">
-            <div class="input-group" style="max-width: 300px;">
-              <select class="form-select" name="sort" onchange="this.form.submit()">
-                <option value="" {% if sort == '' %}selected{% endif %}>排序方式</option>
-                <option value="date_posted_asc" {% if sort == 'date_posted_asc' %}selected{% endif %}>發布日期（最早發佈）</option>
-                <option value="date_posted_desc" {% if sort == 'date_posted_desc' %}selected{% endif %}>發布日期（最新發佈）</option>
-              </select>
+          </div>
+      
+          <!-- 右側搜索區 -->
+          <div class="col-md-9">
+            <div class="search-section mb-4">
+              <form class="d-flex justify-content-end" method="GET" action="{% url 'sponsorship_list' %}">
+                <div class="input-group" style="max-width: 500px;">
+                  <input type="text" class="form-control" placeholder="搜索贊助..." name="q" value="{{ query|default_if_none:'' }}">
+                  <button class="btn btn-outline-primary" type="submit">搜索</button>
+                </div>
+              </form>
             </div>
-          </form>
+      
+            <!-- 搜索結果 -->
+            {% if query %}
+              <div class="search-result-container mb-4">
+                <p class="search-result-title">🔍 搜索結果: "<span class="query-highlight">{{ query }}</span>"</p>
+              </div>
+            {% endif %}
         </div>
+      </div>
+      
+
         <!-- <div class="results-container">
           <p>共找到 {{ sponsorships.paginator.count }} 條結果</p> 
           <div class="row">
@@ -53,6 +94,33 @@
     </div>
   </section>
   <style>
+  .filter-section {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.filter-section h5 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.search-result-container {
+  padding: 10px 0;
+}
+
+.search-result-title {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.result-list .card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
     .search-container {
   text-align: center;
 }
@@ -71,6 +139,16 @@
   font-size: 1.2em;
   font-weight: bold;
 }
+.form-range {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#amount_display {
+  font-weight: bold;
+  color: #007bff;
+}
+
 
   </style>
 
@@ -78,7 +156,6 @@
     <div class="container">
       {% if query %}
       <div class="search-result-container mb-4 text-center">
-        <p class="search-result-title">🔍  搜索結果: "<span class="query-highlight">{{  query  }}</span>"</p>
       </div>
     {% endif %}
 
