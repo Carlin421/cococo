@@ -314,25 +314,37 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'events/login.html', {'form': form})
 
+from django.db import IntegrityError
+from django.shortcuts import render, redirect
+from events.models import UserProfile
+
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         form_userprofile = UserPhotoForm(request.POST, request.FILES)
         if form.is_valid() and form_userprofile.is_valid():
-            user = form.save()
-            user_profile = form_userprofile.save(commit=False)
-            user_profile.user = user
-            
-            # 保存用戶角色
-            user_profile.role = form.cleaned_data['role']
-            
-            user_profile.save()
-            return redirect('login')  # 註冊完成後重定向到登入頁面
+            try:
+                # 創建 User
+                user = form.save()
+
+                # 嘗試創建 UserProfile
+                user_profile = form_userprofile.save(commit=False)
+                user_profile.user = user
+                user_profile.role = form.cleaned_data['role']  # 保存用戶角色
+                user_profile.save()
+
+                return redirect('login')  # 註冊完成後重定向到登入頁面
+
+            except IntegrityError:
+                # 如果出現唯一性錯誤，說明用戶已存在
+                form.add_error(None, "A profile for this user already exists.")
+
     else:
         form = RegisterForm()
         form_userprofile = UserPhotoForm()
 
     return render(request, 'events/register.html', {'form': form, 'form_userprofile': form_userprofile})
+
 
 def activitynew_list(request):
     query = request.GET.get('q')
@@ -705,10 +717,6 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 
 from .models import Activitynew, Photo  # 確保引入 Photo 模型
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from .models import Activitynew, Photo
 
 @login_required
 def toggle_close_activity(request, activity_id):
@@ -716,41 +724,37 @@ def toggle_close_activity(request, activity_id):
 
     if request.user == activity.organizer or request.user.is_staff:
         if request.method == "POST":
-            # 切換結案狀態
-            activity.is_closed = not activity.is_closed
+            activity.is_closed = not activity.is_closed  # 切換結案狀態
 
-            if activity.is_closed:
-                # 如果結案並且有照片上傳
-                if 'result_photos' in request.FILES:
-                    photos = request.FILES.getlist('result_photos')  # 獲取所有上傳的文件
-                    if len(photos) + activity.photos.count() > 20:  # 限制總數最多20張
-                        messages.error(request, "照片數量超過限制（最多 20 張）。")
-                        return redirect('activity_detail', activity_id=activity.id)
+            # 如果結案並且有照片上傳
+            if activity.is_closed and 'result_photos' in request.FILES:
+                photos = request.FILES.getlist('result_photos')  # 獲取所有上傳的文件
+                if len(photos) + activity.photos.count() > 20:  # 限制總數最多20張
+                    messages.error(request, "照片數量超過限制（最多 20 張）。")
+                    return redirect('activity_detail', activity_id=activity.id)
 
-                    for photo in photos:
-                        # 文件格式驗證
-                        if photo.content_type not in ['image/jpeg', 'image/png']:
-                            messages.error(request, f"文件 {photo.name} 格式無效，僅支持 JPEG 或 PNG。")
-                            continue
-                        # 文件大小驗證
-                        if photo.size > 5 * 1024 * 1024:  # 限制文件大小為5MB
-                            messages.error(request, f"文件 {photo.name} 大小超過 5MB。")
-                            continue
-                        # 儲存照片到 Photo 模型
-                        Photo.objects.create(activity=activity, image=photo)
-
-                messages.success(request, "活動已成功結案，照片已保存！")
-            else:
-                # 如果取消結案，刪除所有相關照片
-                activity.photos.all().delete()
-                messages.success(request, "活動結案狀態已取消，所有成果照片已刪除！")
+                for photo in photos:
+                    # 文件格式驗證
+                    if photo.content_type not in ['image/jpeg', 'image/png']:
+                        messages.error(request, f"文件 {photo.name} 格式無效，僅支持 JPEG 或 PNG。")
+                        continue
+                    # 文件大小驗證
+                    if photo.size > 5 * 1024 * 1024:  # 限制文件大小為5MB
+                        messages.error(request, f"文件 {photo.name} 大小超過 5MB。")
+                        continue
+                    # 儲存照片到 Photo 模型
+                    Photo.objects.create(activity=activity, image=photo)
 
             activity.save()
+
+            if activity.is_closed:
+                messages.success(request, "活動已成功結案，照片已保存！")
+            else:
+                messages.success(request, "活動結案狀態已取消！")
             return redirect('activity_detail', activity_id=activity.id)
 
     messages.error(request, "您無權執行此操作。")
     return redirect('activity_detail', activity_id=activity.id)
-
 
 
 from django.shortcuts import render, get_object_or_404, redirect
