@@ -65,7 +65,7 @@ ROOT_URLCONF = "event_matcher.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        'DIRS': [],  # 自定義模板目錄（項目級模板）
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

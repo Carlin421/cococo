@@ -105,3 +105,8 @@ class CloseActivityForm(forms.ModelForm):
     class Meta:
         model = Activitynew
         fields = ['result_photo']
+
+class Photo(models.Model):
+    activity = models.ForeignKey(Activitynew, related_name="photos", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="activity_photos/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)

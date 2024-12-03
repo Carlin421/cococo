@@ -35,14 +35,21 @@
                                 <div id="map" style="height: 300px;"></div>
                             </div>
                         </div>
-                        {% if activity.result_photo %}
+                        {% if activity.photos.exists %}
                         <div class="card mb-4 shadow-sm">
-                          <div class="card-body">
-                              <h5 class="card-title">活動成果照片</h5>
-                              <img src="{{ activity.result_photo.url }}" alt="活動成果照片" class="img-fluid rounded mb-4" style="max-height: 400px; object-fit: cover;">
-                          </div>
-                      </div>
-                      {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">活動成果相簿</h5>
+                                <a href="{% url 'edit_activity_photos' activity.id %}" class="btn btn-info w-100 mt-3">編輯照片</a>
+                                <div class="row">
+                                    {% for photo in activity.photos.all %}
+                                        <div class="col-md-3 mb-3">
+                                            <img src="{{ photo.image.url }}" alt="成果照片" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
                       {% endif %}
                     </ul>
                 </div>
@@ -188,8 +195,8 @@
           結案活動
       </button>
       <div class="mt-3">
-          <label for="resultPhoto" class="form-label">上傳成果照片</label>
-          <input type="file" name="result_photo" id="resultPhoto" class="form-control">
+          <label for="resultPhotos" class="form-label">上傳成果照片 (最多 20 張，每張不超過 5MB)</label>
+          <input type="file" name="result_photos" id="resultPhotos" class="form-control" multiple>
       </div>
   {% endif %}
 </form>
