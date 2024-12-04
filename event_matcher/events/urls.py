@@ -48,6 +48,7 @@ urlpatterns = [
     path('sponsor/<int:sponsorship_id>/delete/', views.delete_sponsorship, name='delete_sponsorship'),
     path('activity/<int:activity_id>/toggle-close/', views.toggle_close_activity, name='toggle_close_activity'),
     path('activity/<int:activity_id>/edit_photos/', views.edit_activity_photos, name='edit_activity_photos'),
+    path('check_profile/', views.check_profile_completion, name='check_profile_completion'),
 ]
 
 
