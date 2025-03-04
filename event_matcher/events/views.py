@@ -802,3 +802,5 @@ def edit_activity_photos(request, activity_id):
 
     return render(request, 'events/edit_activity_photos.html', {'activity': activity})
 
+def qa_view(request):
+    return render(request, 'events/qa.html')
