@@ -4,3 +4,5 @@ django_bootstrap5
 social-auth-app-django
 django-extensions
 django-widget-tweaks
+pymysql
+Pillow
