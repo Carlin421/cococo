@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>選擇要參加贊助的活動</h3>
+    <p>贊助名稱：{{ sponsorship.title }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        {% if events %}
+        <div class="form-group">
+            <select class="form-control" name="event_id" required>
+                <option value="" disabled selected>請選擇活動</option>
+                {% for event in events %}
+                    <option value="{{ event.id }}">{{ event.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% else %}
+            <p class="text-danger">你目前沒有可以選擇的活動。</p>
+        {% endif %}
+        
+
+        <button type="submit" class="btn btn-primary mt-3">使用這個活動參加贊助</button>
+    </form>
+</div>
+{% endblock %}
