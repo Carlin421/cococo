@@ -85,7 +85,7 @@ WSGI_APPLICATION = "event_matcher.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-import pymysql
+import pymysql # 因為找不到 MySQLdb 模組，所以加上以下2行
 pymysql.install_as_MySQLdb()
 
 DATABASES = {
@@ -101,6 +101,19 @@ DATABASES = {
         },
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'coco',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         },
+#     }
+# }
 
 
 # Password validation

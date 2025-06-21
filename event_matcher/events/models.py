@@ -110,3 +110,16 @@ class Photo(models.Model):
     activity = models.ForeignKey(Activitynew, related_name="photos", on_delete=models.CASCADE)
     image = models.ImageField(upload_to="activity_photos/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+# 品牌贊助看有興趣贊助的活動列表
+class SponsorshipInterest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # 哪位社團方
+    event = models.ForeignKey(Activitynew, on_delete=models.CASCADE)  # 哪個活動
+    sponsorship = models.ForeignKey(Sponsorshipnew, on_delete=models.CASCADE)  # 有興趣的贊助
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = [['user', 'event', 'sponsorship']]
+
+    def __str__(self):
+        return f"{self.user.username} has interest in {self.sponsorship.title} via {self.event.title}"

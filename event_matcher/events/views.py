@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate,get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import LoginForm, RegisterForm,UserPhotoForm
-from .models import Activitynew,Sponsorshipnew,UserProfile, Favorite
+from .models import Activitynew,Sponsorshipnew,UserProfile, Favorite ,SponsorshipInterest
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -20,6 +20,38 @@ from django.db import IntegrityError
 import logging
 from django.views.decorators.http import require_POST
 logger = logging.getLogger(__name__)
+
+@login_required
+def choose_activity(request, sponsorship_id):
+    sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
+    events = Activitynew.objects.filter(organizer=request.user)  # 假設活動是用 owner/user 綁定的
+
+    if request.method == 'POST' :
+        event_id = request.POST.get('event_id')
+        print(event_id)
+        if not event_id:
+            messages.error(request, '請選擇活動')
+            return redirect('choose_activity', sponsorship_id=sponsorship_id)
+        else:
+            event = get_object_or_404(Activitynew, id=event_id)
+
+            SponsorshipInterest.objects.get_or_create(
+                user=request.user,
+                event=event,
+                sponsorship=sponsorship
+            )
+
+            # # 傳送訊息
+            # message = f"我對贊助《{sponsorship.title}》有興趣，想用活動《{event.title}》參加！"
+            # return redirect(f"/chatroom/?msg={message}")
+            return (redirect('sponsor_detail', sponsorship_id=sponsorship_id))
+
+    return render(request, 'events/choose_activity.html', {
+        'sponsorship': sponsorship,
+        'events': events
+    })
+
+
 @login_required
 def check_profile_completion(request):
     user_profile = request.user.profile
@@ -496,7 +528,9 @@ def activity_detail(request, activity_id):
 def sponsor_detail(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
     is_fav = is_favorited(request.user, sponsorship) if request.user.is_authenticated else False
-    context = {'sponsorship': sponsorship, 'is_favorited': is_fav}
+    sponsorinterest_bool = SponsorshipInterest.objects.filter(user=request.user, sponsorship_id=sponsorship_id).exists()
+    context = {'sponsorship': sponsorship, 'is_favorited': is_fav, 'sponsorinterest_bool': sponsorinterest_bool}
+    sponsorinterest_bool = SponsorshipInterest.objects.filter(user=request.user, sponsorship_id=sponsorship_id).exists()
     return render(request, 'events/sponsor_detail.html', context)
 def about_us(request):
     return render(request, 'events/aboutus.html')

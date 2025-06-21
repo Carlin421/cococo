@@ -50,6 +50,8 @@ urlpatterns = [
     path('activity/<int:activity_id>/edit_photos/', views.edit_activity_photos, name='edit_activity_photos'),
     path('check_profile/', views.check_profile_completion, name='check_profile_completion'),
     path('qa/', views.qa_view, name='qa'),
+    path('sponsorship/<int:sponsorship_id>/choose_activity/', views.choose_activity, name='choose_activity'),
+
 ]
 
 
