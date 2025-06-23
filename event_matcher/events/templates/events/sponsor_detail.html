@@ -117,6 +117,7 @@
 
             {% if user == sponsorship.organizer %}
                 <a href="{% url 'edit_sponsorship' sponsorship.id %}" class="btn btn-primary w-100 mt-3">編輯贊助</a>
+                <a href="{% url 'manage_sponsorships' sponsorship.id %}" class="btn btn-primary w-100 mt-3">管理贊助</a>
             {% endif %}
 
             {% if user == sponsorship.organizer or user.is_staff %}

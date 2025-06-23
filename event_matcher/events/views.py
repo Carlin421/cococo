@@ -21,6 +21,30 @@ import logging
 from django.views.decorators.http import require_POST
 logger = logging.getLogger(__name__)
 
+
+@login_required
+def manage_sponsorships(request, sponsorship_id):
+    sponsorships = Sponsorshipnew.objects.filter(organizer=request.user)
+    sponsorships_interest = SponsorshipInterest.objects.filter(sponsorship_id=sponsorship_id)
+
+    event_ids = sponsorships_interest.values_list('event_id', flat=True)
+    
+    # 取得排序參數（預設為活動名稱）
+    sort_by = request.GET.get('sort', 'title')
+    allowed_sorts = ['title', 'date', 'location', '-title', '-date', '-location']
+    if sort_by not in allowed_sorts:
+        sort_by = 'title'
+
+    activities = Activitynew.objects.filter(id__in=event_ids).order_by(sort_by)
+
+    return render(request, 'events/manage_sponsorships.html', {
+        'activities': activities,
+        'sponsorships_interest': sponsorships_interest,
+        'sponsorship_id': sponsorship_id,
+        'current_sort': sort_by,
+    })
+
+
 @login_required
 def choose_activity(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
@@ -364,26 +388,32 @@ def register_view(request):
         form_userprofile = UserPhotoForm(request.POST, request.FILES)
         if form.is_valid() and form_userprofile.is_valid():
             try:
-                # 創建 User
-                user = form.save()
+                user = form.save()  # RegisterForm 中已自動建立 UserProfile
 
-                # 嘗試創建 UserProfile
-                user_profile = form_userprofile.save(commit=False)
-                user_profile.user = user
-                user_profile.role = form.cleaned_data['role']  # 保存用戶角色
+                # 更新已建立的 user 的 profile 資料（如：照片、自介等）
+                user_profile = user.userprofile  # 直接透過 OneToOne 取得
+                form_data = form_userprofile.cleaned_data
+                user_profile.photo = form_data['photo']
+                user_profile.bio = form_data['bio']
                 user_profile.save()
 
-                return redirect('login')  # 註冊完成後重定向到登入頁面
+                return redirect('login')
 
             except IntegrityError:
-                # 如果出現唯一性錯誤，說明用戶已存在
-                form.add_error(None, "A profile for this user already exists.")
-
+                form.add_error(None, "這個帳號已經註冊過了。")
+            except Exception as e:
+                form.add_error(None, f"發生錯誤：{e}")
+        else:
+            print(form.errors)
+            print(form_userprofile.errors)
     else:
         form = RegisterForm()
         form_userprofile = UserPhotoForm()
 
-    return render(request, 'events/register.html', {'form': form, 'form_userprofile': form_userprofile})
+    return render(request, 'events/register.html', {
+        'form': form,
+        'form_userprofile': form_userprofile
+    })
 
 
 def activitynew_list(request):

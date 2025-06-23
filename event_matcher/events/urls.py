@@ -51,6 +51,7 @@ urlpatterns = [
     path('check_profile/', views.check_profile_completion, name='check_profile_completion'),
     path('qa/', views.qa_view, name='qa'),
     path('sponsorship/<int:sponsorship_id>/choose_activity/', views.choose_activity, name='choose_activity'),
+    path('sponsorship/<int:sponsorship_id>/manage_sponsorships/', views.manage_sponsorships, name='manage_sponsorships'),
 
 ]
 
