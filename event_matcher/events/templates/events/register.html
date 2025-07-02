@@ -3,74 +3,132 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 60px); background-color: #e9ecef;">
-    <div class="card p-3 shadow-lg" style="max-width: 350px; width: 100%; max-height: 85vh; overflow-y: auto; border-radius: 10px;">
-        <div class="text-center mb-2">
-            <h4 class="fw-bold text-primary">註冊新帳號</h4>
-        </div>
-        <div class="d-grid mb-2">
-            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger btn-sm rounded-pill">
+<div class="container-fluid" style="min-height: calc(100vh - 60px); background-color: #e9ecef;">
+  <div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 60px);">
+    <div class="col-lg-10 col-xl-8">
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div class="row g-0">
+          <!-- 左側圖片 -->
+          <div class="col-md-4 d-none d-md-block" style="background-image: url('{% static "default.jpg" %}'); background-size: cover; background-position: center;"></div>
+
+          <!-- 表單內容 -->
+          <div class="col-md-8 bg-white p-4">
+            <div class="text-center mb-3">
+              <h4 class="fw-bold text-primary">註冊新帳號</h4>
+            </div>
+            <div class="d-grid mb-3">
+              <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger btn-sm rounded-pill">
                 <i class="fab fa-google me-2"></i> 使用 Google 註冊
-            </a>
-        </div>
+              </a>
+            </div>
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="mb-2">
-                <label for="username" class="form-label">使用者名稱</label>
-                {{ form.username|add_class:"form-control form-control-sm" }}
-            </div>
-            <div class="mb-2">
-                <label for="email" class="form-label">電子郵件</label>
-                {{ form.email|add_class:"form-control form-control-sm" }}
-            </div>
-            <div class="mb-2">
-                <label for="password" class="form-label">密碼</label>
-                {{ form.password|add_class:"form-control form-control-sm" }}
-                <div class="form-text">請設定至少8碼，並且英數混和的密碼</div>
-            </div>
-            <div class="mb-2">
-                <label for="password_confirm" class="form-label">確認密碼</label>
-                {{ form.password_confirm|add_class:"form-control form-control-sm" }}
-            </div>
-            <div class="mb-2">
-                <label for="photo" class="form-label">上傳照片</label>
-                {{ form_userprofile.photo|add_class:"form-control form-control-sm" }}
-            </div>
-            <div class="mb-2">
-                <label for="description" class="form-label">自我描述</label>
-                {{ form_userprofile.description|add_class:"form-control form-control-sm" |attr:"style:height:80px;" }}
-            </div>
-            {% if form.errors or form_userprofile.errors %}
-            <div class="alert alert-danger mb-2">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="row">
+                <!-- 左欄 -->
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="username" class="form-label">使用者名稱</label>
+                    {{ form.username|add_class:"form-control form-control-sm" }}
+                  </div>
+                  <div class="mb-2">
+                    <label for="email" class="form-label">電子郵件</label>
+                    {{ form.email|add_class:"form-control form-control-sm" }}
+                  </div>
+                  <div class="mb-2">
+                    <label for="password" class="form-label">密碼</label>
+                    <div class="input-group input-group-sm">
+                      {{ form.password|add_class:"form-control" }}
+                      <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('id_password', this)">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                    <div class="form-text">請設定至少8碼，並且英數混和的密碼</div>
+                  </div>
+                  
+                  <div class="mb-2">
+                    <label for="password_confirm" class="form-label">確認密碼</label>
+                    <div class="input-group input-group-sm">
+                      {{ form.password_confirm|add_class:"form-control" }}
+                      <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('id_password_confirm', this)">
+                        <i class="bi bi-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                </div>
+
+                <!-- 右欄 -->
+                <div class="col-md-6">
+                  <div class="mb-2">
+                    <label for="photo" class="form-label">上傳照片</label>
+                    {{ form_userprofile.photo|add_class:"form-control form-control-sm" }}
+                  </div>
+                  <div class="mb-2">
+                    <label for="description" class="form-label">自我描述</label>
+                    {{ form_userprofile.description|add_class:"form-control form-control-sm" |attr:"style:height:80px;" }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="{{ form.role.id_for_label }}" class="form-label">選擇身分</label>
+                    {{ form.role|add_class:"form-select form-select-sm" }}
+                    <div class="form-text">選擇適合的身份來完成註冊。</div>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">圖形驗證碼</label>
+                    {{ form.captcha }}
+                  </div>
+                </div>
+              </div>
+
+              {% if form.errors or form_userprofile.errors %}
+              <div class="alert alert-danger mb-2">
                 <ul class="mb-0 ps-3">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <li>{{ field.label }}：{{ error }}</li>
-                        {% endfor %}
+                  {% for field in form %}
+                    {% for error in field.errors %}
+                      <li>{{ field.label }}：{{ error }}</li>
                     {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                  {% for field in form_userprofile %}
+                    {% for error in field.errors %}
+                      <li>{{ field.label }}：{{ error }}</li>
                     {% endfor %}
-                    {% for field in form_userprofile %}
-                        {% for error in field.errors %}
-                            <li>{{ field.label }}：{{ error }}</li>
-                        {% endfor %}
-                    {% endfor %}
+                  {% endfor %}
                 </ul>
-            </div>
-            {% endif %}
-            <div class="mb-3">
-                <label for="{{ form.role.id_for_label }}" class="form-label">選擇身分</label>
-                {{ form.role|add_class:"form-select form-select-sm" }}
-                <div class="form-text">選擇適合的身份來完成註冊。</div>
-            </div>
-            <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill py-2">註冊</button>
-        </form>
+              </div>
+              {% endif %}
 
-        <div class="card-footer text-center mt-2">
-            <small>已經有帳號了嗎？ <a href="{% url 'login' %}">登入</a></small>
+              <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill py-2">註冊</button>
+            </form>
+
+            <div class="text-center mt-3">
+              <small>已經有帳號了嗎？ <a href="{% url 'login' %}">登入</a></small>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
+
+<!-- 密碼顯示切換 JS -->
+<script>
+    function togglePassword(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
+  
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+      }
+    }
+  </script>
+  
 {% endblock %}

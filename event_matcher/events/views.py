@@ -388,22 +388,25 @@ def register_view(request):
         form_userprofile = UserPhotoForm(request.POST, request.FILES)
         if form.is_valid() and form_userprofile.is_valid():
             try:
-                user = form.save()  # RegisterForm 中已自動建立 UserProfile
+                user = form.save()
+                # 手動確保有 userprofile
+                user_profile= UserProfile.objects.get_or_create(user=user)
 
-                # 更新已建立的 user 的 profile 資料（如：照片、自介等）
-                user_profile = user.userprofile  # 直接透過 OneToOne 取得
                 form_data = form_userprofile.cleaned_data
                 user_profile.photo = form_data['photo']
-                user_profile.bio = form_data['bio']
                 user_profile.save()
 
                 return redirect('login')
 
             except IntegrityError:
                 form.add_error(None, "這個帳號已經註冊過了。")
+            
             except Exception as e:
                 form.add_error(None, f"發生錯誤：{e}")
         else:
+            # 檢查是否是 captcha 錯誤
+            if 'captcha' in form.errors:
+                form.add_error('captcha', '驗證碼錯誤，請再試一次')
             print(form.errors)
             print(form_userprofile.errors)
     else:
