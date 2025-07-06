@@ -6,3 +6,5 @@ django-extensions
 django-widget-tweaks
 pymysql
 Pillow
+django-simple-captcha
+google-analytics-data

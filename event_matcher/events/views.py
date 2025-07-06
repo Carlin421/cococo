@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate,get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import LoginForm, RegisterForm,UserPhotoForm
-from .models import Activitynew,Sponsorshipnew,UserProfile, Favorite ,SponsorshipInterest
+from .models import Activitynew,Sponsorshipnew,UserProfile, Favorite ,SponsorshipInterest,SponsorshipStats
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 def manage_sponsorships(request, sponsorship_id):
     sponsorships = Sponsorshipnew.objects.filter(organizer=request.user)
     sponsorships_interest = SponsorshipInterest.objects.filter(sponsorship_id=sponsorship_id)
+    sponsorstats = SponsorshipStats.objects.get(sponsorship_id=sponsorship_id)
 
     event_ids = sponsorships_interest.values_list('event_id', flat=True)
     
@@ -42,6 +43,7 @@ def manage_sponsorships(request, sponsorship_id):
         'sponsorships_interest': sponsorships_interest,
         'sponsorship_id': sponsorship_id,
         'current_sort': sort_by,
+        'spopnsorstats': sponsorstats
     })
 
 
@@ -558,6 +560,8 @@ def activity_detail(request, activity_id):
     context = {'activity': activity, 'is_favorited': is_fav}
     return render(request, 'events/activity_detail.html', context)
 
+# 因為sponsorinterest 需要紀錄user所以先這樣，之後再看怎麼改
+@login_required
 def sponsor_detail(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
     is_fav = is_favorited(request.user, sponsorship) if request.user.is_authenticated else False

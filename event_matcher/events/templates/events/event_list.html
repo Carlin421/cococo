@@ -199,19 +199,19 @@
     {% for activity in activities|slice:":3" %}
     {% if activity.check_status%}
       <div class="col">
-        <div class="card h-100 shadow-lg rounded border-0 animate-card">
+        <div class="card h-100 shadow-lg rounded border-0 animate-card activity-card" data-id="{{ activity.id }}">
           <img src="{{ activity.image.url }}" class="card-img-top card-img-fade" alt="{{ activity.title }}">
           <div class="card-body">
             <h5 class="card-title text-dark font-weight-bold">
-              <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">{{ activity.title }}</a>
-            </h5>
+              <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark"
+                 onclick="gtag('event', 'clickActivity', {activityId: '{{ activity.id }}',location: window.location.pathname});">{{ activity.title }}</a></h5>            
             <p class="card-text text-muted">{{ activity.description|truncatewords:20 }}</p>
           </div>
           <ul class="list-group list-group-flush">
             <li class="list-group-item"><i class="fas fa-user me-2"></i>
               <a href="{% url 'user_profile' activity.organizer.id %}" class="text-decoration-none text-primary">
                 {{ activity.organizer }}
-              </a>
+              </a></li>
             <li class="list-group-item"><i class="fas fa-map-marker-alt me-2"></i>{{ activity.location }}</li>
             <li class="list-group-item"><i class="fas fa-calendar-alt me-2"></i>{{ activity.date }}</li>
           </ul>
@@ -250,12 +250,14 @@
     {% for sponsorship in sponsorships|slice:":3" %}
     {% if sponsorship.check_status%}
       <div class="col">
-        <div class="card h-100 shadow-lg rounded border-0 animate-card">
+        <div class="card h-100 shadow-lg rounded border-0 animate-card sponsorship-card" data-id="{{ sponsorship.id }}">
           <img src="{{ sponsorship.image.url }}" class="card-img-top card-img-fade" alt="{{ sponsorship.title }}">
           <div class="card-body">
             <h5 class="card-title text-dark font-weight-bold">
-              <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">{{ sponsorship.title }}</a>
-            </h5>
+              <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark"
+              onclick="gtag('event', 'clickSponsorship', { sponsorshipId: '{{ sponsorship.id }}', location: window.location.pathname });">
+              {{ sponsorship.title }}
+           </a></h5>
             <p class="card-text text-muted">{{ sponsorship.description|truncatewords:20 }}</p>
           </div>
           <ul class="list-group list-group-flush">
@@ -342,7 +344,32 @@
     padding-top: 0;
   }
 </style>
-
+<!-- Google Analytics -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const logImpression = (id, type) => {
+      gtag('event', `impression_${type}`, {
+        [`${type}_id`]: id,
+        location: window.location.pathname
+      });
+    }
+  
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const id = el.dataset.id;
+          const type = el.classList.contains('sponsorship-card') ? 'sponsorship' : 'activity';
+          logImpression(id, type);
+          observer.unobserve(el);  // 只觸發一次
+        }
+      });
+    });
+  
+    document.querySelectorAll('.activity-card, .sponsorship-card').forEach(el => observer.observe(el));
+  });
+  </script>
+<!-- Google Analytics End-->  
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {

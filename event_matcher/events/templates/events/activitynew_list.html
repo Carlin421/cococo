@@ -61,9 +61,9 @@
               {% endif %}
               
               <div class="card-body">
-                <h5 class="card-title fw-bold">
-                  <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">{{ activity.title }}</a>
-                </h5>
+                <h5 class="card-title text-dark font-weight-bold">
+                  <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark"
+                     onclick="gtag('event', 'clickActivity', {activityId: '{{ activity.id }}',location: window.location.pathname});">{{ activity.title }}</a></h5>
                 <p class="card-text text-muted small mb-2"><i class="fas fa-user me-2"></i>主辦方：<a href="{% url 'user_profile' activity.organizer.id %}" class="text-decoration-none text-primary">{{ activity.organizer }}</a></p>
                 <p class="card-text text-muted small mb-2"><i class="fas fa-map-marker-alt me-2"></i>{{ activity.location }}</p>
                 <p class="card-text text-muted small"><i class="fas fa-calendar-alt me-2"></i>{{ activity.date }}</p>

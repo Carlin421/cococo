@@ -45,6 +45,8 @@ class Activitynew(models.Model):
         null=True,
         blank=True
     )
+    daily_views = models.IntegerField(default=0)
+
     def __str__(self):
         return self.title
     
@@ -72,7 +74,8 @@ class Sponsorshipnew(models.Model):
         null=True,
         blank=True
     )
-    
+    daily_views = models.IntegerField(default=0)
+
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     activity = models.ForeignKey('Activitynew', on_delete=models.CASCADE, null=True, blank=True)
@@ -123,3 +126,15 @@ class SponsorshipInterest(models.Model):
 
     def __str__(self):
         return f"{self.user.username} has interest in {self.sponsorship.title} via {self.event.title}"
+
+class ActivityStats(models.Model):
+    activity = models.OneToOneField('Activitynew', on_delete=models.CASCADE)
+    impressions = models.IntegerField(default=0)
+    clicks = models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class SponsorshipStats(models.Model):
+    sponsorship = models.OneToOneField('Sponsorshipnew', on_delete=models.CASCADE)
+    impressions = models.IntegerField(default=0)
+    clicks = models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
