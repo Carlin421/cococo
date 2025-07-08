@@ -48,7 +48,7 @@ def fetch_daily_ga4_data():
 
     ####### 抓點擊＋曝光事件數據 ########
     tracked_events = [
-        "click_activity", "click_sponsorship",
+        "clickActivity", "clickSponsorship",
         "impression_activity", "impression_sponsorship"
     ]
 
@@ -81,12 +81,12 @@ def fetch_daily_ga4_data():
         activity_match = re.match(r"^/activity/(\d+)/?$", path)
         sponsor_match = re.match(r"^/sponsor/(\d+)/?$", path)
 
-        if event == "click_activity" and activity_match:
+        if event == "clickActivity" and activity_match:
             pk = int(activity_match.group(1))
             stats, _ = ActivityStats.objects.get_or_create(activity_id=pk)
             stats.clicks = count
             stats.save()
-        elif event == "click_sponsorship" and sponsor_match:
+        elif event == "clickSponsorship" and sponsor_match:
             pk = int(sponsor_match.group(1))
             stats, _ = SponsorshipStats.objects.get_or_create(sponsorship_id=pk)
             stats.clicks = count

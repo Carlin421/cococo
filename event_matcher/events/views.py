@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 def manage_sponsorships(request, sponsorship_id):
     sponsorships = Sponsorshipnew.objects.filter(organizer=request.user)
     sponsorships_interest = SponsorshipInterest.objects.filter(sponsorship_id=sponsorship_id)
-    sponsorstats = SponsorshipStats.objects.get(sponsorship_id=sponsorship_id)
+    sponsorshipsstats = SponsorshipStats.objects.get(sponsorship_id=sponsorship_id)
 
     event_ids = sponsorships_interest.values_list('event_id', flat=True)
     
@@ -43,7 +43,7 @@ def manage_sponsorships(request, sponsorship_id):
         'sponsorships_interest': sponsorships_interest,
         'sponsorship_id': sponsorship_id,
         'current_sort': sort_by,
-        'spopnsorstats': sponsorstats
+        'sponsorshipstats': sponsorshipsstats
     })
 
 
@@ -80,12 +80,18 @@ def choose_activity(request, sponsorship_id):
 
 @login_required
 def check_profile_completion(request):
-    user_profile = request.user.profile
-    if request.user.social_auth.filter(provider='google-oauth2').exists():
+    user = request.user
+
+    # 取得或建立 user 的 profile（安全寫法）
+    user_profile, created = UserProfile.objects.get_or_create(user=user)
+
+    # 如果是 Google 登入，檢查 profile 是否填寫完成
+    if user.social_auth.filter(provider='google-oauth2').exists():
         if not user_profile.role or not user_profile.description:
             messages.warning(request, '請完成您的個人資料設置。')
             return redirect('edit_profile')
-    return redirect('event_list')  # 或其他適當的主頁
+
+    return redirect('event_list')  # 或其他主頁
 # 在 event_matcher/events/views.py 文件中
 def notifications(request):    
     if request.user.is_authenticated:
@@ -391,8 +397,7 @@ def register_view(request):
         if form.is_valid() and form_userprofile.is_valid():
             try:
                 user = form.save()
-                # 手動確保有 userprofile
-                user_profile= UserProfile.objects.get_or_create(user=user)
+                user_profile, created = UserProfile.objects.get_or_create(user=user)
 
                 form_data = form_userprofile.cleaned_data
                 user_profile.photo = form_data['photo']
@@ -409,8 +414,6 @@ def register_view(request):
             # 檢查是否是 captcha 錯誤
             if 'captcha' in form.errors:
                 form.add_error('captcha', '驗證碼錯誤，請再試一次')
-            print(form.errors)
-            print(form_userprofile.errors)
     else:
         form = RegisterForm()
         form_userprofile = UserPhotoForm()

@@ -8,3 +8,4 @@ pymysql
 Pillow
 django-simple-captcha
 google-analytics-data
+django-extensions
