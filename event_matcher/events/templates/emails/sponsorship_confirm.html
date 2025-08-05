@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>贊助申請成功通知</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6;">
+    <h2>您好 {{ user.first_name }}，</h2>
+    <p>您已成功使用活動 <strong>{{ event.title }}</strong> 參加贊助 <strong>{{ sponsorship.title }}</strong>。</p>
+    <p>我們會盡快審核您的申請，請隨時注意您的信箱通知，感謝您的參與！</p>
+    <br>
+    <p style="font-size: 12px; color: gray;">
+        ※ 此信件由系統 <strong>noreply</strong> 自動發送，請勿直接回覆。
+    </p>
+</body>
+</html>

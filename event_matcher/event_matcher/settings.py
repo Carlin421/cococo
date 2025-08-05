@@ -26,8 +26,8 @@ SECRET_KEY = "django-insecure-9)o(qsv+-@bl@@o2t8t+nzih__x-3q0g*_690ia7pi+#8c8jt*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['34.81.67.33','cococo.hopto.org']
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '34.81.67.33', 'cococo.hopto.org']
+
 
 
 
@@ -88,32 +88,32 @@ WSGI_APPLICATION = "event_matcher.wsgi.application"
 import pymysql # 因為找不到 MySQLdb 模組，所以加上以下2行
 pymysql.install_as_MySQLdb()
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'newdb',
-        'USER': 'Carlin',
-        'PASSWORD': 'Zanny@12345678',
-        'HOST': '34.81.6.189',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-    }
-}
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'coco',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': '127.0.0.1',
+#         'NAME': 'newdb',
+#         'USER': 'Carlin',
+#         'PASSWORD': 'Zanny@12345678',
+#         'HOST': '34.81.6.189',
 #         'PORT': '3306',
 #         'OPTIONS': {
 #             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 #         },
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'coco',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
+}
 
 
 # Password validation
@@ -180,4 +180,11 @@ SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/check_profile/'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '997069648513-uq2u0l831qemlh3msro1121orc7kd6ra.apps.googleusercontent.com' # Google Consumer Key
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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' # Google Consumer Secret
 
-
+# email setting
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'zanny20231026@gmail.com'
+EMAIL_HOST_PASSWORD = '備註當中的16位密碼'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
