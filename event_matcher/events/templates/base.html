@@ -4,239 +4,176 @@
 <!DOCTYPE html>
 <html lang="zh-Hant" data-bs-theme="auto">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}COCO{% endblock %}</title>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}COCO{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Icons / CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+  {% bootstrap_css %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
-    <!-- 引入 Bootstrap CSS 和自訂 CSS -->
-    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    
+  <!-- Leaflet（可留在 head 或移到底部；保留你原設定） -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <style>
- /* 基本樣式 */
-.navbar-brand {
-  color: #637290 !important; /* 標誌文字顏色 */
-  font-weight: bold; /* 加粗文字 */
-  text-transform: uppercase; /* 全部大寫 */
-}
-
-.custom-navbar {
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 添加陰影 */
-  padding: 10px 20px; /* 上下內邊距 */
-}
-
-.nav-button {
-  background-color: #637290;
-  border: none;
-  color: white;
-  border-radius: 25px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
-  margin: 10px 15px 10px 0;
-}
-
-.nav-button:hover {
-  background-color: #d1d5db;
-  color: #111827;
-  transform: scale(1.05); /* 懸停放大效果 */
-}
-
-/* Navbar 導覽列樣式 */
-.navbar-nav .nav-link {
-  font-weight: 500;
-  color: white !important;
-  transition: color 0.3s ease;
-}
-
-.navbar-nav .nav-link:hover {
-  color: #b1b4b9 !important;
-  font-weight: bold;
-}
-
-/* 確保所有按鈕在同一行 */
-@media (min-width: 1200px) {
-  .navbar-collapse {
-    display: flex;
-    justify-content: space-between; /* 左右對齊 */
-    align-items: center; /* 垂直置中 */
-  }
-
-  .navbar-nav {
-    flex-direction: row; /* 水平排列 */
-    align-items: center;
-    gap: 20px; /* 選單間距 */
-  }
-
-  .nav-item {
-    display: inline-block;
-  }
-
-  
-  .nav-button {
-    padding: 10px 15px;
-    border-radius: 25px;
-    background-color: #637290;
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.3s, transform 0.3s;
-  }
-
-  .nav-button:hover {
-    background-color: #d1d5db;
-    color: #111827;
-    transform: scale(1.05);
-  }
-
-  .notification-badge {
-    margin-left: 5px; /* 徽章間距 */
-  }
-}
-
-
-
-/* 1199px 以下 (行動裝置模式) */
-
-@media (max-width: 1199px) {
-    .navbar-collapse {
-        display: none !important; /* 強制隱藏普通 Navbar */
+  <style>
+    /* ===== 基本樣式 ===== */
+    .navbar-brand {
+      color: #637290 !important;
+      font-weight: bold;
+      text-transform: uppercase;
     }
-    .offcanvas {
-        display: block !important; /* 強制顯示 Offcanvas */
+
+    .custom-navbar {
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px 20px;
     }
+
     .nav-button {
-        padding: 5px 10px; /* 縮小按鈕大小 */
-        margin: 5px 0;    /* 減少按鈕間距 */
-        width: 100%;      /* 滿版按鈕 */
+      background-color: #637290;
+      border: none;
+      color: white;
+      border-radius: 25px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin: 10px 15px 10px 0;
+    }
+    .nav-button:hover {
+      background-color: #d1d5db;
+      color: #111827;
+      transform: scale(1.05);
+    }
+
+    .navbar-nav .nav-link {
+      font-weight: 500;
+      color: white !important;
+      transition: color 0.3s ease;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #b1b4b9 !important;
+      font-weight: bold;
+    }
+
+    /* ===== 桌面版（≥992px）一行呈現、不換行；超出可水平滑動 ===== */
+    @media (min-width: 992px) {
+      .custom-navbar .offcanvas-body {
+        display: flex !important;
+        align-items: center !important;
+        padding: 0 !important;
+        gap: 12px;
+      }
+      .custom-navbar .navbar-nav {
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px !important;
+        flex-wrap: nowrap !important;      /* 關鍵：不換行 */
+        overflow-x: auto;                  /* 超出時水平滑動 */
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .custom-navbar .navbar-nav::-webkit-scrollbar { display: none; }
+
+      .custom-navbar .nav-button {
+        white-space: nowrap;               /* 不逐字換行 */
+        display: inline-flex;
+        align-items: center;
+        line-height: 1.2;
+        flex: 0 0 auto;                    /* 不被壓縮 */
+        padding: 10px 15px;
+      }
+      .notification-badge { margin-left: 5px; }
+    }
+
+    /* ===== 手機 / 平板（<992px）：只用 offcanvas，按鈕滿版好點擊 ===== */
+    @media (max-width: 991.98px) {
+      .navbar-expand-lg .navbar-collapse { display: none !important; }
+      .navbar-expand-lg .offcanvas { display: block !important; }
+
+      .navbar-toggler {
+        background-color: #637290;
+        border-color: white;
+      }
+      .navbar-toggler .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+      }
+
+      .navbar-nav { flex-direction: column; gap: 10px; }
+      .nav-button {
+        display: block;
+        width: 100%;
         text-align: center;
-    }
-    .offcanvas-header {
-        background-color: #f0f0f0;
-        color: #637290;
-    }
-}
+        padding: 10px 14px;
+        margin: 6px 0;
+      }
 
-@media (max-width: 1199px) {
-  .navbar-expand-lg .navbar-collapse {
-        display: none !important;
-    }
-    .navbar-expand-lg .offcanvas {
-        display: block !important;
+      .offcanvas { background-color: #ffffff !important; color: #000000; }
+      .offcanvas-header { background-color: #f0f0f0; color: #637290; }
     }
 
-  .navbar-toggler {
-    background-color: #637290; /* 收合按鈕背景顏色 */
-    border-color: white;
-  }
+    /* ===== 通知 dropdown ===== */
+    .nav-item.dropdown > .nav-link {
+      color: #71b8d9 !important;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .nav-item.dropdown > .nav-link:hover {
+      color: #8bcbe8 !important;
+      transform: scale(1.05);
+    }
+    .notification-badge {
+      position: absolute;
+      top: 0;
+      right: -5px;
+      font-size: 0.7rem;
+      padding: 0.25em 0.6em;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px #343a40;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+      100%{ box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+    }
 
-  .navbar-toggler .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
-  }
+    /* Dropdown */
+    .dropdown-menu {
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .dropdown-item {
+      font-size: 14px;
+      color: #f0f0f0;
+    }
+    .dropdown-item:hover {
+      background-color: #f0f0f0;
+      color: #111;
+    }
+  </style>
 
-  .navbar-nav {
-    flex-direction: column; /* 垂直排列 */
-    gap: 10px; /* 選單間距 */
-  }
-  .nav-button {
-    display: block;
-    width: 100%; /* 滿版按鈕 */
-    text-align: center;
-    margin-bottom: 10px;
-  }
-
-  .offcanvas {
-  background-color: #ffffff !important; /* 設定白色背景 */
-  color: #000000; /* 預設文字顏色改為黑色，適配白色背景 */
-}
-  .offcanvas-header {
-    background-color: #f0f0f0;
-    color: #637290;
-  }
-}
-
-/* 通知按鈕樣式 */
-.nav-item.dropdown > .nav-link {
-  color: #71b8d9 !important;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.nav-item.dropdown > .nav-link:hover {
-  color: #8bcbe8 !important;
-  transform: scale(1.05);
-}
-
-.notification-badge {
-  position: absolute;
-  top: 0;
-  right: -5px;
-  font-size: 0.7rem;
-  padding: 0.25em 0.6em;
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px #343a40;
-  animation: pulse 2s infinite; /* 添加脈衝動畫 */
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
-  }
-}
-
-
-/* Dropdown 下拉菜單樣式 */
-.dropdown-menu {
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
-
-.dropdown-item {
-  font-size: 14px;
-  color: #f0f0f0;
-}
-
-.dropdown-item:hover {
-  background-color: #f0f0f0;
-  color: #111;
-}
-
-    </style>
-    {% block extra_css %}{% endblock %}
+  {% block extra_css %}{% endblock %}
 </head>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1F81CHTCF2"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-1F81CHTCF2');
 </script>
+
 <body>
-
-
 <!-- 頁首導航欄 -->
 <header data-bs-theme="dark">
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
@@ -252,127 +189,73 @@
         data-bs-target="#offcanvasNavbar"
         aria-controls="offcanvasNavbar"
         aria-expanded="false"
-        aria-label="切換導航列"
-      >
+        aria-label="切換導航列">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <!-- Offcanvas Navbar -->
+      <!-- 新增 offcanvas-lg：≥992px 會變成一般容器 -->
       <div
-        class="offcanvas offcanvas-end"
+        class="offcanvas offcanvas-end offcanvas-lg"
         tabindex="-1"
         id="offcanvasNavbar"
-        aria-labelledby="offcanvasNavbarLabel"
-      >
+        aria-labelledby="offcanvasNavbarLabel">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="offcanvasNavbarLabel">COCO</h5>
           <button
             type="button"
             class="btn-close text-reset"
             data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
+            aria-label="Close"></button>
         </div>
+
         <div class="offcanvas-body">
           <!-- 主選單 -->
           <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
-            <li class="nav-item">
-              <a class="nav-button" href="{% url 'event_list' %}">首頁</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-button" href="{% url 'activitynew_list' %}">找活動</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-button" href="{% url 'sponsorship_list' %}">找贊助</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-button" href="{% url 'about_us' %}">關於我們</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-button" href="{% url 'add_activity' %}">新增活動</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-button" href="{% url 'add_sponsorship' %}">新增贊助</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-button" href="{% url 'chatroom_list' %}">聊天室列表</a>
-            </li>
-            <li class="nav-item">
-    <a class="nav-button" href="{% url 'qa' %}">常見問題</a>
-</li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'event_list' %}">首頁</a></li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'activitynew_list' %}">找活動</a></li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'sponsorship_list' %}">找贊助</a></li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'about_us' %}">關於我們</a></li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'add_activity' %}">新增活動</a></li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'add_sponsorship' %}">新增贊助</a></li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'chatroom_list' %}">聊天室列表</a></li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'qa' %}">常見問題</a></li>
             {% if user.is_staff %}
-            <li class="nav-item">
-              <a class="nav-button" href="{% url 'check_activity' %}">審核頁</a>
-            </li>
+            <li class="nav-item"><a class="nav-button" href="{% url 'check_activity' %}">審核頁</a></li>
             {% endif %}
           </ul>
 
-          <!-- 通知和用戶操作 -->
+          <!-- 通知與使用者操作 -->
           <ul class="navbar-nav ms-auto">
-            <!-- 通知按鈕 -->
             <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle position-relative"
-                href="#"
-                id="navbarDropdownMenuLink"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+              <a class="nav-link dropdown-toggle position-relative" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 通知
-                <!-- 通知徽章 -->
                 {% if unread_notifications_count > 0 %}
-                <span class="badge bg-danger notification-badge">
-                  {{ unread_notifications_count }}
-                </span>
+                <span class="badge bg-danger notification-badge">{{ unread_notifications_count }}</span>
                 {% endif %}
               </a>
-              <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="navbarDropdownMenuLink"
-              >
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                 {% for notification in notifications %}
                 <li>
-                  <a
-                    class="dropdown-item {% if not notification.is_read %}fw-bold{% endif %}"
-                    href="{% url 'mark_notification_as_read' notification.id %}"
-                  >
+                  <a class="dropdown-item {% if not notification.is_read %}fw-bold{% endif %}" href="{% url 'mark_notification_as_read' notification.id %}">
                     {{ notification.message }}
-                    <small class="text-muted d-block">
-                      {{ notification.created_at|date:"Y-m-d H:i" }}
-                    </small>
+                    <small class="text-muted d-block">{{ notification.created_at|date:"Y-m-d H:i" }}</small>
                   </a>
                 </li>
                 {% empty %}
-                <li>
-                  <a class="dropdown-item" href="#">沒有新通知</a>
-                </li>
+                <li><a class="dropdown-item" href="#">沒有新通知</a></li>
                 {% endfor %}
                 <li><hr class="dropdown-divider"></li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'notification_list' %}">
-                    查看所有通知
-                  </a>
-                </li>
+                <li><a class="dropdown-item" href="{% url 'notification_list' %}">查看所有通知</a></li>
               </ul>
             </li>
-            
 
-            <!-- 登入/登出按鈕 -->
             {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a href="{% url 'logout' %}" class="nav-button">登出</a>
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'profile' %}" class="nav-button">個人資料</a>
-            </li>
+              <li class="nav-item"><a href="{% url 'logout' %}" class="nav-button">登出</a></li>
+              <li class="nav-item"><a href="{% url 'profile' %}" class="nav-button">個人資料</a></li>
             {% else %}
-            <li class="nav-item">
-              <a href="{% url 'login' %}" class="nav-button">登入</a>
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'register' %}" class="nav-button">註冊</a>
-            </li>
+              <li class="nav-item"><a href="{% url 'login' %}" class="nav-button">登入</a></li>
+              <li class="nav-item"><a href="{% url 'register' %}" class="nav-button">註冊</a></li>
             {% endif %}
           </ul>
         </div>
@@ -381,304 +264,142 @@
   </nav>
 </header>
 
-
-
-
-
-
-
 <main>
   {% if messages %}
   <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050; margin-right: 30px; margin-top: 30px;">
-      {% for message in messages %}
-      <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="2000">
-          <div class="d-flex">
-              <div class="toast-body">
-                  <i class="bi bi-shield-exclamation me-2"></i>{{ message }}
-              </div>
-              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
+    {% for message in messages %}
+    <div class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="2000">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="bi bi-shield-exclamation me-2"></i>{{ message }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
-      {% endfor %}
+    </div>
+    {% endfor %}
   </div>
   {% endif %}
-<style>
-  .toast {
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
-.toast-body {
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+  <style>
+    .toast { border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .toast-body { font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
+    .bi-shield-exclamation { font-size: 18px; }  /* ← 修正：補上結束括號 */
 
-.bi-shield-exclamation {
-    font-size: 18px;
-    html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
+    /* 讓頁腳能貼底 */
+    html, body { height: 100%; margin: 0; display: flex; flex-direction: column; }
+    main { flex: 1; }
+  </style>
 
-main {
-    flex: 1;
-}
+  <script>
+    document.querySelectorAll('.toast').forEach((toastEl) => new bootstrap.Toast(toastEl).show());
+  </script>
 
-}
+  {% block content %}{% endblock %}
 
-</style>  
-<script>
-  document.querySelectorAll('.toast').forEach((toastEl) => {
-    const toast = new bootstrap.Toast(toastEl);
-    toast.show();
-});
-
-</script>
-  
-
-
-    {% block content %}
-    {% endblock %}
-
-    <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
-    <script src="https://files.bpcontent.cloud/2024/11/25/14/20241125142039-VT3W2P5C.js"></script>
-    
+  <!-- Botpress -->
+  <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
+  <script src="https://files.bpcontent.cloud/2024/11/25/14/20241125142039-VT3W2P5C.js"></script>
 </main>
 
-<!-- 頁腳 -->
 <footer>
   <div class="container">
-      <div class="row">
-          <!-- Useful Links -->
-          <div class="col-md-4">
-              <h5>快速連結</h5>
-              <ul>
-                  <li><a href="{% url 'event_list' %}">首頁</a></li>
-                  <li><a href="{% url 'activitynew_list' %}">找活動</a></li>
-                  <li><a href="{% url 'sponsorship_list' %}">找贊助</a></li>
-                  <li><a href="#">聯絡我們</a></li>
-              </ul>
-          </div>
-          <!-- Newsletter -->
-          <div class="col-md-4">
-              <h5>合作諮詢</h5>
-              <p>若您有任何合作提案，歡迎留下email，將由專人主動聯繫</p>
-              <div class="newsletter">
-                  <input type="email" placeholder="Your Email Address">
-                  <button>傳送</button>
-              </div>
-          </div>
-          <!-- Contact -->
-          <div class="col-md-4">
-              <h5>聯絡資訊</h5>
-              <p>台中市西屯區河安里台灣大道二段910號11樓之7</p>
-              <p>E-mail: zanny20231026@gmail.com</p>
-              <p>台中市, 台灣</p>
-              <div class="social-icons">
-                  <a href="#"><i class="fab fa-facebook"></i></a>
-                  <a href="#"><i class="fab fa-instagram"></i></a>
-              </div>
-          </div>
+    <div class="row">
+      <div class="col-md-4">
+        <h5>快速連結</h5>
+        <ul>
+          <li><a href="{% url 'event_list' %}">首頁</a></li>
+          <li><a href="{% url 'activitynew_list' %}">找活動</a></li>
+          <li><a href="{% url 'sponsorship_list' %}">找贊助</a></li>
+          <li><a href="#">聯絡我們</a></li>
+        </ul>
       </div>
+      <div class="col-md-4">
+        <h5>合作諮詢</h5>
+        <p>若您有任何合作提案，歡迎留下email，將由專人主動聯繫</p>
+        <div class="newsletter">
+          <input type="email" placeholder="Your Email Address">
+          <button>傳送</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h5>聯絡資訊</h5>
+        <p>台中市西屯區河安里台灣大道二段910號11樓之7</p>
+        <p>E-mail: zanny20231026@gmail.com</p>
+        <p>台中市, 台灣</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
   </div>
+
   <style>
-    html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-main {
-    flex: 1;
-}
-
-footer {
-    background-color: #343a40; /* 深色背景 */
-    color: white; /* 白色文字 */
-    padding: 40px 0;
-    margin-top: auto; /* 自動推到頁面底部 */
-}
     footer {
-        background-color: #343a40; /* 深色背景 */
-        color: white; /* 白色文字 */
-        padding: 40px 0;
+      background-color: #343a40;
+      color: white;
+      padding: 40px 0;
+      margin-top: auto;
     }
-
-    footer h5 {
-        font-weight: bold;
-        text-transform: uppercase;
-        margin-bottom: 20px;
-    }
-
-    footer ul {
-        list-style: none;
-        padding: 0;
-    }
-
-    footer ul li {
-        margin-bottom: 10px;
-    }
-
-    footer ul li a {
-        color: white;
-        text-decoration: none;
-    }
-
-    footer ul li a:hover {
-        text-decoration: underline;
-    }
-
-    .newsletter input[type="email"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: none;
-        border-radius: 5px;
-    }
-
+    footer h5 { font-weight: bold; text-transform: uppercase; margin-bottom: 20px; }
+    footer ul { list-style: none; padding: 0; }
+    footer ul li { margin-bottom: 10px; }
+    footer ul li a { color: white; text-decoration: none; }
+    footer ul li a:hover { text-decoration: underline; }
+    .newsletter input[type="email"] { width: 100%; padding: 10px; margin-bottom: 10px; border: none; border-radius: 5px; }
     .newsletter button {
-        background-color: #28a745;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        text-transform: uppercase;
-        font-weight: bold;
-        cursor: pointer;
+      background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px;
+      text-transform: uppercase; font-weight: bold; cursor: pointer;
     }
-
-    .newsletter button:hover {
-        background-color: #218838;
-    }
-
-    .social-icons a {
-        margin-right: 15px;
-        color: white;
-        font-size: 20px;
-    }
-
-    .social-icons a:hover {
-        color: #adb5bd;
-    }
-</style>
+    .newsletter button:hover { background-color: #218838; }
+    .social-icons a { margin-right: 15px; color: white; font-size: 20px; }
+    .social-icons a:hover { color: #adb5bd; }
+  </style>
 </footer>
 
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-1F81CHTCF2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-1F81CHTCF2');
-</script>
-
-<!-- 引入 ScrollReveal 動畫庫 -->
+<!-- ScrollReveal + 自訂互動 -->
 <script src="https://unpkg.com/scrollreveal"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        ScrollReveal().reveal('.feature-box', { interval: 100, origin: 'bottom', distance: '20px', duration: 500 });
-    });
-    document.addEventListener('DOMContentLoaded', function() {
-      var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-      var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-          return new bootstrap.Dropdown(dropdownToggleEl)
-      })
-  });
-  document.addEventListener('DOMContentLoaded', function() {
-    var dropdownToggle = document.querySelector('.dropdown-toggle');
-    var dropdownMenu = document.querySelector('.dropdown-menu');
-    
-    dropdownToggle.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropdownMenu.classList.toggle('show');
+  document.addEventListener("DOMContentLoaded", function() {
+    ScrollReveal().reveal('.feature-box', { interval: 100, origin: 'bottom', distance: '20px', duration: 500 });
+
+    // 初始化所有 dropdown（避免手動 toggle 互相打架）
+    document.querySelectorAll('.dropdown-toggle').forEach(function (el) {
+      new bootstrap.Dropdown(el);
     });
 
-    document.addEventListener('click', function(e) {
-        if (!dropdownMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
-            dropdownMenu.classList.remove('show');
-        }
-    });
-});
-document.addEventListener('DOMContentLoaded', function() {
-  const notificationLink = document.querySelector('#navbarDropdownMenuLink');
-  const badge = notificationLink.querySelector('.notification-badge');
-  
-  if (badge) {
-    notificationLink.classList.add('has-notification');
-    
-    // 添加搖晃動畫
-    function shake() {
-      notificationLink.classList.add('shake');
-      setTimeout(() => {
-        notificationLink.classList.remove('shake');
-      }, 500);
+    // 通知 icon 搖晃
+    const notificationLink = document.querySelector('#navbarDropdownMenuLink');
+    const badge = notificationLink ? notificationLink.querySelector('.notification-badge') : null;
+    if (notificationLink && badge) {
+      function shake(){ notificationLink.classList.add('shake'); setTimeout(()=>notificationLink.classList.remove('shake'), 500); }
+      setInterval(shake, 5000);
     }
 
-    // 每隔 5 秒搖晃一次
-    setInterval(shake, 5000);
-  }
-});
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  var messages = [
-      {% for message in messages %}
-          {
-              message: "{{ message }}",
-              tags: "{{ message.tags }}"
-          },
-      {% endfor %}
-  ];
-
-  var alertContainer = document.getElementById('alert-container');
-
-  messages.forEach(function(msg) {
-      var alertElement = document.createElement('div');
-      alertElement.className = 'alert-message alert-' + msg.tags;
-      alertElement.textContent = msg.message;
-
-      // 添加點擊事件
-      alertElement.addEventListener('click', function() {
-          closeAlert(alertElement);
+    // flash messages（alert-container 若存在）
+    const alertContainer = document.getElementById('alert-container');
+    if (alertContainer) {
+      const messages = [
+        {% for message in messages %}
+          { message: "{{ message }}", tags: "{{ message.tags }}" },
+        {% endfor %}
+      ];
+      messages.forEach(function(msg) {
+        const el = document.createElement('div');
+        el.className = 'alert-message alert-' + msg.tags;
+        el.textContent = msg.message;
+        el.addEventListener('click', function(){ el.classList.remove('show'); setTimeout(()=>el.remove(), 300); });
+        alertContainer.appendChild(el);
+        setTimeout(()=>el.classList.add('show'), 100);
+        setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(), 300); }, 5000);
       });
-
-      alertContainer.appendChild(alertElement);
-
-      setTimeout(function() {
-          alertElement.classList.add('show');
-      }, 100);
-
-      // 設置自動消失
-      setTimeout(function() {
-          closeAlert(alertElement);
-      }, 5000);  // 5秒後消失
+    }
   });
-
-  // 關閉 alert 的函數
-  function closeAlert(alertElement) {
-      alertElement.classList.remove('show');
-      setTimeout(function() {
-          if (alertElement.parentNode === alertContainer) {
-              alertContainer.removeChild(alertElement);
-          }
-      }, 300);
-  }
-});
-
-
-
 </script>
 
-<!-- 引入 Bootstrap Bundle JS -->
+<!-- Bootstrap Bundle JS（唯一的 Bootstrap JS） -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+{% block extra_js %}{% endblock %}
 </body>
 </html>
