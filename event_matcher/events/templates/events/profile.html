@@ -1,214 +1,141 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
 {% load static %}
+{% load django_bootstrap5 %}
 
 {% block content %}
-<div class="container mt-5">
-    <!-- Profile Section -->
-    <div class="row justify-content-center mb-4">
-        <div class="col-md-8 text-center">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <!-- Profile Picture -->
-                    <div class="mb-3">
-                        {% if user_extend.photo %}
-                        <img src="{{ user_extend.photo.url }}" alt="{{ user.username }}" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-                        {% else %}
-                        <img src="{% static 'default.jpg' %}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
-                        {% endif %}
-                    </div>
+<div class="container py-5">
 
-                    <!-- User Info -->
-                    <h2 class="mb-1">{{ user.username }}</h2>
-                    <p class="text-muted mb-1">{{ user.email }}</p>
-                    <p class="text-muted">加入日期: {{ user.date_joined|date:"Y-m-d" }}</p>
-                    <p class="text-muted">
-                        <strong>身份：</strong>
-                        {% if user_extend.role == 'brand' %}
-                            <span class="badge bg-primary">品牌方</span>
-                        {% elif user_extend.role == 'club' %}
-                            <span class="badge bg-success">社團方</span>
-                        {% else %}
-                            <span class="badge bg-secondary">未設置</span>
-                        {% endif %}
-                    </p>
-                    <p>{{ user_extend.description }}</p>
+  <!-- 個人資訊卡 -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body text-center">
+      <div class="mb-3">
+        {% if user_extend.photo %}
+          <img src="{{ user_extend.photo.url }}" alt="{{ request.user.username }}" class="img-fluid rounded-circle" style="width:150px;height:150px;object-fit:cover;">
+        {% else %}
+          <img src="{% static 'default.jpg' %}" alt="Default" class="img-fluid rounded-circle" style="width:150px;height:150px;object-fit:cover;">
+        {% endif %}
+      </div>
 
-                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">編輯個人資料</a>
-                </div>
-            </div>
+      <h4 class="fw-bold mb-1">{{ request.user.username }}</h4>
+      <div class="text-muted mb-2">{{ request.user.email }}</div>
+      <div class="text-muted mb-3">加入日期：{{ request.user.date_joined|date:"Y-m-d" }}</div>
+
+      {% if user_extend.is_brand or user_extend.is_club %}
+        <div class="mb-3">
+          <strong>身份：</strong>
+          {% if user_extend.is_brand %}
+            <span class="badge bg-primary">品牌方</span>
+          {% elif user_extend.is_club %}
+            <span class="badge bg-success">社團方</span>
+          {% endif %}
         </div>
+      {% endif %}
+
+      {% if user_extend.description %}
+        <p class="mb-3">{{ user_extend.description }}</p>
+      {% endif %}
+
+      <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary rounded-pill px-4">編輯個人資料</a>
+    </div>
+  </div>
+
+  <!-- 收藏（固定顯示） -->
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-light"><strong>我的收藏活動</strong></div>
+        <div class="card-body">
+          {% if favorite_activities %}
+            <ul class="list-group list-group-flush">
+              {% for a in favorite_activities %}
+                <li class="list-group-item">
+                  <a class="text-decoration-none" href="{% url 'activity_detail' a.id %}">{{ a.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted mb-0">你還沒有收藏任何活動。</p>
+          {% endif %}
+        </div>
+      </div>
     </div>
 
-    <!-- Collections Section -->
-    <div class="row gy-4">
-        <!-- My Favorite Activities -->
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-light text-dark">
-                    <h5 class="mb-0">我的收藏活動</h5>
-                </div>
-                <div class="card-body">
-                    {% if favorite_activities %}
-                        <ul class="list-group list-group-flush">
-                            {% for activity in favorite_activities %}
-                                <li class="list-group-item">
-                                    <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">
-                                        {{ activity.title }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">你還沒有收藏任何活動。</p>
-                    {% endif %}
-                </div>
-            </div>
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-light"><strong>我的收藏贊助</strong></div>
+        <div class="card-body">
+          {% if favorite_sponsorships %}
+            <ul class="list-group list-group-flush">
+              {% for s in favorite_sponsorships %}
+                <li class="list-group-item">
+                  <a class="text-decoration-none" href="{% url 'sponsor_detail' s.id %}">{{ s.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted mb-0">你還沒有收藏任何贊助。</p>
+          {% endif %}
         </div>
-
-        <!-- My Favorite Sponsorships -->
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-light text-dark">
-                    <h5 class="mb-0">我的收藏贊助</h5>
-                </div>
-                <div class="card-body">
-                    {% if favorite_sponsorships %}
-                        <ul class="list-group list-group-flush">
-                            {% for sponsorship in favorite_sponsorships %}
-                                <li class="list-group-item">
-                                    <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">
-                                        {{ sponsorship.title }}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">你還沒有收藏任何贊助。</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- My Posted Activities -->
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-light text-dark">
-                    <h5 class="mb-0">我發布的活動</h5>
-                </div>
-                <div class="card-body">
-                    {% if user_activities %}
-                        <ul class="list-group list-group-flush">
-                            {% for activity in user_activities %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <a href="{% url 'activity_detail' activity.id %}" class="text-decoration-none text-dark">
-                                        {{ activity.title }}
-                                    </a>
-                                    {% if not activity.check_status %}
-                                        <span class="badge bg-warning text-dark">審核中</span>
-                                    {% elif activity.check_status and activity.is_active %}
-                                        <span class="badge bg-success">已上架</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary">已下架</span>
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">你還沒有發布任何活動。</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- My Posted Sponsorships -->
-        <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-light text-dark">
-                    <h5 class="mb-0">我發布的贊助</h5>
-                </div>
-                <div class="card-body">
-                    {% if user_sponsorships %}
-                        <ul class="list-group list-group-flush">
-                            {% for sponsorship in user_sponsorships %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <a href="{% url 'sponsor_detail' sponsorship.id %}" class="text-decoration-none text-dark">
-                                        {{ sponsorship.title }}
-                                    </a>
-                                    {% if not sponsorship.check_status %}
-                                        <span class="badge bg-warning text-dark">審核中</span>
-                                    {% elif sponsorship.check_status and sponsorship.is_active %}
-                                        <span class="badge bg-success">已上架</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary">已下架</span>
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">你還沒有發布任何贊助。</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    {% if user_extend.is_club %}
+    <!-- 只有社團方 -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-light"><strong>我發布的活動</strong></div>
+        <div class="card-body">
+          {% if user_activities %}
+            <ul class="list-group list-group-flush">
+              {% for a in user_activities %}
+                <li class="list-group-item">
+                  <a class="text-decoration-none" href="{% url 'activity_detail' a.id %}">{{ a.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted mb-0">你還沒有發布任何活動。</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if user_extend.is_brand %}
+    <!-- 只有品牌方 -->
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-light"><strong>我發布的贊助</strong></div>
+        <div class="card-body">
+          {% if user_sponsorships %}
+            <ul class="list-group list-group-flush">
+              {% for s in user_sponsorships %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <a class="text-decoration-none" href="{% url 'sponsor_detail' s.id %}">{{ s.title }}</a>
+                  {% if not s.check_status %}
+                    <span class="badge bg-warning text-dark">審核中</span>
+                  {% elif s.check_status and s.is_active %}
+                    <span class="badge bg-success">已上架</span>
+                  {% else %}
+                    <span class="badge bg-secondary">已下架</span>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted mb-0">你還沒有發布任何贊助。</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
 </div>
 
-
-
-
 <style>
-/* Styling for Profile Page */
-body {
-    background-color: #f9f9f9;
-    font-family: 'Inter', sans-serif;
-    color: #333;
-}
-.card {
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-.card-header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #ebebeb;
-    font-weight: 600;
-}
-.card-body {
-    padding: 1.25rem;
-}
-.img-fluid {
-    border-radius: 50%;
-    object-fit: cover;
-}
-.btn-outline-primary {
-    color: #0056b3;
-    border-color: #0056b3;
-}
-.btn-outline-primary:hover {
-    background-color: #0056b3;
-    color: #ffffff;
-}
-.list-group-item {
-    border: none;
-    padding: 0.75rem 1rem;
-    transition: background-color 0.3s ease;
-}
-.list-group-item:hover {
-    background-color: #f4f4f4;
-}
-.badge {
-    font-size: 0.85rem;
-    border-radius: 10px;
-}
-.bg-warning {
-    background-color: #ffcc00 !important;
-    color: #333;
-}
-.bg-success {
-    background-color: #28a745 !important;
-}
-.bg-secondary {
-    background-color: #6c757d !important;
-}
+  .card-header { font-weight: 700; }
+  @media (max-width: 992px){
+    .card-header, .card-body { text-align:center; }
+  }
 </style>
 {% endblock %}

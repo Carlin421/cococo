@@ -217,24 +217,45 @@ def edit_profile(request):
         'form_userprofile': form_userprofile
     }
     return render(request, 'events/edit_profile.html', context)
+from django.contrib.auth import get_user_model
+
 def user_profile(request, user_id):
-    User = get_user_model()
-    user = get_object_or_404(User, id=user_id)
-    user_extend = UserProfile.objects.get(user=user)
-    user_activities = Activitynew.objects.filter(organizer=user)
-    user_sponsorships = Sponsorshipnew.objects.filter(organizer=user)
-    # 檢查聊天室是否存在
-    db = firestore.client()
-    chat_id = get_or_create_chat(request.user.username, user.username)
+    UserModel = get_user_model()
+    profile_user = get_object_or_404(UserModel, id=user_id)
+
+    # 取對方的 profile；沒有就建立避免 None
+    user_extend, _ = UserProfile.objects.get_or_create(user=profile_user)
+
+    # 身分旗標
+    show_activities = (user_extend.role == 'club')
+    show_sponsorships = (user_extend.role == 'brand')
+
+    # 只在需要時查資料；否則給空 queryset
+    user_activities = Activitynew.objects.none()
+    user_sponsorships = Sponsorshipnew.objects.none()
+    if show_activities:
+        user_activities = Activitynew.objects.filter(
+            organizer=profile_user
+        ).order_by('-date_posted')
+    if show_sponsorships:
+        user_sponsorships = Sponsorshipnew.objects.filter(
+            organizer=profile_user
+        ).order_by('-date_posted')
+
+    # 建立/取得聊天室
+    chat_id = get_or_create_chat(request.user.username, profile_user.username)
 
     context = {
-        'user': user,
+        'profile_user': profile_user,            # ← 改名
         'user_extend': user_extend,
         'user_activities': user_activities,
-        'user_sponsorships':user_sponsorships,
-        'chat_id': chat_id
+        'user_sponsorships': user_sponsorships,
+        'show_activities': show_activities,
+        'show_sponsorships': show_sponsorships,
+        'chat_id': chat_id,
     }
     return render(request, 'events/user_profile.html', context)
+
 
 def get_or_create_chat(user1, user2):
     db = firestore.client()
@@ -561,25 +582,26 @@ def custom_logout(request):
 
 @login_required
 def profile_view(request):
-    user_extend, created = UserProfile.objects.get_or_create(user=request.user)
-    # 獲取用戶收藏的活動和贊助
+    # 取得或建立個人檔案
+    user_extend, _ = UserProfile.objects.get_or_create(user=request.user)
+
+    # 收藏（不受身分影響）
     favorite_activities = Activitynew.objects.filter(favorite__user=request.user)
     favorite_sponsorships = Sponsorshipnew.objects.filter(favorite__user=request.user)
-    
-    # 獲取用戶發布的活動和贊助
-    user_activities = Activitynew.objects.filter(organizer=request.user)
-    user_sponsorships = Sponsorshipnew.objects.filter(organizer=request.user)
-    
-    # 用戶的照片跟描述
-    user_extend = UserProfile.objects.get(user=request.user)
+
+    # 我發布的… 只在前端用 is_club/is_brand 決定是否顯示
+    user_activities = Activitynew.objects.filter(organizer=request.user).order_by('-date_posted')
+    user_sponsorships = Sponsorshipnew.objects.filter(organizer=request.user).order_by('-date_posted')
+
     context = {
         'favorite_activities': favorite_activities,
         'favorite_sponsorships': favorite_sponsorships,
         'user_activities': user_activities,
-        'user_sponsorships':user_sponsorships,
-        'user_extend': user_extend
+        'user_sponsorships': user_sponsorships,
+        'user_extend': user_extend,
     }
     return render(request, 'events/profile.html', context)
+
 def activity_detail(request, activity_id):
     activity = get_object_or_404(Activitynew, id=activity_id)
     is_fav = is_favorited(request.user, activity) if request.user.is_authenticated else False
@@ -591,10 +613,16 @@ def activity_detail(request, activity_id):
 def sponsor_detail(request, sponsorship_id):
     sponsorship = get_object_or_404(Sponsorshipnew, id=sponsorship_id)
     is_fav = is_favorited(request.user, sponsorship) if request.user.is_authenticated else False
-    sponsorinterest_bool = SponsorshipInterest.objects.filter(user=request.user, sponsorship_id=sponsorship_id).exists()
-    context = {'sponsorship': sponsorship, 'is_favorited': is_fav, 'sponsorinterest_bool': sponsorinterest_bool}
-    sponsorinterest_bool = SponsorshipInterest.objects.filter(user=request.user, sponsorship_id=sponsorship_id).exists()
+    sponsorinterest_bool = SponsorshipInterest.objects.filter(
+        user=request.user, sponsorship_id=sponsorship_id
+    ).exists()
+    context = {
+        'sponsorship': sponsorship,
+        'is_favorited': is_fav,
+        'sponsorinterest_bool': sponsorinterest_bool
+    }
     return render(request, 'events/sponsor_detail.html', context)
+
 def about_us(request):
     return render(request, 'events/aboutus.html')
 
